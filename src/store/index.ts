@@ -20,6 +20,7 @@ const createStore = () => {
           ignoredActions: ["persist/PERSIST", "persist/REHYDRATE"],
         },
       }),
+    devTools: process.env.NODE_ENV !== "production",
   });
 
   return store;
@@ -30,7 +31,7 @@ const persistor = persistStore(store, null, () => {
 });
 // getUser();
 
-export default {store,persistor};
+export default { store, persistor };
 export type RootState = ReturnType<typeof store.getState>;
 
 // const getUser = () => {
