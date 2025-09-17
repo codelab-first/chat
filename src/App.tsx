@@ -7,6 +7,7 @@ import WheatherPage from './pages/WheatherPage.tsx'
 import Nav from './components/common/nav.tsx';
 import styled from "@emotion/styled"
 import Header from './components/common/header.tsx'
+
 const Container = styled.div`
 width:100%;
 max-width:1200px;
@@ -27,6 +28,7 @@ const App = () => {
         <Route path='/join' element={<JoinPage />} />
         <Route path='/air' element={<AirPage />} />
         <Route path='/wheather' element={<WheatherPage />} />
+        <Route path='/home' element={<HomePage />} />
       </Routes>
     </Container>
   );
