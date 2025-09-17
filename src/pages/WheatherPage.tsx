@@ -12,8 +12,8 @@ margin-top:2.5em
 const WheatherPage = () => {
   return (
     <WrapperData>
-      <Air />
-      {/* <Weather /> */}
+
+      <Weather />
       <Map />
     </WrapperData>
   );
