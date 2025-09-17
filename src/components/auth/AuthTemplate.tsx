@@ -16,11 +16,16 @@ align-items:center;
 justify-content:center;
 
 `
+const Logo = styled.div`
+text-align:center;
+letter-spacing:3px;
+`
 const WhiteBox = styled.div`
 width:300px;
 padding:10px;
 background:white;
 border-radius:8px;
+box-shadow:0 0 2px 4px rgba(100,100,100,0.6)
 // border:1px solid black;
 `
 
@@ -28,6 +33,9 @@ const AuthTemplate: React.FC<Props> = ({ children }) => {
   return (
     <AuthForm>
       <WhiteBox>
+        <Logo>
+          TEAM ONE
+        </Logo>
         {children}
       </WhiteBox>
     </AuthForm>
