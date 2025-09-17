@@ -1,0 +1,59 @@
+@use "./mixin";
+
+.custom {
+  border: 2px solid red;
+}
+
+.containers {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  &.shop-container {
+    .form-wrapper {
+      display: flex;
+      margin: 1em 0;
+      gap: 0.25em;
+      .form-wrap {
+        margin-right: auto;
+        position: relative;
+        .btn-delete {
+          font-size: 1.5em;
+          position: absolute;
+          right: 0.25em;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          display: none;
+          &.active {
+            display: block;
+          }
+        }
+        .search-input {
+          border: 1px solid #bbb;
+        }
+      }
+    }
+    > .prd-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      .prd-wrap {
+        width: 24%;
+        margin: 1em 0.5%;
+        border: 1px solid #ccc;
+        text-align: center;
+        .img {
+          margin-bottom: 1em;
+          width: 100%;
+        }
+        .title {
+          font-size: 1.5em;
+          margin-bottom: 0.75em;
+        }
+        .description {
+          font-size: 1em;
+          color: #777;
+        }
+      }
+    }
+  }
+}

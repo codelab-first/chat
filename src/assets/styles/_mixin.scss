@@ -1,0 +1,18 @@
+@use "./variable";
+
+@mixin sample($theme: DarkGray) {
+  background: $theme;
+  box-shadow: 0 0 1px rgba($theme, 0.25);
+  color: #fff;
+}
+
+.btn {
+  padding: 0.5em 1em;
+  background-color: #17b5ca;
+  color: #fff;
+  border-radius: 0.25em;
+  cursor: pointer;
+  &:hover {
+    background-color: #53e0f3;
+  }
+}
