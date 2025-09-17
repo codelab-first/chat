@@ -1,15 +1,25 @@
+// chat/src/components/left/Air.tsx
 import React from "react"
 import styled from "@emotion/styled"
+// ✅ index.tsx까지 명시
+import Air01Widget from "../../features/air01/index.tsx"
+
 const Wraps = styled.div`
   border: 1px solid black;
   width: 50%;
   height: 70vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: stretch;
+  align-items: stretch;
+  overflow: hidden;
 `
+
 const Air = () => {
-  return <Wraps>Air</Wraps>
+  return (
+    <Wraps>
+      <Air01Widget />
+    </Wraps>
+  )
 }
 
 export default Air
