@@ -34,10 +34,67 @@ const Tilde = styled.span`
   color: #333;
 `
 
+const ChatArea = styled.div`
+  border: 2px solid #666;
+  box-shadow: 0 4px 8px rgba(0, 0, 0);
+  border-radius: 5px;
+  width: 90%;
+  height: 60%;
+  padding: 15px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+  margin-bottom: 20px;
+`
+
+const InputArea = styled.div`
+  display: flex;
+  gap: 10px;
+  width: 90%;
+  margin-bottom: 20px;
+`
+
+const InputBox = styled.input`
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`
+
+const SendButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+`
+
+const PhotoButton = styled.button`
+  padding: 10px 20px;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+`
+
 const Chat = () => {
   const [selectedDate1, setSelectedDate1] = useState("")
   const [selectedDate2, setSelectedDate2] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [message, setMessage] = useState("")
+  const [messages, setMessages] = useState<string[]>([])
+
+  const handleSend = () => {
+    if (message.trim()) {
+      setMessages([...messages, message])
+      setMessage("")
+    }
+  }
+
+  const handlePhoto = () => {
+    console.log("사진 버튼 클릭")
+  }
 
   return (
     <Wraps>
@@ -69,6 +126,21 @@ const Chat = () => {
           />
         </Box>
       </Header>
+      <ChatArea>
+        {messages.map((msg, index) => (
+          <p key={index}>{msg}</p>
+        ))}
+      </ChatArea>
+      <InputArea>
+        <InputBox
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="메시지를 입력하세요"
+        />
+        <SendButton onClick={handleSend}>전송</SendButton>
+        <PhotoButton onClick={handlePhoto}>사진</PhotoButton>
+      </InputArea>
     </Wraps>
   )
 }
