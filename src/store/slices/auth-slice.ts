@@ -29,11 +29,11 @@ export const authData = createSelector(
   messageSelector,
   loginSelector,
   joinSelector,
-  (success, message, loginData, joindata) => ({
+  (success, message, loginData, joinData) => ({
     success,
     message,
     loginData,
-    joindata,
+    joinData,
   })
 );
 const authSlice = createSlice({
