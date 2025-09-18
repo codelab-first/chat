@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Map, useKakaoLoader } from "react-kakao-maps-sdk"
+import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
 
-import useCurrentLocation from "../../hook/useCurrentLocation"
-import useMapBoundary from "../../hook/useMapBoundary"
-import useMapResize from "../../hook/useMapResize"
+import useCurrentLocation from "./hooks/useCurrentLocation"
+import useMapBoundary from "./hooks/useMapBoundary"
+import useMapResize from "./hooks/useMapResize"
+import useVisibleMarkers from "./hooks/useVisibleMarkers"
 
-import useKakaoApi from "../api/useKakaoApi"
+import useKakaoApi from "../../components/api/useKakaoApi"
 
 const MapComponent = () => {
   const { loading: apiLoading, error: apiError } = useKakaoApi()
@@ -17,6 +18,16 @@ const MapComponent = () => {
   } = useCurrentLocation()
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap } = useMapResize()
+
+    const locations = [
+    {
+      title: "서울",
+      latlng: { lat: import.meta.env.VITE_DEFAULT_LATITUDE, lng: import.meta.env.VITE_DEFAULT_LONGITUDE },
+    },
+  ]
+
+  const visibleMarkers = useVisibleMarkers(locations, bounds)
+
 
   if (apiLoading || locationLoading) return <div>로딩중...</div>
   if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
@@ -41,7 +52,15 @@ const MapComponent = () => {
           updateBounds(map)
           console.log("지도 이동 완료", map)
         }}
-      />
+      >
+        {visibleMarkers.map((location, index) => (
+          <MapMarker
+            key={index}
+            position={location.latlng}
+            title={location.title}
+            />
+        ))}
+      </Map>
       <div style={{ marginTop: "0.75em" }}>
         <strong>현재 위치: </strong> {address}
       </div>
