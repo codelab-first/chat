@@ -64,7 +64,8 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       );
       if (user) {
         alert("로그인 성공! (로컬 저장)");
-        navigate("/home"); // 이 줄 추가: /home으로 이동
+        localStorage.setItem("currentUser", JSON.stringify(user)); // 추가
+        navigate("/home");
       } else {
         alert("로그인 실패! (로컬 저장)");
       }
@@ -102,4 +103,4 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   );
 };
 
-export default AuthForm;
+export default AuthForm;;0
