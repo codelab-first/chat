@@ -1,19 +1,15 @@
-import React from 'react';
-import styled from '@emotion/styled'
+import React from "react"
+import styled from "@emotion/styled"
 const Wraps = styled.div`
-border:1px solid black;
-width:50%;
-height:70vh;
-display:flex;
-justify-content:center;
-align-items:center;
+  border: 1px solid black;
+  width: 50%;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `
 const Weather = () => {
-  return (
-    <Wraps>
-      Wheather
-    </Wraps>
-  );
-};
+  return <Wraps>Weather</Wraps>
+}
 
-export default Weather;
+export default Weather

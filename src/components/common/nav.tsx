@@ -17,7 +17,7 @@ const Nav = () => {
     <div>
       <WrapsNav>
         <li><a href="/home">Home</a></li>
-        <li><a href="/wheather">날씨정보</a></li>
+        <li><a href="/weather">날씨정보</a></li>
         <li><a href="/air">대기정보</a></li>
       </WrapsNav>
     </div>
