@@ -3,7 +3,7 @@ import HomePage from './pages/HomePage.tsx'
 import JoinPage from './pages/JoinPage.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import AirPage from './pages/AirPage.tsx';
-import WheatherPage from './pages/WheatherPage.tsx'
+import WeatherPage from './pages/WeatherPage.tsx'
 import Nav from './components/common/nav.tsx';
 import styled from "@emotion/styled"
 import Header from './components/common/header.tsx'
@@ -27,7 +27,7 @@ const App = () => {
         <Route path='/' element={<LoginPage />} />
         <Route path='/join' element={<JoinPage />} />
         <Route path='/air' element={<AirPage />} />
-        <Route path='/wheather' element={<WheatherPage />} />
+        <Route path='/weather' element={<WeatherPage />} />
         <Route path='/home' element={<HomePage />} />
       </Routes>
     </Container>
