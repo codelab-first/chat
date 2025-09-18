@@ -103,4 +103,4 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   );
 };
 
-export default AuthForm;;0
+export default AuthForm;
