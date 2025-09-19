@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
 
-import useCurrentLocation from "../../../Hooks/useCurrentLocation"
+import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
