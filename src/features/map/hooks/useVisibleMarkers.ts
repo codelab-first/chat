@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 interface LatLng {
   lat: number;
   lng: number;
@@ -8,6 +6,7 @@ interface LatLng {
 interface MarkerLocation {
   title: string;
   latlng: LatLng;
+  condition: "good" | "normal" | "bad" | "terrible" | "unknown";
 }
 
 interface BoundaryState {
@@ -19,6 +18,21 @@ export default function useVisibleMarkers(
   locations: MarkerLocation[],
   bounds: BoundaryState | null
 ) {
+  const getMarkerColor = (condition: MarkerLocation["condition"]): string => {
+    switch (condition) {
+      case "good":
+        return "blue";
+      case "normal":
+        return "green";
+      case "bad":
+        return "yellow";
+      case "terrible":
+        return "red";
+      default:
+        return "gray";
+    }
+  };
+
   const isInBounds = (point: LatLng, bounds: BoundaryState): boolean => {
     return (
       point.lat >= bounds.sw.lat &&
@@ -26,12 +40,16 @@ export default function useVisibleMarkers(
       point.lng >= bounds.sw.lng &&
       point.lng <= bounds.ne.lng
     );
-  }
+  };
 
-  const useVisibleMarkers = useMemo(() => {
-    if (!bounds) return []
-    return locations.filter((pos) => isInBounds(pos.latlng, bounds))
-  }, [locations, bounds])
+  if (!bounds) return [];
 
-  return useVisibleMarkers
+  const visibleMarkers = locations.filter((pos) =>
+    isInBounds(pos.latlng, bounds)
+  ).map((pos) => ({
+    ...pos,
+    color: getMarkerColor(pos.condition),
+  }));
+
+  return visibleMarkers;
 }

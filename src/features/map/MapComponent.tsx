@@ -19,15 +19,17 @@ const MapComponent = () => {
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap } = useMapResize()
 
-    const locations = [
+  const locations = [
     {
       title: "서울",
-      latlng: { lat: import.meta.env.VITE_DEFAULT_LATITUDE, lng: import.meta.env.VITE_DEFAULT_LONGITUDE },
+      latlng: {
+        lat: import.meta.env.VITE_DEFAULT_LATITUDE,
+        lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
+      },
     },
   ]
 
   const visibleMarkers = useVisibleMarkers(locations, bounds)
-
 
   if (apiLoading || locationLoading) return <div>로딩중...</div>
   if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
@@ -35,6 +37,9 @@ const MapComponent = () => {
   return (
     // Map 내부에서 loading 상태를 관찰하고 있기 때문에 conditional rendering를 하지 않아도 됩니다.
     <>
+      <div style={{ margin: "0.75em 0" }}>
+        <strong>현재 위치: </strong> {address}
+      </div>
       <Map
         center={position}
         style={{
@@ -58,12 +63,16 @@ const MapComponent = () => {
             key={index}
             position={location.latlng}
             title={location.title}
-            />
+            // image={
+            //   {
+            //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
+            //     size: { width: 24, height: 35 },
+            //     options: { offset: { x: 12, y: 35 } },
+            //   }
+            // }
+          />
         ))}
       </Map>
-      <div style={{ marginTop: "0.75em" }}>
-        <strong>현재 위치: </strong> {address}
-      </div>
       {bounds && (
         <div style={{ marginTop: "1em" }}>
           <strong>지도 경계:</strong>
