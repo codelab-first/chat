@@ -3,7 +3,7 @@ import styled from "@emotion/styled"
 
 const Wraps = styled.div`
   border: 1px solid black;
-  width: 50%;
+  max-width: 500px;
   height: 70vh;
   display: flex;
   flex-direction: column;
@@ -21,7 +21,26 @@ const Header = styled.div`
   max-width: 700px;
   margin: 0 auto;
 `
-
+const CircleBtn = styled.div`
+min-width:30px;
+height:30px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:1.5em;
+font-weight:1000;
+background:gray;
+border-radius:50%;
+line-height:1.5;
+transition:.5s ease-in;
+cursor:pointer;
+user-select:none;
+&:hover{
+color:white;
+background:black;
+transform:rotate(360deg)
+}
+`
 const Box = styled.div`
   flex: 1;
   padding: 10px;
@@ -39,7 +58,7 @@ const ChatArea = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0);
   border-radius: 5px;
   width: 90%;
-  height: 60%;
+  height: 80%;
   padding: 15px;
   background-color: #f9f9f9;
   overflow-y: auto;
@@ -48,6 +67,8 @@ const ChatArea = styled.div`
 
 const InputArea = styled.div`
   display: flex;
+  justify-content:center;
+align-items:center;
   gap: 10px;
   width: 90%;
   margin-bottom: 20px;
@@ -132,6 +153,7 @@ const Chat = () => {
         ))}
       </ChatArea>
       <InputArea>
+        <CircleBtn>+</CircleBtn>
         <InputBox
           type="text"
           value={message}

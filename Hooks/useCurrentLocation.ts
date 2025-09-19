@@ -1,5 +1,5 @@
-import { useState, useEffect, use } from "react";
-import useKakaoApi from "../components/api/useKakaoApi";
+import { useState, useEffect } from "react";
+import useKakaoApi from "../src/components/api/useKakaoApi";
 
 interface LocationState {
   position : { lat: number; lng: number };
