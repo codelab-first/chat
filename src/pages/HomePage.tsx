@@ -1,5 +1,5 @@
 import styled from "@emotion/styled"
-import Chat from "../components/common/Chat"
+import Chat from "../components/common/Chat_ksh"
 const WrapperData = styled.div`
   display: flex;
   justify-content: center;
