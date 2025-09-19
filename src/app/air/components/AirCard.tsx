@@ -1,5 +1,6 @@
-import React from "react"
+import React, { useMemo, useState } from "react"
 import styled from "@emotion/styled"
+import { keyframes } from "@emotion/react"
 import type { AirApiItem } from "../../../app/air/api/getAirQuality"
 
 type Props = {
@@ -19,20 +20,30 @@ const gradeBg = (g: number) =>
     5: "#ef4444",
   }[g] || "#6b7280")
 
+const pop = keyframes`
+  0% { transform: scale(1) rotate(0deg); }
+  35% { transform: scale(1.2) rotate(-10deg); }
+  100% { transform: scale(1) rotate(0deg); }
+`
+
+const burst = keyframes`
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+`
+
 const Card = styled.div<{ $bg: string }>`
   position: relative;
   width: 100%;
   max-width: 18rem;
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   background: ${({ $bg }) => $bg};
   color: #fff;
 `
 
-const Star = styled.button<{ $on: boolean }>`
+const Star = styled.button<{ $on: boolean; $pulse: boolean }>`
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
@@ -41,6 +52,27 @@ const Star = styled.button<{ $on: boolean }>`
   background: transparent;
   border: none;
   cursor: pointer;
+  line-height: 1;
+  transform-origin: center;
+  ${({ $pulse }) => ($pulse ? `animation: ${pop} 360ms ease-out;` : "")}
+`
+
+const SparkleLayer = styled.div`
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+`
+
+const Spark = styled.span`
+  position: absolute;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.9);
+  animation: ${burst} var(--d) ease-out forwards;
 `
 
 const Title = styled.h3`
@@ -70,18 +102,37 @@ const Time = styled.div`
   padding: 0.125rem 0.25rem;
 `
 
-const AirCard: React.FC<Props> = ({
-  item,
-  favorite = false,
-  createFavorite,
-  removeFavorite,
-}) => {
+const AirCard: React.FC<Props> = ({ item, favorite = false, createFavorite, removeFavorite }) => {
+  const [pulse, setPulse] = useState(false)
+  const [burstKey, setBurstKey] = useState(0)
+
   const numericGrade = parseInt(item.pm10Grade || "0", 10) || 0
+
+  const particles = useMemo(
+    () =>
+      Array.from({ length: 10 }).map((_, i) => {
+        const angle = (i / 10) * Math.PI * 2
+        const radius = 18 + Math.random() * 18
+        const size = 3 + Math.random() * 3
+        const duration = 350 + Math.random() * 200
+        return {
+          id: i,
+          dx: Math.cos(angle) * radius,
+          dy: Math.sin(angle) * radius,
+          s: size,
+          d: duration,
+        }
+      }),
+    []
+  )
 
   const onStarClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation()
     if (favorite) removeFavorite()
     else createFavorite()
+    setPulse(true)
+    setBurstKey((k) => k + 1)
+    setTimeout(() => setPulse(false), 380)
   }
 
   const gradeLabel: Record<number, string> = {
@@ -95,9 +146,26 @@ const AirCard: React.FC<Props> = ({
 
   return (
     <Card $bg={gradeBg(numericGrade)}>
-      <Star onClick={onStarClick} $on={!!favorite}>
+      <Star onClick={onStarClick} $on={!!favorite} $pulse={pulse}>
         ★
       </Star>
+      {favorite && (
+        <SparkleLayer key={burstKey}>
+          {particles.map((p) => (
+            <Spark
+              key={p.id}
+              style={
+                {
+                  "--dx": `${p.dx}px`,
+                  "--dy": `${p.dy}px`,
+                  "--s": `${p.s}px`,
+                  "--d": `${p.d}ms`,
+                } as React.CSSProperties
+              }
+            />
+          ))}
+        </SparkleLayer>
+      )}
       <div
         style={{
           display: "flex",
