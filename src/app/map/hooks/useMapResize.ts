@@ -2,30 +2,35 @@ import { useState, useEffect, useRef } from "react";
 
 export default function useMapResize() {
   const [map, setMap] = useState<kakao.maps.Map | null>(null);
-  const centerRef = useRef<kakao.maps.LatLng | null>(null);
+  const lastCenterRef = useRef<kakao.maps.LatLng | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (!map) return;
+    if (!map || !containerRef.current) return;
 
-    centerRef.current = map.getCenter();
+    lastCenterRef.current = map.getCenter();
 
-    const updateCenter = () => {
-      centerRef.current = map.getCenter();
+    const handleUserMoved = () => {
+      lastCenterRef.current = map.getCenter();
     };
 
-    const handleResize = () => {
-      if (!map ||!centerRef.current) return;
+    const resizeObserver = new ResizeObserver(() => {
+      if (!map || !lastCenterRef.current) return;
       map.relayout();
-      map.setCenter(centerRef.current);
-    }; 
-    kakao.maps.event.addListener(map, "center_changed", updateCenter);
-    window.addEventListener("resize", handleResize);
+      map.setCenter(lastCenterRef.current);
+    });
+
+    resizeObserver.observe(containerRef.current);
+
+    kakao.maps.event.addListener(map, "dragend", handleUserMoved);
+    kakao.maps.event.addListener(map,"zoom_changed", handleUserMoved);
 
     return () => {
-      kakao.maps.event.removeListener(map, "center_changed", updateCenter);
-      window.removeEventListener("resize", handleResize);
+      resizeObserver.disconnect();
+      kakao.maps.event.removeListener(map, "dragend", handleUserMoved);
+      kakao.maps.event.removeListener(map, "zoom_changed", handleUserMoved);
     };
   }, [map]);
 
-  return { setMap };
+  return { setMap, containerRef };
 }
