@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 
-import MapComponent from "../../features/map/app/MapApp"
+import MapComponent from "../../app/map/MapApp"
 
 const Wraps = styled.div`
   border: 1px solid black;
