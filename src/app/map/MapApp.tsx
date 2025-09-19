@@ -65,7 +65,7 @@ const MapApp = () => {
               position={location.latlng}
               title={location.title}
               clickable={true}
-              onClick={() => }
+              onClick={() => alert(location.title)}
               // image={
               //   {
               //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
