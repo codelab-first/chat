@@ -27,7 +27,6 @@ const Header = () => {
   // 로그아웃 버튼 클릭 시 currentUser 삭제
   const handleLogout = () => {
     localStorage.removeItem("currentUser");
-    navigate("/"); // 로그아웃 후 로그인 페이지로 이동 (필요시)
   };
 
   return (
