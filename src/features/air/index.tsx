@@ -1,10 +1,10 @@
 import React from "react"
-import Air01App from "./Air01App"
+import AirApp from "./app/AirApp"
 
 export default function Air01Widget() {
   return (
     <div style={{ height: "100%", width: "100%", overflow: "auto" }}>
-      <Air01App />
+      <AirApp />
     </div>
   )
 }
