@@ -2,7 +2,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 // ✅ index.tsx까지 명시
-import Air01Widget from "../../features/air01/index.tsx"
+import AirWidget from "../../features/air/index.tsx"
 
 const Wraps = styled.div`
   border: 1px solid black;
@@ -17,7 +17,7 @@ const Wraps = styled.div`
 const Air = () => {
   return (
     <Wraps>
-      <Air01Widget />
+      <AirWidget />
     </Wraps>
   )
 }
