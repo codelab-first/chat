@@ -8,13 +8,13 @@ const WrapperData = styled.div`
   align-items: center;
   margin-top: 2.5em;
 `
-const AirPage = () => {
+const WeatherPage = () => {
   return (
     <WrapperData>
-      <Air />
+      <Weather />
       <Map />
     </WrapperData>
   )
 }
 
-export default AirPage
+export default WeatherPage

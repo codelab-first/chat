@@ -31,7 +31,7 @@ const persistor = persistStore(store, null, () => {
 });
 // getUser();
 
-export default { store, persistor };
+export  { store, persistor };
 export type RootState = ReturnType<typeof store.getState>;
 
 // const getUser = () => {

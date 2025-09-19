@@ -1,11 +1,17 @@
-
-
+import styled from "@emotion/styled"
+import Chat from "../components/common/Chat"
+const WrapperData = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2.5em;
+`
 const HomePage = () => {
   return (
-    <div>
-      Home
-    </div>
-  );
-};
+    <WrapperData>
+      <Chat />
+    </WrapperData>
+  )
+}
 
-export default HomePage;
+export default HomePage

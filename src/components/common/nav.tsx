@@ -2,9 +2,9 @@ import styled from '@emotion/styled'
 
 const WrapsNav = styled.ul`
 margin-left:auto;
-width:50%;
+width:30%;
 display:flex;
-justify-content:space-between;
+justify-content:space-evenly;
 align-items:center;
 border:1px solid black;
 right:0;
@@ -16,9 +16,9 @@ const Nav = () => {
   return (
     <div>
       <WrapsNav>
-        <li><a href="/home">Home</a></li>
-        <li><a href="/wheather">날씨정보</a></li>
+        {/* <li><a href="/weather">날씨정보</a></li> */}
         <li><a href="/air">대기정보</a></li>
+        <li><a href="/home">채팅</a></li>
       </WrapsNav>
     </div>
   );
