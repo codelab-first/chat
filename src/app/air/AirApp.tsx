@@ -77,6 +77,9 @@ const SIDO_LIST = [
   { value: "경기", label: "경기" },
   { value: "제주", label: "제주" },
 ]
+type Props = {
+  onBack: () => void
+}
 
 export default function AirApp({ onBack }: Props) {
   const [sidoName, setSidoName] = useState("서울")
