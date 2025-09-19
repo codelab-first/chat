@@ -63,13 +63,13 @@ const MapComponent = () => {
             key={index}
             position={location.latlng}
             title={location.title}
-            image={
-              {
-                // src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
-                // size: { width: 24, height: 35 },
-                // options: { offset: { x: 12, y: 35 } },
-              }
-            }
+            // image={
+            //   {
+            //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
+            //     size: { width: 24, height: 35 },
+            //     options: { offset: { x: 12, y: 35 } },
+            //   }
+            // }
           />
         ))}
       </Map>
