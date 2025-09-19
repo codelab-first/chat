@@ -6,7 +6,7 @@ type Props = {
 }
 
 export default function AirLocal({ onShowApp }: Props) {
-  const { position, address } = useCurrentLocation()
+  const { position, address, region } = useCurrentLocation()
 
   return (
     <div
@@ -18,9 +18,9 @@ export default function AirLocal({ onShowApp }: Props) {
     >
       <div>
         <h2>현재 지역 정보</h2>
-        <p>대기질 정보와 관련된 현재 위치 정보를 표시합니다.</p>
+        <p>대기질 정보와 관련된 현재 지역 정보를 표시합니다.</p>
         <p>
-          <strong>현재 위치: </strong> {address}
+          <strong>현재 지역: </strong> {region}
         </p>
       </div>
       {onShowApp && (
