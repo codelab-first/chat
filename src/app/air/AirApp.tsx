@@ -1,8 +1,8 @@
 import React, { useState } from "react"
 import styled from "@emotion/styled"
-import { useAirQuality } from "../hooks/useAirQuality"
-import AirCard from "../components/AirCard"
-import type { AirApiItem } from "../api/getAirQuality"
+import { useAirQuality } from "./hooks/useAirQuality"
+import AirCard from "./components/AirCard"
+import type { AirApiItem } from "../../app/air/api/getAirQuality"
 
 const Wrap = styled.div`
   padding: 12px;

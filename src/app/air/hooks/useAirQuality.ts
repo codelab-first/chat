@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { getAirQuality, type AirApiResponse } from "../api/getAirQuality"
+import { getAirQuality, type AirApiResponse } from "../../../app/air/api/getAirQuality"
 
 export const useAirQuality = (sidoName: string) =>
   useQuery<AirApiResponse>({
