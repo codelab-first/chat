@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from "react"
+import React, { useState } from "react"
 import styled from "@emotion/styled"
 import { useAirQuality } from "./hooks/useAirQuality"
 import AirCard from "./components/AirCard"
-import type { AirApiItem } from "./api/getAirQuality"
+import type { AirApiItem } from "../../app/air/api/getAirQuality"
 
 const Wrap = styled.div`
   padding: 12px;
@@ -78,14 +78,14 @@ const SIDO_LIST = [
   { value: "제주", label: "제주" },
 ]
 
-export default function Air01App() {
+export default function AirApp() {
   const [sidoName, setSidoName] = useState("서울")
   const { data, isPending, error } = useAirQuality(sidoName)
 
   const [favorites, setFavorites] = useState<Map<string, AirApiItem>>(new Map())
   const [showFavorites, setShowFavorites] = useState(false)
 
-  const items: AirApiItem[] = useMemo(() => data?.response?.body?.items ?? [], [data])
+  const items: AirApiItem[] = data?.response?.body?.items ?? []
 
   const addFavorite = (item: AirApiItem) => {
     setFavorites((prev) => {
@@ -105,7 +105,10 @@ export default function Air01App() {
 
   const isFav = (station: string) => favorites.has(station)
 
-  if (isPending) return <div style={{ textAlign: "center", padding: "2.5rem" }}>로딩 중...</div>
+  if (isPending)
+    return (
+      <div style={{ textAlign: "center", padding: "2.5rem" }}>로딩 중...</div>
+    )
   if (error)
     return (
       <div style={{ color: "#ef4444", textAlign: "center", padding: "2.5rem" }}>
@@ -126,7 +129,10 @@ export default function Air01App() {
           ))}
         </Select>
 
-        <FavBtn onClick={() => setShowFavorites((v) => !v)}>{showFavorites ? "즐겨찾기 닫기" : "즐겨찾기 보기"}</FavBtn>
+        <FavBtn onClick={() => setShowFavorites((v) => !v)}>
+          {showFavorites ? "즐겨찾기 닫기" : "즐겨찾기 보기"}
+        </FavBtn>
+        {/* <FavBtn onClick={() => setShowAirInit((v) => !v)}>현위치 보기</FavBtn> */}
       </Bar>
 
       {showFavorites && (
@@ -147,7 +153,10 @@ export default function Air01App() {
           ) : (
             <Grid>
               {Array.from(favorites.values()).map((fav) => (
-                <div key={fav.stationName} style={{ display: "flex", justifyContent: "center" }}>
+                <div
+                  key={fav.stationName}
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
                   <AirCard
                     item={fav}
                     favorite={true}
@@ -164,7 +173,10 @@ export default function Air01App() {
 
       <Grid>
         {items.map((item) => (
-          <div key={item.stationName} style={{ display: "flex", justifyContent: "center" }}>
+          <div
+            key={item.stationName}
+            style={{ display: "flex", justifyContent: "center" }}
+          >
             <AirCard
               item={item}
               favorite={isFav(item.stationName)}

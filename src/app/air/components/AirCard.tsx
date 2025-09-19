@@ -1,6 +1,6 @@
 import React from "react"
 import styled from "@emotion/styled"
-import type { AirApiItem } from "../api/getAirQuality"
+import type { AirApiItem } from "../../../app/air/api/getAirQuality"
 
 type Props = {
   item: AirApiItem
@@ -24,7 +24,8 @@ const Card = styled.div<{ $bg: string }>`
   width: 100%;
   max-width: 18rem;
   border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
   border: 2px solid rgba(0, 0, 0, 0.1);
   padding: 1rem;
   background: ${({ $bg }) => $bg};
@@ -69,7 +70,12 @@ const Time = styled.div`
   padding: 0.125rem 0.25rem;
 `
 
-const AirCard: React.FC<Props> = ({ item, favorite = false, createFavorite, removeFavorite }) => {
+const AirCard: React.FC<Props> = ({
+  item,
+  favorite = false,
+  createFavorite,
+  removeFavorite,
+}) => {
   const numericGrade = parseInt(item.pm10Grade || "0", 10) || 0
 
   const onStarClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
