@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
 
-import useCurrentLocation from "../../../Hooks/useCurrentLocation"
+import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
@@ -64,6 +64,8 @@ const MapApp = () => {
               key={index}
               position={location.latlng}
               title={location.title}
+              clickable={true}
+              onClick={() => alert(location.title)}
               // image={
               //   {
               //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
