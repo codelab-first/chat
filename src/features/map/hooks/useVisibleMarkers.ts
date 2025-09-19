@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-
 interface LatLng {
   lat: number;
   lng: number;
@@ -26,12 +24,13 @@ export default function useVisibleMarkers(
       point.lng >= bounds.sw.lng &&
       point.lng <= bounds.ne.lng
     );
-  }
+  };
 
-  const useVisibleMarkers = useMemo(() => {
-    if (!bounds) return []
-    return locations.filter((pos) => isInBounds(pos.latlng, bounds))
-  }, [locations, bounds])
+  if (!bounds) return [];
 
-  return useVisibleMarkers
+  const visibleMarkers = locations.filter((pos) =>
+    isInBounds(pos.latlng, bounds)
+  );
+
+  return visibleMarkers;
 }
