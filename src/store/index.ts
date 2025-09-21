@@ -3,12 +3,14 @@ import { persistStore, persistReducer } from "redux-persist";
 import sessionStorage from "redux-persist/es/storage/session";
 import authReducer from "./slices/auth-slice";
 import chatReducer from "./slices/chat-slice";
+import formReducer from "./slices/form-slice";
 
 const authConfig = { key: "auth", storage: sessionStorage };
 
 const reducers = combineReducers({
   auth: persistReducer(authConfig, authReducer),
   chat: chatReducer,
+  form: formReducer,
 });
 
 const createStore = () => {
@@ -31,7 +33,7 @@ const persistor = persistStore(store, null, () => {
 });
 // getUser();
 
-export  { store, persistor };
+export { store, persistor };
 export type RootState = ReturnType<typeof store.getState>;
 
 // const getUser = () => {

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { authData, authActions } from '../../store/slices/auth-slice'
 import { Link } from 'react-router-dom';
+import { apiPost } from '../../modules/api';
 type Props = {
   form: "login" | "join";
 }
@@ -48,18 +49,29 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
     const { name, value } = e.target;
     dispatch(authActions.changeField({ form, key: name, value }))
   };
-  const login = () => {
-    if (!loginData.email || !loginData.password) return;
-    console.log(loginData.email, loginData.password)
-    // dispatch(authActions.login({ email: loginData.email, password: loginData.password }))
+  const join = async () => {
+    console.log("joinData", joinData)
+    if (joinData.email === '' || joinData.name === '' || joinData.password === '') return;
+    try {
 
+      const rs = await apiPost("http://localhost:3000/public/join", { email: joinData.email, name: joinData.name, password: joinData.password });
+
+      if (rs?.success) {
+        navigate('/')
+      }
+      // dispatch(authActions.joinSuccess('OK'))
+    } catch (e) {
+      dispatch(authActions.joinFailure(e))
+    }
   }
-  const join = () => {
-    if (!joinData.email || !joinData.name || !joinData.password) return;
-    console.log(joinData.email, joinData.password, joinData.name)
-    // dispatch(authActions.join({ email: joinData.email, password: joinData.password, name: joinData.name, rank: joinData.rank }))
+  const login = async () => {
+    if (loginData.email === '' || loginData.password === '') return;
+    console.log("loginData", loginData)
+    const rs = await apiPost<{ email: string, password: string }, { user: { id: number, email: string, name: string } }>("http://localhost:3000/public/login", { email: loginData.email, password: loginData.password });
+    if (rs?.success) {
+      navigate('/main')
+    }
   }
-  // 버튼 클릭 시 서버로 데이터 전송
 
   const onSubmit = (e: any) => {
     e.preventDefault()
@@ -95,7 +107,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
         onChange={onChange}
         placeholder='Input Password'
       />
-      <StyledButton type="submit">{form !== "login" ? "회원가입" : "로그인"}</StyledButton>
+      {form === "login" ? <StyledButton onClick={login}>로그인</StyledButton> : <StyledButton onClick={join}>회원가입</StyledButton>}
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
         {form === "login" ? <Link to='/join'>회원가입</Link> : <Link to='/'>로그인</Link>}
       </div>
