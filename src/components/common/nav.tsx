@@ -17,8 +17,8 @@ const Nav = () => {
     <div>
       <WrapsNav>
         {/* <li><a href="/weather">날씨정보</a></li> */}
-        <li><a href="/air">대기정보</a></li>
-        <li><a href="/home">채팅</a></li>
+        <li><a href="/home">대기정보</a></li>
+        <li><a href="/weather">날씨정보</a></li>
       </WrapsNav>
     </div>
   );
