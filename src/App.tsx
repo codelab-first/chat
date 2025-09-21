@@ -26,8 +26,8 @@ const App = () => {
       <Routes>
         <Route path='/' element={<LoginPage />} />
         <Route path='/join' element={<JoinPage />} />
-        <Route path='/air' element={<AirPage />} />
-        <Route path='/weather' element={<WeatherPage />} />
+        {/* <Route path='/air' element={<AirPage />} />*/}
+        <Route path='/weather' element={<WeatherPage />} /> 
         <Route path='/home' element={<HomePage />} />
       </Routes>
     </Container>

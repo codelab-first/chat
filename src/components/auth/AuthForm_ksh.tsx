@@ -54,9 +54,9 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
     if (joinData.email === '' || joinData.name === '' || joinData.password === '') return;
     try {
 
-      const rs = await apiPost("http://localhost:3000/public/join", { email: joinData.email, name: joinData.name, password: joinData.password });
+      const rs = await apiPost<{ email: string, name: string, password: string }, { success: string }>("http://localhost:3000/auth/join", { email: joinData.email, name: joinData.name, password: joinData.password });
 
-      if (rs?.success) {
+      if (rs?.success === "OK") {
         navigate('/')
       }
       // dispatch(authActions.joinSuccess('OK'))
@@ -67,21 +67,19 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   const login = async () => {
     if (loginData.email === '' || loginData.password === '') return;
     console.log("loginData", loginData)
-    const rs = await apiPost<{ email: string, password: string }, { user: { id: number, email: string, name: string } }>("http://localhost:3000/public/login", { email: loginData.email, password: loginData.password });
-    if (rs?.success) {
-      navigate('/main')
+    const rs = await apiPost<{ email: string, password: string }, { success: string }>("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
+    console.log(rs)
+    if (rs?.success === "OK") {
+      navigate('/home')
     }
   }
 
-  const onSubmit = (e: any) => {
-    e.preventDefault()
-    navigate('/home')
-  }
+
   useEffect(() => {
     dispatch(authActions.initForm(form))
   }, [])
   return (
-    <form onSubmit={onSubmit}>
+    < >
       {form === "join" && (
         <StyledInput
           name="name"
@@ -111,7 +109,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
         {form === "login" ? <Link to='/join'>회원가입</Link> : <Link to='/'>로그인</Link>}
       </div>
-    </form>
+    </>
   );
 };
 

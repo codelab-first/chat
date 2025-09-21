@@ -13,7 +13,7 @@ type State = {
 const initialState: State = {
   data: { visible: false, position: { x: 250, y: 300 } },
   map: { visible: false, position: { x: 250, y: 300 } },
-  chatting: { visible: true, position: { x: 250, y: 300 } },
+  chatting: { visible: true, position: { x: 600, y: 100 } },
 };
 const dataFormSelector = (state: RootState) => {
   return state.form.data;

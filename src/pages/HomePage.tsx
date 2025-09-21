@@ -1,5 +1,12 @@
 import styled from "@emotion/styled"
 import Chat from "../components/common/Chat_ksh"
+import Air from "../components/left/Air"
+import Weather from "../components/left/Weather"
+
+import Map from "../components/right/Map"
+const WrapperAll = styled.div`
+
+`
 const WrapperData = styled.div`
   display: flex;
   justify-content: center;
@@ -8,9 +15,13 @@ const WrapperData = styled.div`
 `
 const HomePage = () => {
   return (
-    <WrapperData>
+    <WrapperAll>
+      <WrapperData>
+        <Air />
+        <Map />
+      </WrapperData>
       <Chat />
-    </WrapperData>
+    </WrapperAll>
   )
 }
 

@@ -67,7 +67,7 @@ export const retrieveToken = async () => {
     const rs = await apiPost<
       { refreshToken: string },
       { accessToken: string; refreshToken: string }
-    >("/public/refresh", { refreshToken });
+    >("/auth/refresh", { refreshToken });
     if (rs?.success === "OK") {
       setTokens(rs?.data?.accessToken || "", rs?.data?.refreshToken || "");
       return true;
@@ -83,7 +83,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const url = config.url || "";
-    const isPublic = url.toUpperCase().includes("PUBLIC");
+    const isPublic = url.toUpperCase().includes("AUTH");
     if (!isPublic) {
       const accessToken = getAccessToken();
       if (accessToken) {
