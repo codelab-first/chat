@@ -164,6 +164,7 @@ const apiPost = async <T = unknown, D = unknown>(
     AxiosResponse<ApiResponse<D>>,
     T | null
   >(url, data, config);
+  console.log(response);
   // console.log(response);
   return response || null;
 };
