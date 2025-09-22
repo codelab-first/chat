@@ -47,7 +47,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
     e.preventDefault();
 
     if (form === "join") {
-      const res = await fetch("http://localhost:5173/api/join", {
+      const res = await fetch("http://localhost:4000/api/join", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,7 +59,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       const result = await res.json();
       alert(result.message);
     } else {
-      const res = await fetch("http://localhost:5173/api/login", {
+      const res = await fetch("http://localhost:4000/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -109,4 +109,4 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   );
 };
 
-export default AuthForm;;0
+export default AuthForm;
