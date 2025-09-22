@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import styled from "@emotion/styled"
 import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
-import { useDrag } from 'react-use-gesture';
+import { useDrag } from '@use-gesture/react';
 const Wraps = styled.div`
   border: 1px solid black;
   max-width: 500px;

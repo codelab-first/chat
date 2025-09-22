@@ -3,7 +3,7 @@ import styled from '@emotion/styled'
 import Button from './Button'
 import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
-import { useDrag } from 'react-use-gesture';
+import { useDrag } from '@use-gesture/react';
 import { chatData, chatActions } from '../../store/slices/chat-slice'
 import { authData } from '../../store/slices/auth-slice';
 import io from 'socket.io-client'
