@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { authData, authActions } from '../../store/slices/auth-slice'
 import { Link } from 'react-router-dom';
 import { apiPost } from '../../modules/api';
+import Button from '../common/Button';
 type Props = {
   form: "login" | "join";
 }
@@ -16,11 +17,11 @@ const StyledInput = styled.input`
   outline:none;
   border:1px solid black;
   cursor:pointer;
-  &:hover{
-  background:gray;
-  ::placeholder{
-  color:white;
-  }
+  &:focus{
+  background:rgba(200,200,200,0.4)
+  // ::placeholder{
+  // color:white;
+  // }
   }
 `
 
@@ -48,6 +49,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(authActions.changeField({ form, key: name, value }))
+    dispatch(authActions.changeField({ form: 'login', key: name, value }))
   };
   const join = async () => {
     console.log("joinData", joinData)
@@ -105,7 +107,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
         onChange={onChange}
         placeholder='Input Password'
       />
-      {form === "login" ? <StyledButton onClick={login}>로그인</StyledButton> : <StyledButton onClick={join}>회원가입</StyledButton>}
+      {form === "login" ? <Button width="100%" color="white" bgcolor="darkcyan" onClick={login}>로그인</Button> : <Button width="100%" color="white" bgcolor="darkcyan" onClick={join}>회원가입</Button>}
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
         {form === "login" ? <Link to='/join'>회원가입</Link> : <Link to='/'>로그인</Link>}
       </div>

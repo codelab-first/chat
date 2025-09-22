@@ -180,7 +180,7 @@ const Chat = () => {
               <CircleBtn>+</CircleBtn>
               <form className="control" onSubmit={onSubmit}>
                 <input type="text" onChange={onChange} value={message} />
-                <Button color={"white"} width={'100px'} bgcolor="darkcyan" >전송</Button>
+                <Button color={"white"} width={'100px'} bgcolor="darkcyan" marginLeft=".5em">전송</Button>
                 <label htmlFor="photo" className='btn'>사진</label>
                 <input type="file" name="images" id="photo" onChange={onInsertImage} multiple accept='image/*' />
               </form>
