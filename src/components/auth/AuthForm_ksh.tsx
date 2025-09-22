@@ -57,11 +57,11 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       const rs = await apiPost<{ email: string, name: string, password: string }, { success: string }>("http://localhost:3000/auth/join", { email: joinData.email, name: joinData.name, password: joinData.password });
 
       if (rs?.success === "OK") {
-        navigate('/')
+        navigate('/home')
       }
       // dispatch(authActions.joinSuccess('OK'))
     } catch (e) {
-      dispatch(authActions.joinFailure(e))
+      // dispatch(authActions.joinFailure(e))
     }
   }
   const login = async () => {
