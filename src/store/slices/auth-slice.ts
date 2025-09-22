@@ -7,10 +7,10 @@ type State = {
   login: { email: string; password: string };
   join: { email: string; password: string; name: string };
 };
+
 const initialState: State = {
   login: { email: "", password: "" },
   join: { email: "", password: "", name: "" },
-  user: {},
   status: { success: "", message: "", loading: false },
 };
 const successSelector = (state: RootState) => {
@@ -25,21 +25,21 @@ const loginSelector = (state: RootState) => {
 const joinSelector = (state: RootState) => {
   return state.auth.join;
 };
-const userSelector=(state:RootState)=>{
-  return state.auth.user
-}
+const userSelector = (state: RootState) => {
+  return state.auth.user;
+};
 export const authData = createSelector(
   successSelector,
   messageSelector,
   loginSelector,
   joinSelector,
   userSelector,
-  (success, message, loginData, joinData,userData) => ({
+  (success, message, loginData, joinData, userData) => ({
     success,
     message,
     loginData,
     joinData,
-    userData
+    userData,
   })
 );
 const authSlice = createSlice({
