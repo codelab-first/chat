@@ -1,6 +1,8 @@
 import React, { useState } from "react"
 import styled from "@emotion/styled"
-
+import { useSelector, useDispatch } from "react-redux";
+import { formSelector, formActions } from '../../store/slices/form-slice';
+import { useDrag } from 'react-use-gesture';
 const Wraps = styled.div`
   border: 1px solid black;
   max-width: 500px;
@@ -100,6 +102,7 @@ const PhotoButton = styled.button`
 `
 
 const Chat = () => {
+
   const [selectedDate1, setSelectedDate1] = useState("")
   const [selectedDate2, setSelectedDate2] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
@@ -116,54 +119,76 @@ const Chat = () => {
   const handlePhoto = () => {
     console.log("사진 버튼 클릭")
   }
-
+  const { chatting } = useSelector(formSelector)
+  const dispatch = useDispatch()
+  const changePosition = (form: string, position: { x: number, y: number }) => {
+    dispatch(formActions.changePosition({ form, position }))
+  }
+  const chattingPos = useDrag(params => { changePosition('chatting', { x: params.offset[0] + 250, y: params.offset[1] + 300 }) })
   return (
-    <Wraps>
-      <Header>
-        <Box>
-          <input
-            type="date"
-            value={selectedDate1}
-            onChange={(e) => setSelectedDate1(e.target.value)}
-            style={{ width: "100%", padding: "8px", border: "none" }}
-          />
-        </Box>
-        <Tilde>~</Tilde>
-        <Box>
-          <input
-            type="date"
-            value={selectedDate2}
-            onChange={(e) => setSelectedDate2(e.target.value)}
-            style={{ width: "100%", padding: "8px", border: "none" }}
-          />
-        </Box>
-        <Box>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="검색"
-            style={{ width: "100%", padding: "8px", border: "none" }}
-          />
-        </Box>
-      </Header>
-      <ChatArea>
-        {messages.map((msg, index) => (
-          <p key={index}>{msg}</p>
-        ))}
-      </ChatArea>
-      <InputArea>
-        <CircleBtn>+</CircleBtn>
-        <InputBox
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="메시지를 입력하세요"
-        />
-        <SendButton onClick={handleSend}>전송</SendButton>
-        <PhotoButton onClick={handlePhoto}>사진</PhotoButton>
-      </InputArea>
-    </Wraps>
+    <>
+      {chatting.visible && <Wraps>
+        <div {...chattingPos()} style={{
+          color: 'black',
+          position: 'fixed',
+          top: chatting.position.y,
+          left: chatting.position.x,
+          zIndex: 2,
+          textAlign: 'center',
+          boxSizing: 'border-box',
+
+        }}>
+          <div style={{ width: '450px', padding: '1rem', userSelect: 'none', background: "yellow" }}></div>
+        </div>
+        <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
+
+          <Header>
+            <Box>
+              <input
+                type="date"
+                value={selectedDate1}
+                onChange={(e) => setSelectedDate1(e.target.value)}
+                style={{ width: "100%", padding: "8px", border: "none" }}
+              />
+            </Box>
+            <Tilde>~</Tilde>
+            <Box>
+              <input
+                type="date"
+                value={selectedDate2}
+                onChange={(e) => setSelectedDate2(e.target.value)}
+                style={{ width: "100%", padding: "8px", border: "none" }}
+              />
+            </Box>
+            <Box>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="검색"
+                style={{ width: "100%", padding: "8px", border: "none" }}
+              />
+            </Box>
+          </Header>
+          <ChatArea>
+            {messages.map((msg, index) => (
+              <p key={index}>{msg}</p>
+            ))}
+          </ChatArea>
+          <InputArea>
+            <CircleBtn>+</CircleBtn>
+            <InputBox
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="메시지를 입력하세요"
+            />
+            <SendButton onClick={handleSend}>전송</SendButton>
+            <PhotoButton onClick={handlePhoto}>사진</PhotoButton>
+          </InputArea>
+        </div>
+      </Wraps>}
+    </>
   )
 }
 

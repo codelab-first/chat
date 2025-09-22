@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import useKakaoApi from "../src/components/api/useKakaoApi";
+import useKakaoApi from "../components/api/useKakaoApi";
 
 interface LocationState {
   position : { lat: number; lng: number };
   address: string;
+  region: string;
   loading: boolean;
   error: string | null;
 }
@@ -17,6 +18,7 @@ export default function useCurrentLocation(): LocationState {
   const { loading: apiLoading, error: apiError } = useKakaoApi();
   const [position, setPosition] = useState(DEFAULT_POSITION);
   const [address, setAddress] = useState<string>("");
+  const [region, setRegion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -55,6 +57,7 @@ export default function useCurrentLocation(): LocationState {
                 setAddress(region.address_name);
                 const { region_1depth_name: city, region_2depth_name: district, region_3depth_name: town } = region;
                 const regionAddress = `${city} ${district} ${town}`;
+                setRegion(regionAddress);
 
                 // 읍면동주소를 좌표로 변환
                 geocoder.addressSearch(regionAddress, (res: any, stat: string) => {
@@ -86,5 +89,5 @@ export default function useCurrentLocation(): LocationState {
     );
   }, [apiLoading, apiError]);
 
-  return { position, address, loading, error };
+  return { position, address, region, loading, error };
 }

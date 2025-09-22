@@ -77,8 +77,11 @@ const SIDO_LIST = [
   { value: "경기", label: "경기" },
   { value: "제주", label: "제주" },
 ]
+type Props = {
+  onBack: () => void
+}
 
-export default function AirApp() {
+export default function AirApp({ onBack }: Props) {
   const [sidoName, setSidoName] = useState("서울")
   const { data, isPending, error } = useAirQuality(sidoName)
 
@@ -132,7 +135,7 @@ export default function AirApp() {
         <FavBtn onClick={() => setShowFavorites((v) => !v)}>
           {showFavorites ? "즐겨찾기 닫기" : "즐겨찾기 보기"}
         </FavBtn>
-        {/* <FavBtn onClick={() => setShowAirInit((v) => !v)}>현위치 보기</FavBtn> */}
+        <FavBtn onClick={onBack}>현위치 보기</FavBtn>
       </Bar>
 
       {showFavorites && (

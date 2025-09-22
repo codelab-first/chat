@@ -1,7 +1,7 @@
 import React from "react"
 import styled from "@emotion/styled"
 
-import MapComponent from "../../app/map/MapApp"
+import MapApp from "../../app/map/MapApp"
 
 const Wraps = styled.div`
   border: 1px solid black;
@@ -10,11 +10,12 @@ const Wraps = styled.div`
   // display: flex;
   justify-content: center;
   align-items: center;
+  flex:1;
 `
 const Map = () => {
   return (
     <Wraps>
-      <MapComponent />
+      <MapApp />
     </Wraps>
   )
 }
