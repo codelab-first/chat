@@ -12,6 +12,7 @@ const Wraps = styled.div`
   justify-content: stretch;
   align-items: stretch;
   overflow: hidden;
+  flex:1;
 `
 
 const Air = () => {
