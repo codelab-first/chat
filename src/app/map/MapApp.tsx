@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
+import {
+  CustomOverlayMap,
+  Map,
+  MapMarker,
+  useKakaoLoader,
+} from "react-kakao-maps-sdk"
 
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useMapBoundary from "./hooks/useMapBoundary"
@@ -7,8 +12,23 @@ import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
+import axios from "axios"
+
+interface dbData {
+  stationName: string
+  dmX: number
+  dmY: number
+}
+interface MarkerLocation {
+  title: string
+  latlng: { lat: number; lng: number }
+  // condition: "good" | "normal" | "bad" | "terrible" | "unknown"
+}
 
 const MapApp = () => {
+  const [locations, setLocations] = useState<MarkerLocation[]>([])
+  const [dataLoading, setDataLoading] = useState(true)
+
   const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
@@ -19,15 +39,45 @@ const MapApp = () => {
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap, containerRef } = useMapResize()
 
-  const locations = [
-    {
-      title: "서울",
-      latlng: {
-        lat: import.meta.env.VITE_DEFAULT_LATITUDE,
-        lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
-      },
-    },
-  ]
+  // const locations = [
+  //   {
+  //     title: "서울",
+  //     latlng: {
+  //       lat: import.meta.env.VITE_DEFAULT_LATITUDE,
+  //       lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
+  //     },
+  //   },
+  // ]
+
+  useEffect(() => {
+    const getLocation = async () => {
+      try {
+        const response = await axios.get("http://localhost:3000/api/positions")
+        console.log("response", response.data)
+
+        if (Array.isArray(response.data)) {
+          const mapLocations: MarkerLocation[] = response.data.map(
+            (item: dbData) => ({
+              title: item.stationName,
+              latlng: { lat: item.dmX, lng: item.dmY },
+              // condition: "unknown", // 기본값 설정
+            })
+          )
+          setLocations(mapLocations)
+        } else {
+          console.error("Invalid data format: Expected an array", response.data)
+          setLocations([])
+        }
+
+        setDataLoading(false)
+      } catch (error) {
+        console.error("Error getting data:", error)
+        setDataLoading(false)
+      }
+    }
+
+    getLocation()
+  }, [])
 
   const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -60,20 +110,35 @@ const MapApp = () => {
           }}
         >
           {visibleMarkers.map((location, index) => (
-            <MapMarker
-              key={index}
-              position={location.latlng}
-              title={location.title}
-              clickable={true}
-              onClick={() => alert(location.title)}
-              // image={
-              //   {
-              //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
-              //     size: { width: 24, height: 35 },
-              //     options: { offset: { x: 12, y: 35 } },
-              //   }
-              // }
-            />
+            <React.Fragment key={index}>
+              <MapMarker
+                position={location.latlng}
+                title={location.title}
+                clickable={true}
+                onClick={() => alert(location.title)}
+                // image={
+                //   {
+                //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
+                //     size: { width: 24, height: 35 },
+                //     options: { offset: { x: 12, y: 35 } },
+                //   }
+                // }
+              />
+              <CustomOverlayMap position={location.latlng}>
+                <div
+                  style={{
+                    padding: "0.25em",
+                    background: "white",
+                    border: "1px solid #ccc",
+                    borderRadius: "0.25em",
+                    textAlign: "center",
+                    transform: "translate(-50%, -120%)",
+                  }}
+                >
+                  {location.title}
+                </div>
+              </CustomOverlayMap>
+            </React.Fragment>
           ))}
         </Map>
       </div>
