@@ -49,7 +49,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(authActions.changeField({ form, key: name, value }))
-    dispatch(authActions.changeField({ form: 'login', key: name, value }))
+    // dispatch(authActions.changeField({ form: 'login', key: name, value }))
   };
   const join = async () => {
     console.log("joinData", joinData)
@@ -61,18 +61,20 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       if (rs?.success === "OK") {
         navigate('/home')
       }
-      // dispatch(authActions.joinSuccess('OK'))
+      dispatch(authActions.joinSuccess('OK'))
     } catch (e) {
-      // dispatch(authActions.joinFailure(e))
+
     }
   }
   const login = async () => {
     if (loginData.email === '' || loginData.password === '') return;
     console.log("loginData", loginData)
-    const rs = await apiPost<{ email: string, password: string }, { success: string }>("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
-    console.log(rs)
+    const rs = await apiPost<{ email: string, password: string }, { success: string, data: { user: { id: number, name: string } } }>("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
+    // console.log(rs)
     if (rs?.success === "OK") {
       navigate('/home')
+      dispatch(authActions.loginSuccess(rs))
+      dispatch(authActions.initForm('login'))
     }
   }
 
