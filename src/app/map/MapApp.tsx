@@ -10,12 +10,12 @@ import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
+import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
-import axios from "axios"
 
-import useGetLocations from "./hooks/useGetLocations"
 import MapMarkerOverlay from "./mapMarkerOverlay"
+import MapClickHandler from "./MapClickHandler"
 
 const MapApp = () => {
   const { locations, dataLoading, error: getError } = useGetLocations()
@@ -69,7 +69,7 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          <MapMarkerOverlay visibleMarkers={visibleMarkers} />
+          <MapClickHandler visibleMarkers={visibleMarkers} />
         </Map>
       </div>
       {bounds && (
