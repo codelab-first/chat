@@ -14,21 +14,11 @@ import useVisibleMarkers from "./hooks/useVisibleMarkers"
 import useKakaoApi from "./../../components/api/useKakaoApi"
 import axios from "axios"
 
-interface dbData {
-  stationName: string
-  dmX: number
-  dmY: number
-}
-interface MarkerLocation {
-  title: string
-  latlng: { lat: number; lng: number }
-  // condition: "good" | "normal" | "bad" | "terrible" | "unknown"
-}
+import useGetLocations from "./hooks/useGetLocations"
+import MapMarkerOverlay from "./mapMarkerOverlay"
 
 const MapApp = () => {
-  const [locations, setLocations] = useState<MarkerLocation[]>([])
-  const [dataLoading, setDataLoading] = useState(true)
-
+  const { locations, dataLoading, error: getError } = useGetLocations()
   const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
@@ -48,36 +38,6 @@ const MapApp = () => {
   //     },
   //   },
   // ]
-
-  useEffect(() => {
-    const getLocation = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/api/positions")
-        console.log("response", response.data)
-
-        if (Array.isArray(response.data)) {
-          const mapLocations: MarkerLocation[] = response.data.map(
-            (item: dbData) => ({
-              title: item.stationName,
-              latlng: { lat: item.dmX, lng: item.dmY },
-              // condition: "unknown", // 기본값 설정
-            })
-          )
-          setLocations(mapLocations)
-        } else {
-          console.error("Invalid data format: Expected an array", response.data)
-          setLocations([])
-        }
-
-        setDataLoading(false)
-      } catch (error) {
-        console.error("Error getting data:", error)
-        setDataLoading(false)
-      }
-    }
-
-    getLocation()
-  }, [])
 
   const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -109,37 +69,7 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          {visibleMarkers.map((location, index) => (
-            <React.Fragment key={index}>
-              <MapMarker
-                position={location.latlng}
-                title={location.title}
-                clickable={true}
-                onClick={() => alert(location.title)}
-                // image={
-                //   {
-                //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
-                //     size: { width: 24, height: 35 },
-                //     options: { offset: { x: 12, y: 35 } },
-                //   }
-                // }
-              />
-              <CustomOverlayMap position={location.latlng}>
-                <div
-                  style={{
-                    padding: "0.25em",
-                    background: "white",
-                    border: "1px solid #ccc",
-                    borderRadius: "0.25em",
-                    textAlign: "center",
-                    transform: "translate(-50%, -120%)",
-                  }}
-                >
-                  {location.title}
-                </div>
-              </CustomOverlayMap>
-            </React.Fragment>
-          ))}
+          <MapMarkerOverlay visibleMarkers={visibleMarkers} />
         </Map>
       </div>
       {bounds && (
