@@ -59,9 +59,9 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       const rs = await apiPost<{ email: string, name: string, password: string }, { success: string }>("http://localhost:3000/auth/join", { email: joinData.email, name: joinData.name, password: joinData.password });
 
       if (rs?.success === "OK") {
-        navigate('/home')
+        dispatch(authActions.joinSuccess({ success: 'OK', joinData }))
+        navigate('/')
       }
-      dispatch(authActions.joinSuccess('OK'))
     } catch (e) {
 
     }
@@ -80,7 +80,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
 
 
   useEffect(() => {
-    dispatch(authActions.initForm(form))
+    // dispatch(authActions.initForm(form))
   }, [])
   return (
     < >

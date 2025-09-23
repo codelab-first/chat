@@ -1,4 +1,4 @@
-// import { apiPost } from '../../modules/api';
+import { apiPost } from '../../modules/api';
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled'
 import Button from './Button'
@@ -9,7 +9,7 @@ import { chatData, chatActions } from '../../store/slices/chat-slice'
 import { authData } from '../../store/slices/auth-slice';
 import io from 'socket.io-client'
 import { imageInsert } from '../../modules/createFormData'
-import axios from 'axios';
+import axios from 'axios'
 const socket = io('/', { withCredentials: true, path: '/socket.io' })
 
 const Wraps = styled.div`
@@ -64,7 +64,7 @@ user-select:none;
     }
     `
 const Chat = () => {
-  const { userData } = useSelector(authData)
+  const { user } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
   const dispatch = useDispatch()
   const changePosition = (form: string, position: { x: number, y: number }) => {
@@ -96,7 +96,7 @@ const Chat = () => {
     setMessage('')
   }
   const send = async () => {
-    return await axios.post('http://localhost:3000/chat/chat', { message })
+    return await axios.post<{ message: string, user: { id: number, name: string } | null }, Promise<string>>('http://localhost:3000/chat/chat', { user, message })
   }
   const scrollToBottom = () => {
     if (scrollRef.current) {

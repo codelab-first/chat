@@ -2,8 +2,8 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled'
 
-import { useDispatch } from 'react-redux'
-import { authActions } from '../../store/slices/auth-slice';
+import { useDispatch, useSelector } from 'react-redux'
+import { authData, authActions } from '../../store/slices/auth-slice';
 const WrapperHeader = styled.div`
 display:flex;
 justify-content:space-between;
@@ -25,8 +25,8 @@ const LoginStatus = styled(Link)``
 
 const Header = () => {
   const navigate = useNavigate();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-
+  // const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+  const { user } = useSelector(authData)
   // 로그아웃 버튼 클릭 시 currentUser 삭제
   const handleLogout = () => {
     // localStorage.removeItem("currentUser");
@@ -39,8 +39,8 @@ const Header = () => {
     <WrapperHeader>
       <WrappLogo>Logo</WrappLogo>
       <div>
-        {currentUser && currentUser.name && (
-          <span style={{ marginRight: "1em" }}>{currentUser.name}님</span>
+        {user && user.name && (
+          <span style={{ marginRight: "1em" }}>{user.name}님</span>
         )}
         <LoginStatus to={"/"} onClick={handleLogout}>LogOut</LoginStatus>
       </div>
