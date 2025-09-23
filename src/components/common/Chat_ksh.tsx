@@ -1,4 +1,3 @@
-import { apiPost } from '../../modules/api';
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled'
 import Button from './Button'
@@ -8,8 +7,8 @@ import { useDrag } from '@use-gesture/react';
 import { chatData, chatActions } from '../../store/slices/chat-slice'
 import { authData } from '../../store/slices/auth-slice';
 import io from 'socket.io-client'
+import { apiPost } from '../../modules/api';
 import { imageInsert } from '../../modules/createFormData'
-import axios from 'axios'
 const socket = io('/', { withCredentials: true, path: '/socket.io' })
 
 const Wraps = styled.div`
@@ -64,7 +63,7 @@ user-select:none;
     }
     `
 const Chat = () => {
-  const { user } = useSelector(authData)
+  const { userData } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
   const dispatch = useDispatch()
   const changePosition = (form: string, position: { x: number, y: number }) => {
@@ -96,7 +95,7 @@ const Chat = () => {
     setMessage('')
   }
   const send = async () => {
-    return await axios.post<{ message: string, user: { id: number, name: string } | null }, Promise<string>>('http://localhost:3000/chat/chat', { user, message })
+    return await apiPost('http://localhost:3000/chat', { message })
   }
   const scrollToBottom = () => {
     if (scrollRef.current) {
@@ -110,7 +109,7 @@ const Chat = () => {
     //   return
     // }
     socket.on('chat', (data: { chat: string, name: string, image: string, userList: string[] }) => {
-      console.log('data', data)
+      // console.log('data', data)
       setChats(prev => [...prev, data])
       if (data.image) {
         setTimeout(scrollToBottom, 1000)
@@ -164,10 +163,9 @@ const Chat = () => {
               <div className="chats" ref={scrollRef}>
                 {chats?.map((message, index) => {
                   // console.log('message.name', message.name, 'auth.name:', auth?.name)
-                  // return (<div key={index} className={`chat ${message.name === 'system' ? 'center' : message?.name === auth?.name ? 'right' : 'left'}`}>
-                  return (<div key={index} className={`chat  right `}>
+                  return (<div key={index} className={`chat ${message.name === 'system' ? 'center' : message?.name === auth?.name ? 'right' : 'left'}`}>
                     <div className='username'>
-                      {/* {message.name === 'system' ? '' : message.name === auth?.name ? "" : message.name} */}
+                      {message.name === 'system' ? '' : message.name === auth?.name ? "" : message.name}
                     </div>
                     {message.chat && message.chat}
                     <div>
