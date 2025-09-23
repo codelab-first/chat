@@ -1,5 +1,5 @@
 import AuthTemplate from "../components/auth/AuthTemplate";
-import AuthForm from '../components/auth/AuthForm'
+import AuthForm from '../components/auth/AuthForm_ksh'
 
 const JoinPage = () => {
   return (

@@ -1,23 +1,20 @@
-import styled from "@emotion/styled"
-import Chat from "../components/common/Chat_ksh"
 import Air from "../components/left/Air"
 import Weather from "../components/left/Weather"
-
 import Map from "../components/right/Map"
-const WrapperAll = styled.div`
-
-`
+import styled from "@emotion/styled"
+import Chat from "../components/common/Chat_ksh"
+const WrapperAll = styled.div``
 const WrapperData = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 2.5em;
 `
-const HomePage = () => {
+const WeatherPage = () => {
   return (
     <WrapperAll>
       <WrapperData>
-        <Air />
+        <Weather />
         <Map />
       </WrapperData>
       <Chat />
@@ -25,4 +22,4 @@ const HomePage = () => {
   )
 }
 
-export default HomePage
+export default WeatherPage

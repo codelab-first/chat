@@ -3,14 +3,22 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 type State = {
-  [key: string]: { [key: string]: string | number | boolean };
+  [key: string]: {
+    [key: string]: string | { id: number; name: string } | null;
+  };
   login: { email: string; password: string };
   join: { email: string; password: string; name: string };
+  status: {
+    success: string;
+    message: string;
+    auth: { id: number; name: string } | null;
+  };
 };
+
 const initialState: State = {
   login: { email: "", password: "" },
   join: { email: "", password: "", name: "" },
-  status: { success: "", message: "", loading: false },
+  status: { success: "", message: "", auth: null },
 };
 const successSelector = (state: RootState) => {
   return state.auth.status.success;
@@ -24,16 +32,21 @@ const loginSelector = (state: RootState) => {
 const joinSelector = (state: RootState) => {
   return state.auth.join;
 };
+const userSelector = (state: RootState) => {
+  return state.auth.user;
+};
 export const authData = createSelector(
   successSelector,
   messageSelector,
   loginSelector,
   joinSelector,
-  (success, message, loginData, joindata) => ({
+  userSelector,
+  (success, message, loginData, joinData, userData) => ({
     success,
     message,
     loginData,
-    joindata,
+    joinData,
+    userData,
   })
 );
 const authSlice = createSlice({
@@ -45,8 +58,8 @@ const authSlice = createSlice({
       state.status.success = initialState.status.success;
       state.status.message = initialState.status.message;
     },
-    errorReset: (state) => {
-      state.status.message = "";
+    errorReset: (state, { payload: error }) => {
+      state.status.message = error;
     },
     changeField: (state, { payload: { form, key, value } }) => {
       state[form][key] = value;
@@ -55,13 +68,16 @@ const authSlice = createSlice({
       state.status.success = "";
       state.status.message = "";
     },
-    loginSuccess: (state, { payload: { success, message } }) => {
-      state.status.success = success;
-      state.status.message = message;
+    loginSuccess: (state, { payload: rs }) => {
+      // console.log("rs:", rs.data.user);
+      state.status.success = rs.success;
+      // state.status.message = message;
+      state.status.auth = rs.data.user;
     },
-    loginFailure: (state, { payload: { success, message } }) => {
+    loginFailure: (state, { payload: { success, error } }) => {
       state.status.success = success;
-      state.status.message = message;
+      state.status.message = error;
+      state.status.auth = null;
     },
     join: (state) => {
       state.status.success = "";
@@ -71,9 +87,12 @@ const authSlice = createSlice({
       state.status.success = success;
       state.status.message = message;
     },
-    joinFailure: (state, { payload: { success, message } }) => {
+    joinFailure: (state, { payload: { success, error } }) => {
       state.status.success = success;
-      state.status.message = message;
+      state.status.message = error;
+    },
+    logout: (state) => {
+      state.status.auth = null;
     },
   },
 });

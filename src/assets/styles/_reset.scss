@@ -133,18 +133,18 @@ input[type="number"],
 select,
 textarea {
   padding: 0.5em 0.75em;
-  border: 1px solid var(--text-c);
+  // border: 1px solid var(--text-c);
   color: var(--text-5);
   border-radius: 0.25em;
 }
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="number"]:focus,
-select:focus,
-textarea:focus {
-  border: 1px solid var(--text-7);
-  outline: none;
-}
+// input[type="text"]:focus,
+// input[type="password"]:focus,
+// input[type="number"]:focus,
+// select:focus,
+// textarea:focus {
+//   border: 1px solid var(--text-7);
+//   outline: none;
+// }
 select {
   padding: 0.5em 0.75em 0.5em 0.25em;
 }
@@ -177,6 +177,9 @@ input[type="text"] {
   padding: 0.5em 1em;
   border: 1px solid #ccc;
   border-radius: 0.25em;
+}
+input[type="file"] {
+  display: none;
 }
 .w-100 {
   width: 100%;

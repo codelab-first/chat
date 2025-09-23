@@ -3,10 +3,11 @@ import HomePage from './pages/HomePage.tsx'
 import JoinPage from './pages/JoinPage.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 import AirPage from './pages/AirPage.tsx';
-import WheatherPage from './pages/WheatherPage.tsx'
+import WeatherPage from './pages/WeatherPage.tsx'
 import Nav from './components/common/nav.tsx';
 import styled from "@emotion/styled"
 import Header from './components/common/header.tsx'
+
 const Container = styled.div`
 width:100%;
 max-width:1200px;
@@ -25,8 +26,9 @@ const App = () => {
       <Routes>
         <Route path='/' element={<LoginPage />} />
         <Route path='/join' element={<JoinPage />} />
-        <Route path='/air' element={<AirPage />} />
-        <Route path='/wheather' element={<WheatherPage />} />
+        {/* <Route path='/air' element={<AirPage />} />*/}
+        <Route path='/weather' element={<WeatherPage />} /> 
+        <Route path='/home' element={<HomePage />} />
       </Routes>
     </Container>
   );
