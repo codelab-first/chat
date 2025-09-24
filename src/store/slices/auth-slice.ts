@@ -6,6 +6,7 @@ type State = {
   [key: string]: {
     [key: string]: string | { id: number; name: string } | null;
   };
+
   login: { email: string; password: string };
   join: { email: string; password: string; name: string };
   status: {
@@ -69,7 +70,7 @@ const authSlice = createSlice({
       state.status.message = "";
     },
     loginSuccess: (state, { payload: rs }) => {
-      // console.log("rs:", rs.data.user);
+      // console.log("rs:", rs.success);
       state.status.success = rs.success;
       // state.status.message = message;
       state.status.auth = rs.data.user;
@@ -84,7 +85,7 @@ const authSlice = createSlice({
       state.status.message = "";
     },
     joinSuccess: (state, { payload: datas }) => {
-      console.log("datas", datas);
+      // console.log("datas", datas);
       state.status.success = datas.success;
       state.login.email = datas.joinData.email;
       state.login.password = datas.joinData.password;
@@ -93,6 +94,7 @@ const authSlice = createSlice({
       state.status.success = success;
       state.status.message = error;
     },
+
     logout: (state) => {
       state.status.auth = null;
     },
