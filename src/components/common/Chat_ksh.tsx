@@ -1,16 +1,18 @@
-import { apiPost } from '../../modules/api';
 import { useState, useRef, useEffect } from 'react';
 import styled from '@emotion/styled'
+import { css } from "@emotion/react";
 import Button from './Button'
 import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
 import { useDrag } from '@use-gesture/react';
 import { chatData, chatActions } from '../../store/slices/chat-slice'
 import { authData } from '../../store/slices/auth-slice';
-import io from 'socket.io-client'
+import { tokenData } from '../../store/slices/token-slice'
+import { apiPost } from '../../modules/api';
+import axios from 'axios';
 import { imageInsert } from '../../modules/createFormData'
-import axios from 'axios'
-const socket = io('/', { withCredentials: true, path: '/socket.io' })
+import { io } from "socket.io-client";
+import './chat.scss'
 
 const Wraps = styled.div`
 // border:1px solid black;
@@ -31,7 +33,8 @@ margin:1em auto;
 width:90%;
 height:500px;
 background:white;
-box-shadow:0px 0px 8px 4px  rgba(.3,.3,.3,.3)
+box-shadow:0px 0px 8px 4px  rgba(.3,.3,.3,.3);
+overflow-y:scroll;
 `
 const WrapControl = styled.div`
 margin:0 auto;
@@ -63,9 +66,18 @@ user-select:none;
     transform:rotate(360deg)
     }
     `
+
+const MessageDiv = styled.div<{ wrap: string, height: number }>`
+${props => props.wrap && css`text-wrap:${props.wrap}`};
+// ${props => props.height && css`height:${((props.height - 1) * 2)}`};
+
+  // textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute'
+  `
 const Chat = () => {
-  const { user } = useSelector(authData)
+  // const { userData } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
+  const { token } = useSelector(tokenData)
+  const { user } = useSelector(authData)
   const dispatch = useDispatch()
   const changePosition = (form: string, position: { x: number, y: number }) => {
     dispatch(formActions.changePosition({ form, position }))
@@ -74,9 +86,14 @@ const Chat = () => {
 
   const { imageList, status, messages } = useSelector(chatData)
   const [message, setMessage] = useState('')
-  const [chats, setChats] = useState<{ chat: string, name: string, image: string }[]>([])
+  const [chats, setChats] = useState<{ message: string, name: string }[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
 
+  const socket = io('http://localhost:3000', {
+    auth: {
+      token: token.accessToken // auth 속성을 통해 토큰을 전달
+    }
+  });
 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,43 +113,55 @@ const Chat = () => {
     setMessage('')
   }
   const send = async () => {
-    return await axios.post<{ message: string, user: { id: number, name: string } | null }, Promise<string>>('http://localhost:3000/chat/chat', { user, message })
+    // socket.emit('message', { message })
+    return await axios.post('http://localhost:3000/chat/chat', { message, user })
   }
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
+
   useEffect(() => {
-    if (!io) return
-    // if (once.current) {
-    //   once.current = false;
-    //   return
-    // }
-    socket.on('chat', (data: { chat: string, name: string, image: string, userList: string[] }) => {
-      console.log('data', data)
+
+    socket.on('connect', () => {
+      console.log('서버에 연결되었습니다.');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('서버와 연결이 끊어졌습니다.');
+    });
+
+
+
+    socket.on('connect_error', (error) => {
+      console.error('연결 오류:', error.message);
+    });
+  }, [])
+  useEffect(() => {
+
+    socket.on('message', (data: { message: string, name: string }) => {
       setChats(prev => [...prev, data])
-      if (data.image) {
-        setTimeout(scrollToBottom, 1000)
-      } else {
-        setTimeout(scrollToBottom, 100)
-      }
+
     })
-    // once.current = true;
     return () => {
-      socket.off('chat', (data: { chat: string, name: string, image: string, userList: string[] }) => {
-        setChats(prev => [...prev, data])
-      })
+      // socket.off('chat', (data: { message: string }) => {
+      //   // console.log('data', data.message)
+      //   setChats(prev => [...prev, data])
+
+      // })
     }
-  }, []);
+  }, [])
+
+
   useEffect(() => {
-    setChats(messages)
+    // setChats(messages)
     setTimeout(scrollToBottom, 1000)
   }, [messages])
 
-  useEffect(() => {
-    dispatch(chatActions.getChats())
-  }, [dispatch])
+  // useEffect(() => {
+  //   dispatch(chatActions.getChats())
+  // }, [dispatch])
   return (
     <div>
       {chatting.visible && <Wraps>
@@ -160,20 +189,24 @@ const Chat = () => {
               <Button color={"white"} width={'100px'} bgcolor="darkcyan">검색</Button>
             </WrapSearch>
 
-            <WrapChat>
-              <div className="chats" ref={scrollRef}>
+            <WrapChat ref={scrollRef}>
+              <div className="chats" >
                 {chats?.map((message, index) => {
-                  // console.log('message.name', message.name, 'auth.name:', auth?.name)
-                  // return (<div key={index} className={`chat ${message.name === 'system' ? 'center' : message?.name === auth?.name ? 'right' : 'left'}`}>
-                  return (<div key={index} className={`chat  right `}>
-                    <div className='username'>
-                      {/* {message.name === 'system' ? '' : message.name === auth?.name ? "" : message.name} */}
-                    </div>
-                    {message.chat && message.chat}
-                    <div>
-                      {message.image && <img key={index} src={message.image} alt='img' width='100px'></img>}
-                    </div>
-                  </div>)
+
+                  // console.log('message.name', message.name, 'auth.name:', user?.name)
+                  return (
+                    <div key={index} style={{}}>
+                      <div className='username' style={{ minHeight: "20px" }}>
+                        {message.name === 'system' ? '' : message.name === user?.name ? " " : message.name}
+                      </div>
+                      {/* <div>a</div> */}
+                      <div style={{ width: "100%", position: "relative" }}>
+                        <MessageDiv wrap="wrap" height={1} style={{ textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.message && message.message}</MessageDiv>
+                      </div>
+                      <div>
+                        {/* {message.image && <img key={index} src={message.image} alt='img' width='100px'></img>} */}
+                      </div>
+                    </div>)
                 })}
               </div>
             </WrapChat>
@@ -191,7 +224,7 @@ const Chat = () => {
         </div>
 
       </Wraps >}
-    </div>
+    </div >
   );
 };
 
