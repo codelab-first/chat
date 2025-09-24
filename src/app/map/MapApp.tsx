@@ -1,14 +1,24 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
+import {
+  CustomOverlayMap,
+  Map,
+  MapMarker,
+  useKakaoLoader,
+} from "react-kakao-maps-sdk"
 
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
+import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
 
+import MapMarkerOverlay from "./mapMarkerOverlay"
+import MapClickHandler from "./MapClickHandler"
+
 const MapApp = () => {
+  const { locations, dataLoading, error: getError } = useGetLocations()
   const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
@@ -19,15 +29,15 @@ const MapApp = () => {
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap, containerRef } = useMapResize()
 
-  const locations = [
-    {
-      title: "서울",
-      latlng: {
-        lat: import.meta.env.VITE_DEFAULT_LATITUDE,
-        lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
-      },
-    },
-  ]
+  // const locations = [
+  //   {
+  //     title: "서울",
+  //     latlng: {
+  //       lat: import.meta.env.VITE_DEFAULT_LATITUDE,
+  //       lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
+  //     },
+  //   },
+  // ]
 
   const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -59,22 +69,7 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          {visibleMarkers.map((location, index) => (
-            <MapMarker
-              key={index}
-              position={location.latlng}
-              title={location.title}
-              clickable={true}
-              onClick={() => alert(location.title)}
-              // image={
-              //   {
-              //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
-              //     size: { width: 24, height: 35 },
-              //     options: { offset: { x: 12, y: 35 } },
-              //   }
-              // }
-            />
-          ))}
+          <MapClickHandler visibleMarkers={visibleMarkers} />
         </Map>
       </div>
       {bounds && (

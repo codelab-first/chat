@@ -6,7 +6,7 @@ interface LatLng {
 interface MarkerLocation {
   title: string;
   latlng: LatLng;
-  condition: "good" | "normal" | "bad" | "terrible" | "unknown";
+  // condition: "good" | "normal" | "bad" | "terrible" | "unknown";
 }
 
 interface BoundaryState {
@@ -18,20 +18,21 @@ export default function useVisibleMarkers(
   locations: MarkerLocation[],
   bounds: BoundaryState | null
 ) {
-  const getMarkerColor = (condition: MarkerLocation["condition"]): string => {
-    switch (condition) {
-      case "good":
-        return "blue";
-      case "normal":
-        return "green";
-      case "bad":
-        return "yellow";
-      case "terrible":
-        return "red";
-      default:
-        return "gray";
-    }
-  };
+// {
+//   const getMarkerColor = (condition: MarkerLocation["condition"]): string => {
+//     switch (condition) {
+//       case "good":
+//         return "blue";
+//       case "normal":
+//         return "green";
+//       case "bad":
+//         return "yellow";
+//       case "terrible":
+//         return "red";
+//       default:
+//         return "gray";
+//     }
+//   };
 
   const isInBounds = (point: LatLng, bounds: BoundaryState): boolean => {
     return (
@@ -48,7 +49,7 @@ export default function useVisibleMarkers(
     isInBounds(pos.latlng, bounds)
   ).map((pos) => ({
     ...pos,
-    color: getMarkerColor(pos.condition),
+    // color: getMarkerColor(pos.condition),
   }));
 
   return visibleMarkers;
