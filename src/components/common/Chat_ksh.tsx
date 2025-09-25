@@ -87,9 +87,14 @@ const Chat = () => {
   const { imageList, status, messages } = useSelector(chatData)
   const [message, setMessage] = useState('')
   const [chats, setChats] = useState<{ message: string, name: string }[]>([])
+  const [day, setDay] = useState<{ [key: string]: string }>({});
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
-
+  const daySelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setDay(prev => ({ ...prev, [name]: value }))
+  }
 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -155,7 +160,10 @@ const Chat = () => {
     // setChats(messages)
     setTimeout(scrollToBottom, 1000)
   }, [messages])
-
+  const onSearch = async () => {
+    const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
+    console.log(result)
+  }
   // useEffect(() => {
   //   dispatch(chatActions.getChats())
   // }, [dispatch])
@@ -181,9 +189,9 @@ const Chat = () => {
             <WrapSearch>
               <div style={{ marginTop: '5em' }}>
               </div>
-              <input type="date" name="date" id="date" />
-              <input type="date" name="date" id="date" />
-              <Button color={"white"} width={'100px'} bgcolor="darkcyan">검색</Button>
+              <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
+              <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
+              <Button color={"white"} width={'100px'} bgcolor="darkcyan" onClick={onSearch}>검색</Button>
             </WrapSearch>
 
             <WrapChat ref={scrollRef}>

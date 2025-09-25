@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import { formSelector, formActions } from '../../store/slices/form-slice';
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from 'react-router-dom';
 const WrapsNav = styled.ul`
 margin-left:auto;
 width:30%;
@@ -23,8 +24,8 @@ const Nav = () => {
     <div>
       <WrapsNav>
         {/* <li><a href="/weather">날씨정보</a></li> */}
-        <li><a href="/home">대기정보</a></li>
-        <li><a href="/weather">날씨정보</a></li>
+        <li><Link to="/home">대기정보</Link></li>
+        <li><Link to="/weather">날씨정보</Link></li>
         <button onClick={onClick}>채팅창</button>
       </WrapsNav>
     </div>
