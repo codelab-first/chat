@@ -13,7 +13,12 @@ interface MarkerLocation {
   // condition: "good" | "normal" | "bad" | "terrible" | "unknown"
 }
 
-const useGetLocations = () => {
+interface MapBounds {
+  sw: { lat: number; lng: number }
+  ne: { lat: number; lng: number }
+}
+
+const useGetLocations = (bounds: MapBounds | null) => {
   const [locations, setLocations] = useState<MarkerLocation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
