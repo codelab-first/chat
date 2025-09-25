@@ -89,9 +89,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   }
 
 
-  useEffect(() => {
-    // dispatch(authActions.initForm(form))
-  }, [])
+
   return (
     <>
       {form === "join" && (

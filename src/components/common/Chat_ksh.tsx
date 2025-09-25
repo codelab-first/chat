@@ -137,7 +137,8 @@ const Chat = () => {
       console.log('서버와 연결이 끊어졌습니다.');
     });
 
-    socket.on('message', (data: { chat: string, name: string }) => {
+    socket.on('message', (data) => {
+      console.log('data', data)
       setChats(prev => [...prev, data])
     })
 
@@ -145,6 +146,7 @@ const Chat = () => {
       console.error('연결 오류:', error.message);
     });
   }, [])
+
   useEffect(() => {
     return () => {
       // socket.off('chat', (data: { message: string }) => {
@@ -162,7 +164,7 @@ const Chat = () => {
   }, [messages])
   const onSearch = async () => {
     const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
-
+    setChats([])
     setChats(result.data)
 
   }
