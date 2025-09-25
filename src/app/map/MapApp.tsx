@@ -58,7 +58,7 @@ const MapApp = () => {
             height: "480px",
             position: "static",
           }}
-          level={9} // 지도의 확대 레벨
+          level={6} // 지도의 확대 레벨
           onCreate={(map) => {
             setMap(map)
             updateBounds(map)
