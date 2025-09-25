@@ -7,6 +7,7 @@ import {
 } from "react-kakao-maps-sdk"
 
 import useCurrentLocation from "../../hooks/useCurrentLocation"
+import useNearStation from "../../hooks/useNearStation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
@@ -28,6 +29,7 @@ const MapApp = () => {
   } = useCurrentLocation()
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap, containerRef } = useMapResize()
+  const nearestStation = useNearStation(position, locations)
 
   // const locations = [
   //   {
@@ -49,6 +51,11 @@ const MapApp = () => {
     <>
       <div style={{ margin: "0.75em 0" }}>
         <strong>현재 위치: </strong> {address}
+        {nearestStation && (
+          <p>
+            <strong>가장 가까운 측정소: </strong> {nearestStation.title}
+          </p>
+        )}
       </div>
       <div ref={containerRef}>
         <Map
