@@ -86,7 +86,7 @@ const Chat = () => {
 
   const { imageList, status, messages } = useSelector(chatData)
   const [message, setMessage] = useState('')
-  const [chats, setChats] = useState<{ message: string, name: string }[]>([])
+  const [chats, setChats] = useState<{ chat: string, name: string }[]>([])
   const [day, setDay] = useState<{ [key: string]: string }>({});
 
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -137,7 +137,7 @@ const Chat = () => {
       console.log('서버와 연결이 끊어졌습니다.');
     });
 
-    socket.on('message', (data: { message: string, name: string }) => {
+    socket.on('message', (data: { chat: string, name: string }) => {
       setChats(prev => [...prev, data])
     })
 
@@ -162,7 +162,9 @@ const Chat = () => {
   }, [messages])
   const onSearch = async () => {
     const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
-    console.log(result)
+
+    setChats(result.data)
+
   }
   // useEffect(() => {
   //   dispatch(chatActions.getChats())
@@ -206,7 +208,7 @@ const Chat = () => {
                       </div>
                       {/* <div>a</div> */}
                       <div style={{ width: "100%", position: "relative" }}>
-                        <MessageDiv wrap="wrap" height={1} style={{ textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.message && message.message}</MessageDiv>
+                        <MessageDiv wrap="wrap" height={1} style={{ textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.chat && message.chat}</MessageDiv>
                       </div>
                       <div>
                         {/* {message.image && <img key={index} src={message.image} alt='img' width='100px'></img>} */}
@@ -221,7 +223,7 @@ const Chat = () => {
               <form className="control" onSubmit={onSubmit}>
                 <input type="text" onChange={onChange} value={message} />
                 <Button color={"white"} width={'100px'} bgcolor="darkcyan" marginLeft=".5em">전송</Button>
-                <label htmlFor="photo" className='btn'>사진</label>
+                {/* <label htmlFor="photo" className='btn'>사진</label> */}
                 <input type="file" name="images" id="photo" onChange={onInsertImage} multiple accept='image/*' />
               </form>
             </WrapControl>
