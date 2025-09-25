@@ -1,14 +1,25 @@
 import React, { useState, useEffect, useRef } from "react"
-import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk"
+import {
+  CustomOverlayMap,
+  Map,
+  MapMarker,
+  useKakaoLoader,
+} from "react-kakao-maps-sdk"
 
 import useCurrentLocation from "../../hooks/useCurrentLocation"
+import useNearStation from "../../hooks/useNearStation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
 import useVisibleMarkers from "./hooks/useVisibleMarkers"
+import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
 
+import MapMarkerOverlay from "./mapMarkerOverlay"
+import MapClickHandler from "./MapClickHandler"
+
 const MapApp = () => {
+  const { locations, dataLoading, error: getError } = useGetLocations()
   const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
@@ -18,16 +29,17 @@ const MapApp = () => {
   } = useCurrentLocation()
   const { bounds, updateBounds } = useMapBoundary()
   const { setMap, containerRef } = useMapResize()
+  const nearestStation = useNearStation(position, locations)
 
-  const locations = [
-    {
-      title: "서울",
-      latlng: {
-        lat: import.meta.env.VITE_DEFAULT_LATITUDE,
-        lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
-      },
-    },
-  ]
+  // const locations = [
+  //   {
+  //     title: "서울",
+  //     latlng: {
+  //       lat: import.meta.env.VITE_DEFAULT_LATITUDE,
+  //       lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
+  //     },
+  //   },
+  // ]
 
   const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -39,6 +51,11 @@ const MapApp = () => {
     <>
       <div style={{ margin: "0.75em 0" }}>
         <strong>현재 위치: </strong> {address}
+        {nearestStation && (
+          <p>
+            <strong>가장 가까운 측정소: </strong> {nearestStation.title}
+          </p>
+        )}
       </div>
       <div ref={containerRef}>
         <Map
@@ -48,7 +65,7 @@ const MapApp = () => {
             height: "480px",
             position: "static",
           }}
-          level={9} // 지도의 확대 레벨
+          level={6} // 지도의 확대 레벨
           onCreate={(map) => {
             setMap(map)
             updateBounds(map)
@@ -59,22 +76,7 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          {visibleMarkers.map((location, index) => (
-            <MapMarker
-              key={index}
-              position={location.latlng}
-              title={location.title}
-              clickable={true}
-              onClick={() => alert(location.title)}
-              // image={
-              //   {
-              //     src: `marker-${location.color}.png`, // 마커이미지의 주소입니다
-              //     size: { width: 24, height: 35 },
-              //     options: { offset: { x: 12, y: 35 } },
-              //   }
-              // }
-            />
-          ))}
+          <MapClickHandler visibleMarkers={visibleMarkers} />
         </Map>
       </div>
       {bounds && (
