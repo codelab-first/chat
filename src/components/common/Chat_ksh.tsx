@@ -89,11 +89,7 @@ const Chat = () => {
   const [chats, setChats] = useState<{ message: string, name: string }[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
 
-  const socket = io('http://localhost:3000', {
-    auth: {
-      token: token.accessToken // auth 속성을 통해 토큰을 전달
-    }
-  });
+
 
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,7 +119,11 @@ const Chat = () => {
   }
 
   useEffect(() => {
-
+    const socket = io('http://localhost:3000', {
+      auth: {
+        token: token.accessToken // auth 속성을 통해 토큰을 전달
+      }
+    });
     socket.on('connect', () => {
       console.log('서버에 연결되었습니다.');
     });
@@ -132,18 +132,15 @@ const Chat = () => {
       console.log('서버와 연결이 끊어졌습니다.');
     });
 
-
+    socket.on('message', (data: { message: string, name: string }) => {
+      setChats(prev => [...prev, data])
+    })
 
     socket.on('connect_error', (error) => {
       console.error('연결 오류:', error.message);
     });
   }, [])
   useEffect(() => {
-
-    socket.on('message', (data: { message: string, name: string }) => {
-      setChats(prev => [...prev, data])
-
-    })
     return () => {
       // socket.off('chat', (data: { message: string }) => {
       //   // console.log('data', data.message)
