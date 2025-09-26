@@ -57,7 +57,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
         <strong>현재 위치: </strong> {address}
         {nearestStation && (
           <p>
-            <strong>가장 가까운 측정소: </strong> {nearestStation.stationName}
+            <strong>가장 가까운 측정소: </strong> {nearestStation.title}
           </p>
         )}
       </div>
