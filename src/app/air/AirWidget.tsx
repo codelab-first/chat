@@ -2,7 +2,11 @@ import React, { useState } from "react"
 import AirApp from "./AirApp"
 import AirLocal from "./AirLocal"
 
-export default function AirWidget() {
+interface AirWidgetProps {
+  selectedStation: string | null
+}
+
+export default function AirWidget({ selectedStation }: AirWidgetProps) {
   const [isAppView, setIsAppView] = useState(false)
 
   return (
@@ -10,7 +14,10 @@ export default function AirWidget() {
       {isAppView ? (
         <AirApp onBack={() => setIsAppView(false)} />
       ) : (
-        <AirLocal onShowApp={() => setIsAppView(true)} />
+        <AirLocal
+          onShowApp={() => setIsAppView(true)}
+          selectedStation={selectedStation}
+        />
       )}
     </div>
   )

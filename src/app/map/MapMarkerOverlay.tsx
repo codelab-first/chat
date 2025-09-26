@@ -1,18 +1,27 @@
 import React from "react"
 import { MapMarker, CustomOverlayMap } from "react-kakao-maps-sdk"
 
+interface LatLng {
+  lat: number
+  lng: number
+}
+
 interface MarkerLocation {
   title: string
-  latlng: { lat: number; lng: number }
+  latlng: LatLng
   // condition: "good" | "normal" | "bad" | "terrible" | "unknown";
 }
 
 interface MapMarkerOverlayProps {
   visibleMarkers: MarkerLocation[]
+  onMarkerClick: (latlng: LatLng) => void
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
   visibleMarkers,
+  onMarkerClick,
+  setSelectedStation,
 }) => {
   return (
     <>
@@ -23,7 +32,8 @@ const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
             title={marker.title}
             clickable={true}
             onClick={() => {
-              alert(`Marker: ${marker.title}`)
+              onMarkerClick(marker.latlng)
+              setSelectedStation(marker.title)
             }}
             // image={
             //   {

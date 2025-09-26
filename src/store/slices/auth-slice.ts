@@ -6,6 +6,7 @@ type State = {
   [key: string]: {
     [key: string]: string | { id: number; name: string } | null;
   };
+
   login: { email: string; password: string };
   join: { email: string; password: string; name: string };
   status: {
@@ -26,14 +27,14 @@ const successSelector = (state: RootState) => {
 const messageSelector = (state: RootState) => {
   return state.auth.status.message;
 };
+const userSelector = (state: RootState) => {
+  return state.auth.status.auth;
+};
 const loginSelector = (state: RootState) => {
   return state.auth.login;
 };
 const joinSelector = (state: RootState) => {
   return state.auth.join;
-};
-const userSelector = (state: RootState) => {
-  return state.auth.user;
 };
 export const authData = createSelector(
   successSelector,
@@ -41,12 +42,12 @@ export const authData = createSelector(
   loginSelector,
   joinSelector,
   userSelector,
-  (success, message, loginData, joinData, userData) => ({
+  (success, message, loginData, joinData, user) => ({
     success,
     message,
     loginData,
     joinData,
-    userData,
+    user,
   })
 );
 const authSlice = createSlice({
@@ -69,7 +70,7 @@ const authSlice = createSlice({
       state.status.message = "";
     },
     loginSuccess: (state, { payload: rs }) => {
-      // console.log("rs:", rs.data.user);
+      // console.log("rs:", rs.success);
       state.status.success = rs.success;
       // state.status.message = message;
       state.status.auth = rs.data.user;
@@ -83,14 +84,17 @@ const authSlice = createSlice({
       state.status.success = "";
       state.status.message = "";
     },
-    joinSuccess: (state, { payload: { success, message } }) => {
-      state.status.success = success;
-      state.status.message = message;
+    joinSuccess: (state, { payload: datas }) => {
+      // console.log("datas", datas);
+      state.status.success = datas.success;
+      state.login.email = datas.joinData.email;
+      state.login.password = datas.joinData.password;
     },
     joinFailure: (state, { payload: { success, error } }) => {
       state.status.success = success;
       state.status.message = error;
     },
+
     logout: (state) => {
       state.status.auth = null;
     },

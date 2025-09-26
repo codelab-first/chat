@@ -4,11 +4,13 @@ import sessionStorage from "redux-persist/es/storage/session";
 import authReducer from "./slices/auth-slice";
 import chatReducer from "./slices/chat-slice";
 import formReducer from "./slices/form-slice";
+import tokenReducer from "./slices/token-slice";
 
-const authConfig = { key: "auth", storage: sessionStorage };
+const tokenConfig = { key: "token", storage: sessionStorage };
 
 const reducers = combineReducers({
-  auth: persistReducer(authConfig, authReducer),
+  token: persistReducer(tokenConfig, tokenReducer),
+  auth: authReducer,
   chat: chatReducer,
   form: formReducer,
 });
