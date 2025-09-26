@@ -15,10 +15,12 @@ interface MarkerLocation {
 
 interface MapClickHandlerProps {
   visibleMarkers: MarkerLocation[]
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
 }
 
 const MapClickHandler: React.FC<MapClickHandlerProps> = ({
   visibleMarkers,
+  setSelectedStation,
 }) => {
   const { handleMarkerClick } = useMarkerClickHandler()
 
@@ -26,6 +28,7 @@ const MapClickHandler: React.FC<MapClickHandlerProps> = ({
     <MapMarkerOverlay
       visibleMarkers={visibleMarkers}
       onMarkerClick={handleMarkerClick}
+      setSelectedStation={setSelectedStation}
     />
   )
 }
