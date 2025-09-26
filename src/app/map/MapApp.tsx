@@ -18,7 +18,11 @@ import useKakaoApi from "./../../components/api/useKakaoApi"
 import MapMarkerOverlay from "./mapMarkerOverlay"
 import MapClickHandler from "./MapClickHandler"
 
-const MapApp = () => {
+interface MapAppProps {
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
+}
+
+const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   const { bounds, updateBounds } = useMapBoundary()
   const { locations, dataLoading, error: getError } = useGetLocations(bounds)
   const { loading: apiLoading, error: apiError } = useKakaoApi()
@@ -76,7 +80,10 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          <MapClickHandler visibleMarkers={locations} />
+          <MapClickHandler
+            visibleMarkers={locations}
+            setSelectedStation={setSelectedStation}
+          />
         </Map>
       </div>
       {bounds && (
