@@ -14,11 +14,14 @@ const Wraps = styled.div`
   overflow: hidden;
   flex:1;
 `
+interface AirProps {
+  selectedStation?: string | null
+}
 
-const Air = () => {
+const Air: React.FC<AirProps> = ({ selectedStation }) => {
   return (
     <Wraps>
-      <AirWidget />
+      <AirWidget selectedStation={selectedStation} />
     </Wraps>
   )
 }

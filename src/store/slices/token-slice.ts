@@ -31,7 +31,7 @@ const tokenSlice = createSlice({
     },
 
     setToken: (state, { payload: rs }) => {
-      console.log("token", rs);
+
       state.accessToken = rs.data.accessToken;
       state.refreshToken = rs.data.refreshToken;
     },
