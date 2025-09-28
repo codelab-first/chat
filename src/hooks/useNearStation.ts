@@ -1,4 +1,3 @@
-import { current } from "@reduxjs/toolkit";
 import { useMemo } from "react";
 
 interface LatLng {

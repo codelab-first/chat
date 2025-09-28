@@ -10,12 +10,17 @@ const Wraps = styled.div`
   // display: flex;
   justify-content: center;
   align-items: center;
-  flex:1;
+  flex: 1;
 `
-const Map = () => {
+
+interface MapProps {
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
+}
+
+const Map = ({ setSelectedStation }: MapProps) => {
   return (
     <Wraps>
-      <MapApp />
+      <MapApp setSelectedStation={setSelectedStation} />
     </Wraps>
   )
 }

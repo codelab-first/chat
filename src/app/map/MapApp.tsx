@@ -10,7 +10,7 @@ import useCurrentLocation from "../../hooks/useCurrentLocation"
 import useNearStation from "../../hooks/useNearStation"
 import useMapBoundary from "./hooks/useMapBoundary"
 import useMapResize from "./hooks/useMapResize"
-import useVisibleMarkers from "./hooks/useVisibleMarkers"
+// import useVisibleMarkers from "./hooks/useVisibleMarkers"
 import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
@@ -18,8 +18,13 @@ import useKakaoApi from "./../../components/api/useKakaoApi"
 import MapMarkerOverlay from "./mapMarkerOverlay"
 import MapClickHandler from "./MapClickHandler"
 
-const MapApp = () => {
-  const { locations, dataLoading, error: getError } = useGetLocations()
+interface MapAppProps {
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
+}
+
+const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
+  const { bounds, updateBounds } = useMapBoundary()
+  const { locations, dataLoading, error: getError } = useGetLocations(bounds)
   const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
@@ -27,7 +32,6 @@ const MapApp = () => {
     loading: locationLoading,
     error: locationError,
   } = useCurrentLocation()
-  const { bounds, updateBounds } = useMapBoundary()
   const { setMap, containerRef } = useMapResize()
   const nearestStation = useNearStation(position, locations)
 
@@ -41,7 +45,7 @@ const MapApp = () => {
   //   },
   // ]
 
-  const visibleMarkers = useVisibleMarkers(locations, bounds)
+  // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
   if (apiLoading || locationLoading) return <div>로딩중...</div>
   if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
@@ -76,7 +80,10 @@ const MapApp = () => {
             console.log("지도 이동 완료", map)
           }}
         >
-          <MapClickHandler visibleMarkers={visibleMarkers} />
+          <MapClickHandler
+            visibleMarkers={locations}
+            setSelectedStation={setSelectedStation}
+          />
         </Map>
       </div>
       {bounds && (
