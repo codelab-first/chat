@@ -76,8 +76,8 @@ ${props => props.wrap && css`text-wrap:${props.wrap}`};
 const Chat = () => {
   // const { userData } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
-  const { token } = useSelector(tokenData)
-  const { user } = useSelector(authData)
+  const { token, user } = useSelector(tokenData)
+  // const { user } = useSelector(authData)
   const dispatch = useDispatch()
   const changePosition = (form: string, position: { x: number, y: number }) => {
     dispatch(formActions.changePosition({ form, position }))
@@ -147,30 +147,20 @@ const Chat = () => {
     });
   }, [])
 
-  useEffect(() => {
-    return () => {
-      // socket.off('chat', (data: { message: string }) => {
-      //   // console.log('data', data.message)
-      //   setChats(prev => [...prev, data])
 
-      // })
-    }
-  }, [])
 
 
   useEffect(() => {
-    // setChats(messages)
     setTimeout(scrollToBottom, 1000)
   }, [messages])
+
   const onSearch = async () => {
     const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
     setChats([])
     setChats(result.data)
 
   }
-  // useEffect(() => {
-  //   dispatch(chatActions.getChats())
-  // }, [dispatch])
+
   return (
     <div>
       {chatting.visible && <Wraps>
