@@ -46,6 +46,8 @@ export default function useCurrentLocation(): LocationState {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         console.log("현재 위치 좌표:", latitude, longitude);
+
+        setPosition({ lat: latitude, lng: longitude });
         
         // 좌표를 주소로 변환
         if (window.kakao && window.kakao.maps.services) {
@@ -58,24 +60,13 @@ export default function useCurrentLocation(): LocationState {
                 const { region_1depth_name: city, region_2depth_name: district, region_3depth_name: town } = region;
                 const regionAddress = `${city} ${district} ${town}`;
                 setRegion(regionAddress);
-
-                // 읍면동주소를 좌표로 변환
-                geocoder.addressSearch(regionAddress, (res: any, stat: string) => {
-                  if (stat === window.kakao.maps.services.Status.OK) {
-                    const cityCoordinate = res[0];
-                    const {y: cityLat, x: cityLng} = cityCoordinate;
-                    console.log("지역 좌표:", cityLat, cityLng);
-                    setPosition({ lat: cityLat, lng: cityLng });
-                  } else {
-                  setError("지역 좌표를 찾지 못했습니다.");
-                  }
-                  setLoading(false);
-              });
               } else {
                 setError("주소를 찾지 못했습니다.");
-                setLoading(false);
               }
+            } else {
+              setError("주소 변환에 실패했습니다.");
             }
+            setLoading(false);
           });
         } else {
           setError("카카오맵 API가 로드되지 않았습니다.");
