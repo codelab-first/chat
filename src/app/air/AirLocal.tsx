@@ -11,6 +11,14 @@ interface AirData {
   so2Grade: number | null
   o3Grade: number | null
   no2Grade: number | null
+  coGrade: number | null
+  pm10Grade: number | null
+  pm25Grade: number | null
+  khaiGrade: number | null
+  so2Grade: number | null
+  o3Grade: number | null
+  no2Grade: number | null
+  coGrade: number | null
   dataTime: string
   sidoName: string
 }
