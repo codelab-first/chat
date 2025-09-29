@@ -4,9 +4,13 @@
 import { createContext, useEffect, useState, ReactNode } from "react"
 import { useErrorBoundary } from "react-error-boundary"
 interface ErrorContextType {
-  rootError: any
+  rootError: any;
 }
-export const ErrorContext = createContext<ErrorContextType | undefined>(undefined)
+
+export const ErrorContext = createContext<ErrorContextType>({
+  rootError: null,
+});
+
 
 export default function ErrorProvider({ children }: { children: ReactNode }) {
   const [rootError, setRootError] = useState(null)

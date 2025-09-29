@@ -6,13 +6,15 @@ import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
 import { useDrag } from '@use-gesture/react';
 import { chatData, chatActions } from '../../store/slices/chat-slice'
-import { authData } from '../../store/slices/auth-slice';
 import { tokenData } from '../../store/slices/token-slice'
-import { apiPost } from '../../modules/api';
 import axios from 'axios';
 import { imageInsert } from '../../modules/createFormData'
 import { io } from "socket.io-client";
 import './chat.scss'
+
+import { apiPost } from '../../modules/api';
+import { authData } from '../../store/slices/auth-slice';
+
 
 const Wraps = styled.div`
 // border:1px solid black;
@@ -62,22 +64,23 @@ user-select:none;
   background:black;
   // transform:rotate(360deg)
   }
-  &:active{
-    transform:rotate(360deg)
-    }
+  // &:active{
+  //   transform:rotate(360deg)
+  //   }
     `
 
-const MessageDiv = styled.div<{ wrap: string, height: number }>`
-${props => props.wrap && css`text-wrap:${props.wrap}`};
-// ${props => props.height && css`height:${((props.height - 1) * 2)}`};
+// const MessageDiv = styled.div<{ wrap: string, height: number }>`
+//     ${props => props.wrap && css`text-wrap:${props.wrap}`};
+//     // ${props => props.height && css`height:${((props.height - 1) * 2)}`};
 
-  // textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute'
-  `
+//   // textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute'
+//   `
 const Chat = () => {
+  const scrollRef = useRef<HTMLDivElement>(null)
   // const { userData } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
   const { token, user } = useSelector(tokenData)
-  // const { user } = useSelector(authData)
+  const [rise, setRise] = useState(false)
   const dispatch = useDispatch()
   const changePosition = (form: string, position: { x: number, y: number }) => {
     dispatch(formActions.changePosition({ form, position }))
@@ -89,7 +92,6 @@ const Chat = () => {
   const [chats, setChats] = useState<{ chat: string, name: string }[]>([])
   const [day, setDay] = useState<{ [key: string]: string }>({});
 
-  const scrollRef = useRef<HTMLDivElement>(null)
 
   const daySelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -149,10 +151,14 @@ const Chat = () => {
 
 
 
-
+  const riseUp = () => {
+    setTimeout(() => {
+      setRise(!rise)
+    }, 500)
+  }
   useEffect(() => {
-    setTimeout(scrollToBottom, 1000)
-  }, [messages])
+    setTimeout(scrollToBottom, 100)
+  }, [chats])
 
   const onSearch = async () => {
     const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
@@ -194,24 +200,26 @@ const Chat = () => {
 
                   // console.log('message.name', message.name, 'auth.name:', user?.name)
                   return (
-                    <div key={index} style={{}}>
-                      <div className='username' style={{ minHeight: "20px" }}>
+                    <div key={index}>
+
+                      <div className='username' style={{ marginTop: "1.5em", marginLeft: ".3em", fontSize: '.8em', color: 'gray' }}>
                         {message.name === 'system' ? '' : message.name === user?.name ? " " : message.name}
                       </div>
-                      {/* <div>a</div> */}
-                      <div style={{ width: "100%", position: "relative" }}>
-                        <MessageDiv wrap="wrap" height={1} style={{ textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.chat && message.chat}</MessageDiv>
+
+                      <div>
+                        <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.chat && message.chat}</div>
                       </div>
                       <div>
-                        {/* {message.image && <img key={index} src={message.image} alt='img' width='100px'></img>} */}
+
                       </div>
                     </div>)
                 })}
               </div>
             </WrapChat>
-
+            <div>--------------------------------------------------------</div>
             <WrapControl>
-              <CircleBtn>+</CircleBtn>
+              <CircleBtn onClick={riseUp} className={rise ? 'rise' : ''}>+</CircleBtn>
+
               <form className="control" onSubmit={onSubmit}>
                 <input type="text" onChange={onChange} value={message} />
                 <Button color={"white"} width={'100px'} bgcolor="darkcyan" marginLeft=".5em">전송</Button>
