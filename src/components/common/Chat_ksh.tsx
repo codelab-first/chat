@@ -20,7 +20,7 @@ const Wraps = styled.div`
 // border:1px solid black;
 min-width:400px;
 padding:1em;
-
+position:relative;
 `
 const WrapSearch = styled.div`
 margin:0 auto;
@@ -37,6 +37,8 @@ height:500px;
 background:white;
 box-shadow:0px 0px 8px 4px  rgba(.3,.3,.3,.3);
 overflow-y:scroll;
+
+
 `
 const WrapControl = styled.div`
 margin:0 auto;
@@ -152,9 +154,7 @@ const Chat = () => {
 
 
   const riseUp = () => {
-    setTimeout(() => {
-      setRise(!rise)
-    }, 500)
+    setRise(!rise)
   }
   useEffect(() => {
     setTimeout(scrollToBottom, 100)
@@ -215,8 +215,8 @@ const Chat = () => {
                     </div>)
                 })}
               </div>
+              <div className={`menu ${rise ? "up" : ''}`}></div>
             </WrapChat>
-            <div>--------------------------------------------------------</div>
             <WrapControl>
               <CircleBtn onClick={riseUp} className={rise ? 'rise' : ''}>+</CircleBtn>
 
