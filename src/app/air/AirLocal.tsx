@@ -1,6 +1,7 @@
 import React, { useState, useEffect, use } from "react"
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import axios from "axios"
+import { getGradeText, getGradeColor } from "../../utils/getGrade"
 
 interface AirData {
   stationName: string
@@ -10,6 +11,14 @@ interface AirData {
   so2Grade: number | null
   o3Grade: number | null
   no2Grade: number | null
+  coGrade: number | null
+  pm10Grade: number | null
+  pm25Grade: number | null
+  khaiGrade: number | null
+  so2Grade: number | null
+  o3Grade: number | null
+  no2Grade: number | null
+  coGrade: number | null
   dataTime: string
   sidoName: string
 }
@@ -83,16 +92,60 @@ export default function AirLocal({ onShowApp, selectedStation }: Props) {
         <div>
           <h3>선택된 측정소: {airData?.stationName}</h3>
           <p>
-            <strong>통합대기환경지수: </strong>{" "}
-            {airData.khaiGrade ?? "정보 없음"}
+            <strong>통합대기환경지수: </strong>
+            <span style={{ color: getGradeColor(airData.khaiGrade) }}>
+              {getGradeText(airData.khaiGrade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.khaiValue}</span>
           </p>
           <p>
-            <strong>미세먼지 (PM10): </strong>{" "}
-            {airData.pm10Grade ?? "정보 없음"}
+            <strong>미세먼지 (PM10): </strong>
+            <span style={{ color: getGradeColor(airData.pm10Grade) }}>
+              {getGradeText(airData.pm10Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.pm10Value}</span>
           </p>
           <p>
-            <strong>초미세먼지 (PM2.5): </strong>{" "}
-            {airData.pm25Grade ?? "정보 없음"}
+            <strong>초미세먼지 (PM2.5): </strong>
+            <span style={{ color: getGradeColor(airData.pm25Grade) }}>
+              {getGradeText(airData.pm25Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.pm25Value}</span>
+          </p>
+          <p>
+            <strong>오존 (O3): </strong>
+            <span style={{ color: getGradeColor(airData.o3Grade) }}>
+              {getGradeText(airData.o3Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.o3Value}</span>
+          </p>
+          <p>
+            <strong>이산화질소 (NO2): </strong>
+            <span style={{ color: getGradeColor(airData.no2Grade) }}>
+              {getGradeText(airData.no2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.no2Value}</span>
+          </p>
+          <p>
+            <strong>이산화질소 (NO2): </strong>
+            <span style={{ color: getGradeColor(airData.no2Grade) }}>
+              {getGradeText(airData.no2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.no2Value}</span>
+          </p>
+          <p>
+            <strong>일산화탄소 (CO): </strong>
+            <span style={{ color: getGradeColor(airData.coGrade) }}>
+              {getGradeText(airData.coGrade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.coValue}</span>
+          </p>
+          <p>
+            <strong>아황산가스 (SO2): </strong>
+            <span style={{ color: getGradeColor(airData.so2Grade) }}>
+              {getGradeText(airData.so2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.so2Value}</span>
           </p>
         </div>
       )}
