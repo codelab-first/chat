@@ -40,7 +40,7 @@ const Header = () => {
         {user && user.name && (
           <span style={{ marginRight: "1em" }}>{user.name}님</span>
         )}
-        <LoginStatus to={"/"} onClick={handleLogout}>LogOut</LoginStatus>
+        {user ? <LoginStatus to={"/"} onClick={handleLogout}>LogOut</LoginStatus> : <LoginStatus to={"/"} onClick={handleLogout}>Login</LoginStatus>}
       </div>
     </WrapperHeader>
   );

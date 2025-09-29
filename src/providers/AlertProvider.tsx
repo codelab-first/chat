@@ -9,14 +9,21 @@ import {
 import { ErrorContext } from "./ErrorProvider"
 
 interface AlertContextType {
-  isAlertOpen: boolean
-  setIsAlertOpen: (open: boolean) => void
-  alertMsg: string
-  setAlertMsg: (msg: string) => void
+  isAlertOpen: boolean;
+  setIsAlertOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  alertMsg: string;
+  setAlertMsg: React.Dispatch<React.SetStateAction<string>>;
 }
 
 
-export const AlertContext = createContext<AlertContextType | undefined>(undefined)
+
+export const AlertContext = createContext<AlertContextType>({
+  isAlertOpen: false,
+  setIsAlertOpen: () => { },
+  alertMsg: "",
+  setAlertMsg: () => { },
+});
+
 
 
 export default function AlertProvider({ children }: { children: ReactNode }) {

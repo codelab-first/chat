@@ -1,4 +1,4 @@
-import Air from "../components/left/Air"
+// import Air from "../components/left/Air"
 import Weather from "../components/left/Weather"
 import Map from "../components/right/Map"
 import styled from "@emotion/styled"

@@ -9,7 +9,7 @@ import { PersistGate } from "redux-persist/integration/react"
 import AlertProvider from "./providers/AlertProvider.tsx"
 import ErrorProvider from "./providers/ErrorProvider.tsx"
 import { ErrorBoundary } from "react-error-boundary"
-import ErrorFallback from './components/common/ErrorFallback.tsx'
+import ErrorFallback from "./components/common/ErrorFallBack.tsx"
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
