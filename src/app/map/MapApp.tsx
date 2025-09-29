@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, use } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import {
   CustomOverlayMap,
   Map,
@@ -22,13 +22,7 @@ interface MapAppProps {
   setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
 }
 
-const DEFAULT_POSITION = {
-  lat: import.meta.env.VITE_DEFAULT_LATITUDE,
-  lng: import.meta.env.VITE_DEFAULT_LONGITUDE,
-}
-
 const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
-  const [map, setMap] = useState<kakao.maps.Map | null>(null)
   const { bounds, updateBounds } = useMapBoundary()
   const { locations, dataLoading, error: getError } = useGetLocations(bounds)
   const { loading: apiLoading, error: apiError } = useKakaoApi()
@@ -38,7 +32,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     loading: locationLoading,
     error: locationError,
   } = useCurrentLocation()
-  const { containerRef } = useMapResize(map)
+  const { setMap, containerRef } = useMapResize()
   const nearestStation = useNearStation(position, locations)
 
   // const locations = [
@@ -53,32 +47,14 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
-  const mapCenter =
-    position.lat === DEFAULT_POSITION.lat &&
-    position.lng === DEFAULT_POSITION.lng
-      ? DEFAULT_POSITION
-      : position
-
-  if (apiError) return <div>API 오류 발생: {apiError.message}</div>
-
-  useEffect(() => {
-    if (map && !locationLoading) {
-      map.setCenter(new kakao.maps.LatLng(position.lat, position.lng))
-    }
-  }, [map, position, locationLoading])
-
-  useEffect(() => {
-    if (map && position) {
-      updateBounds(map)
-    }
-  }, [map, position, updateBounds])
+  if (apiLoading || locationLoading) return <div>로딩중...</div>
+  if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
 
   return (
-    // Map 내부에서 loading 상태를 관찰하고 있기 때문에 conditional rendering을 하지 않아도 됩니다.
+    // Map 내부에서 loading 상태를 관찰하고 있기 때문에 conditional rendering를 하지 않아도 됩니다.
     <>
       <div style={{ margin: "0.75em 0" }}>
-        <strong>현재 위치: </strong>{" "}
-        {locationLoading ? "위치를 찾는 중..." : address}
+        <strong>현재 위치: </strong> {address}
         {nearestStation && (
           <p>
             <strong>가장 가까운 측정소: </strong> {nearestStation.title}
@@ -87,7 +63,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
       </div>
       <div ref={containerRef}>
         <Map
-          center={mapCenter}
+          center={position}
           style={{
             width: "100%", // 지도의 크기
             height: "480px",
@@ -104,13 +80,6 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
             console.log("지도 이동 완료", map)
           }}
         >
-          {locations.map((location) => (
-            <MapMarker
-              key={location.title}
-              position={location.latlng}
-              onClick={() => setSelectedStation(location.title)}
-            />
-          ))}
           <MapClickHandler
             visibleMarkers={locations}
             setSelectedStation={setSelectedStation}

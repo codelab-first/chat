@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function useMapResize(map: kakao.maps.Map | null) {
+export default function useMapResize() {
+  const [map, setMap] = useState<kakao.maps.Map | null>(null);
   const lastCenterRef = useRef<kakao.maps.LatLng | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -31,5 +32,5 @@ export default function useMapResize(map: kakao.maps.Map | null) {
     };
   }, [map]);
 
-  return { containerRef };
+  return { setMap, containerRef };
 }
