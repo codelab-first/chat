@@ -91,18 +91,53 @@ export default function AirLocal({ onShowApp, selectedStation }: Props) {
             <span> {airData?.khaiValue}</span>
           </p>
           <p>
-            <strong>미세먼지 (PM10): </strong>{" "}
+            <strong>미세먼지 (PM10): </strong>
             <span style={{ color: getGradeColor(airData.pm10Grade) }}>
               {getGradeText(airData.pm10Grade) ?? "정보 없음"}
             </span>
             <span> {airData?.pm10Value}</span>
           </p>
           <p>
-            <strong>초미세먼지 (PM2.5): </strong>{" "}
+            <strong>초미세먼지 (PM2.5): </strong>
             <span style={{ color: getGradeColor(airData.pm25Grade) }}>
               {getGradeText(airData.pm25Grade) ?? "정보 없음"}
             </span>
             <span> {airData?.pm25Value}</span>
+          </p>
+          <p>
+            <strong>오존 (O3): </strong>
+            <span style={{ color: getGradeColor(airData.o3Grade) }}>
+              {getGradeText(airData.o3Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.o3Value}</span>
+          </p>
+          <p>
+            <strong>이산화질소 (NO2): </strong>
+            <span style={{ color: getGradeColor(airData.no2Grade) }}>
+              {getGradeText(airData.no2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.no2Value}</span>
+          </p>
+          <p>
+            <strong>이산화질소 (NO2): </strong>
+            <span style={{ color: getGradeColor(airData.no2Grade) }}>
+              {getGradeText(airData.no2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.no2Value}</span>
+          </p>
+          <p>
+            <strong>일산화탄소 (CO): </strong>
+            <span style={{ color: getGradeColor(airData.coGrade) }}>
+              {getGradeText(airData.coGrade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.coValue}</span>
+          </p>
+          <p>
+            <strong>아황산가스 (SO2): </strong>
+            <span style={{ color: getGradeColor(airData.so2Grade) }}>
+              {getGradeText(airData.so2Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.so2Value}</span>
           </p>
         </div>
       )}
