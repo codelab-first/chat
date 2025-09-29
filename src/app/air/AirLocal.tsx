@@ -2,6 +2,20 @@ import React, { useState, useEffect, use } from "react"
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import axios from "axios"
 
+function getKhaiGradeColor(grade: number | null): string {
+  switch (grade) {
+    case 1:
+      return "#E8F5E9" // 초록 (좋음)
+    case 2:
+      return "#FFFDE7" // 노랑 (보통)
+    case 3:
+      return "#FFF3E0" // 주황 (나쁨)
+    case 4:
+      return "#FFEBEE" // 빨강 (매우 나쁨)
+    default:
+      return "#F5F5F5" // 회색 (정보 없음)
+  }
+}
 interface AirData {
   stationName: string
   pm10Grade: number | null
@@ -80,19 +94,31 @@ export default function AirLocal({ onShowApp, selectedStation }: Props) {
       {loading && <p>대기 정보 로딩 중...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
       {airData && (
-        <div>
-          <h3>선택된 측정소: {airData?.stationName}</h3>
+        <div
+          style={{
+            backgroundColor: getKhaiGradeColor(airData.khaiGrade),
+            padding: "1em",
+            borderRadius: "8px",
+            marginTop: "1em",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <h3>선택된 측정소: {airData.stationName}</h3>
           <p>
-            <strong>통합대기환경지수: </strong>{" "}
+            <strong>통합대기환경지수:</strong>{" "}
             {airData.khaiGrade ?? "정보 없음"}
           </p>
           <p>
-            <strong>미세먼지 (PM10): </strong>{" "}
+            <strong>미세먼지 (PM10):</strong>{" "}
             {airData.pm10Grade ?? "정보 없음"}
           </p>
           <p>
-            <strong>초미세먼지 (PM2.5): </strong>{" "}
+            <strong>초미세먼지 (PM2.5):</strong>{" "}
             {airData.pm25Grade ?? "정보 없음"}
+          </p>
+          <p>
+            <strong>측정 시간:</strong>{" "}
+            {new Date(airData.dataTime).toLocaleString()}
           </p>
         </div>
       )}
