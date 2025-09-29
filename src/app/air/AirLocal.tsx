@@ -1,6 +1,7 @@
 import React, { useState, useEffect, use } from "react"
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import axios from "axios"
+import { getGradeText, getGradeColor } from "../../utils/getGrade"
 
 interface AirData {
   stationName: string
@@ -83,16 +84,25 @@ export default function AirLocal({ onShowApp, selectedStation }: Props) {
         <div>
           <h3>선택된 측정소: {airData?.stationName}</h3>
           <p>
-            <strong>통합대기환경지수: </strong>{" "}
-            {airData.khaiGrade ?? "정보 없음"}
+            <strong>통합대기환경지수: </strong>
+            <span style={{ color: getGradeColor(airData.khaiGrade) }}>
+              {getGradeText(airData.khaiGrade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.khaiValue}</span>
           </p>
           <p>
             <strong>미세먼지 (PM10): </strong>{" "}
-            {airData.pm10Grade ?? "정보 없음"}
+            <span style={{ color: getGradeColor(airData.pm10Grade) }}>
+              {getGradeText(airData.pm10Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.pm10Value}</span>
           </p>
           <p>
             <strong>초미세먼지 (PM2.5): </strong>{" "}
-            {airData.pm25Grade ?? "정보 없음"}
+            <span style={{ color: getGradeColor(airData.pm25Grade) }}>
+              {getGradeText(airData.pm25Grade) ?? "정보 없음"}
+            </span>
+            <span> {airData?.pm25Value}</span>
           </p>
         </div>
       )}
