@@ -8,6 +8,7 @@ import { apiPost } from '../../modules/api';
 import Button from '../common/Button';
 import { tokenActions } from '../../store/slices/token-slice';
 import { io } from 'socket.io-client'
+import { ApiResponse } from '../../modules/api';
 type Props = {
   form: "login" | "join";
 }
@@ -70,9 +71,10 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   }
   const login = async () => {
     if (loginData.email === '' || loginData.password === '') return;
-    console.log("loginData", loginData)
-    const rs = await apiPost<{ email: string, password: string }, { success: string, data: { user: { id: number, name: string }, accessToken: string, refreshToken: string } }>("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
-    // console.log(rs)
+    const rs = await apiPost<
+      { email: string, password: string },
+      ApiResponse<{ success: string, data: { user: { id: number, name: string }, accessToken: string, refreshToken: string } }>
+    >("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
     if (rs?.success === "OK") {
       navigate('/home')
       dispatch(authActions.loginSuccess(rs))
@@ -85,6 +87,11 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       // socket.on('connect', () => {
       //   console.log('Socket.IO 서버에 연결되었습니다.')
       // })
+    } else {
+
+      dispatch(authActions.loginFailure(rs))
+      dispatch(tokenActions.initToken())
+
     }
   }
 

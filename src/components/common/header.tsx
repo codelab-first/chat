@@ -1,9 +1,7 @@
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled'
-
 import { useDispatch, useSelector } from 'react-redux'
-import { authData, authActions } from '../../store/slices/auth-slice';
+import { tokenData, tokenActions } from '../../store/slices/token-slice';
 const WrapperHeader = styled.div`
 display:flex;
 justify-content:space-between;
@@ -26,11 +24,11 @@ const LoginStatus = styled(Link)``
 const Header = () => {
   const navigate = useNavigate();
   // const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
-  const { user } = useSelector(authData)
+  const { user } = useSelector(tokenData)
   // 로그아웃 버튼 클릭 시 currentUser 삭제
   const handleLogout = () => {
     // localStorage.removeItem("currentUser");
-    dispatch(authActions.logout())
+    dispatch(tokenActions.initToken())
     navigate("/"); // 로그아웃 후 로그인 페이지로 이동 (필요시)
   };
   const dispatch = useDispatch();

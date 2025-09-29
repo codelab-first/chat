@@ -1,10 +1,9 @@
 import type { RootState } from "..";
-import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice, createSelector } from "@reduxjs/toolkit";
 
 type State = {
   [key: string]: {
-    [key: string]: string | { id: number; name: string } | null;
+    [key: string]: string | { id: number; name: string };
   };
 
   login: { email: string; password: string };
@@ -12,14 +11,13 @@ type State = {
   status: {
     success: string;
     message: string;
-    auth: { id: number; name: string } | null;
   };
 };
 
 const initialState: State = {
   login: { email: "", password: "" },
   join: { email: "", password: "", name: "" },
-  status: { success: "", message: "", auth: null },
+  status: { success: "", message: "" },
 };
 const successSelector = (state: RootState) => {
   return state.auth.status.success;
@@ -27,9 +25,7 @@ const successSelector = (state: RootState) => {
 const messageSelector = (state: RootState) => {
   return state.auth.status.message;
 };
-const userSelector = (state: RootState) => {
-  return state.auth.status.auth;
-};
+
 const loginSelector = (state: RootState) => {
   return state.auth.login;
 };
@@ -41,13 +37,12 @@ export const authData = createSelector(
   messageSelector,
   loginSelector,
   joinSelector,
-  userSelector,
-  (success, message, loginData, joinData, user) => ({
+
+  (success, message, loginData, joinData) => ({
     success,
     message,
     loginData,
     joinData,
-    user,
   })
 );
 const authSlice = createSlice({
@@ -70,15 +65,14 @@ const authSlice = createSlice({
       state.status.message = "";
     },
     loginSuccess: (state, { payload: rs }) => {
-      // console.log("rs:", rs.success);
+      console.log("rs", rs);
       state.status.success = rs.success;
-      // state.status.message = message;
-      state.status.auth = rs.data.user;
+      // state.status.message = rs.message;
     },
-    loginFailure: (state, { payload: { success, error } }) => {
-      state.status.success = success;
-      state.status.message = error;
-      state.status.auth = null;
+    loginFailure: (state, { payload: rs }) => {
+      console.log("rs", rs);
+      state.status.success = rs.success;
+      state.status.message = rs.err.msg;
     },
     join: (state) => {
       state.status.success = "";
@@ -93,10 +87,6 @@ const authSlice = createSlice({
     joinFailure: (state, { payload: { success, error } }) => {
       state.status.success = success;
       state.status.message = error;
-    },
-
-    logout: (state) => {
-      state.status.auth = null;
     },
   },
 });
