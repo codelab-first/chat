@@ -32,6 +32,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     loading: locationLoading,
     error: locationError,
   } = useCurrentLocation()
+  const currentLocation = { lat: position.lat, lng: position.lng, address }
+
   const { setMap, containerRef } = useMapResize()
   const nearestStation = useNearStation(position, locations)
 
@@ -100,6 +102,24 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           </ul>
         </div>
       )}
+      <div>
+        <button
+          style={{
+            padding: "0.5em 1em",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "1px solid black",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            console.log("현재 위치로 이동")
+
+          }}
+        >
+          현재 위치로 돌아가기
+        </button>
+      </div>
     </>
   )
 }
