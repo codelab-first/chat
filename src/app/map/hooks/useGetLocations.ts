@@ -25,25 +25,7 @@ const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: numbe
 
   useEffect(() => {
     const getLocation = async () => {
-      let currentBounds = bounds;
-
-      if (!currentBounds && initialPosition) {
-        const deltaLat = 0.5;
-        const deltaLng = 0.5;
-
-        currentBounds = {
-          sw: {
-            lat: initialPosition.lat - deltaLat,
-            lng: initialPosition.lng - deltaLng,
-          },
-          ne: {
-            lat: initialPosition.lat + deltaLat,
-            lng: initialPosition.lng + deltaLng,
-          },
-        };
-      }
-
-      if (!currentBounds) {
+      if (!bounds && !initialPosition) {
         setDataLoading(false)
         return
       }
@@ -54,10 +36,10 @@ const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: numbe
       try {
         const response = await axios.get("http://localhost:3000/api/positions", {
           params: {
-            sw_lat: currentBounds.sw.lat,
-            sw_lng: currentBounds.sw.lng,
-            ne_lat: currentBounds.ne.lat,
-            ne_lng: currentBounds.ne.lng
+            sw_lat: bounds.sw.lat,
+            sw_lng: bounds.sw.lng,
+            ne_lat: bounds.ne.lat,
+            ne_lng: bounds.ne.lng
           }
         })
         console.log("response", response.data)
