@@ -42,7 +42,6 @@ const useGetLocations = (bounds: MapBounds | null, initialPosition: {}) => {
             ne_lng: bounds.ne.lng
           }
         })
-        console.log("response", response.data)
 
         if (Array.isArray(response.data)) {
           const mapLocations: MarkerLocation[] = response.data.map(
@@ -67,7 +66,7 @@ const useGetLocations = (bounds: MapBounds | null, initialPosition: {}) => {
     }
 
     getLocation()
-  }, [bounds, initialPosition])
+  }, [bounds])
 
   return { locations, dataLoading, error }
 }
