@@ -45,10 +45,6 @@ const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
           />
           <CustomOverlayMap position={marker.latlng}>
             <div
-              onClick={() => {
-                onMarkerClick(marker.latlng)
-                setSelectedStation(marker.title)
-              }}
               style={{
                 padding: "0.25em",
                 backgroundColor: "white",
@@ -56,7 +52,6 @@ const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
                 borderRadius: "0.25em",
                 textAlign: "center",
                 transform: "translate(-50%, -120%)",
-                cursor: "pointer",
               }}
             >
               {marker.title}
