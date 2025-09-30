@@ -64,17 +64,14 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
       setSelectedStation(currentNearestStation.title)
       console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
     }
+  }, [initNearestStation, currentNearestStation, setSelectedStation])
 
-    if (displayStation && displayStation.title) {
-      setSelectedStation(displayStation.title)
-      console.log("가장 가까운 측정소:", displayStation.title)
-    }
-  }, [
-    displayStation,
-    initNearestStation,
-    currentNearestStation,
-    setSelectedStation,
-  ])
+  useEffect(() => {
+    // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
+    if (!displayStation?.title) return
+    setSelectedStation(displayStation.title)
+    console.log("가장 가까운 측정소:", displayStation.title)
+  }, [displayStation, setSelectedStation])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
