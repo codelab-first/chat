@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"
+import React, { useState, useEffect, useRef, use } from "react"
 import {
   CustomOverlayMap,
   Map,
@@ -46,6 +46,13 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   //     },
   //   },
   // ]
+
+  useEffect(() => {
+    if (nearestStation && nearestStation.title) {
+      setSelectedStation(nearestStation.title)
+      console.log("가장 가까운 측정소:", nearestStation.title)
+    }
+  }, [nearestStation, setSelectedStation])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
