@@ -28,6 +28,7 @@ const App = () => {
         <Routes>
           <Route path='/home' element={<LoginPage />} />
           <Route path='/' element={<LoginPage />} />
+          <Route path='/join' element={<JoinPage />} />
         </Routes>
       </Container>
     )
