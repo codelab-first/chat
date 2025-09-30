@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react"
 import useMarkerClickHandler from "./hooks/useMarkerClickHandler"
-import MapMarkerOverlay from "./MapMarkerOverlay"
+import MapMarkerOverlay from "./mapMarkerOverlay"
 
 interface LatLng {
   lat: number

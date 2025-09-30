@@ -7,7 +7,6 @@ interface LatLng {
 }
 
 const useMarkerClickHandler = () => {
-
   const map = useMap()
   const [center, setCenter] = useState<LatLng | null>(null);
 
@@ -17,7 +16,7 @@ const useMarkerClickHandler = () => {
     }
   }
 
-  return { handleMarkerClick }
+  return { handleMarkerClick}
 }
 
 export default useMarkerClickHandler;
