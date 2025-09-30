@@ -18,14 +18,14 @@ interface MapBounds {
   ne: { lat: number; lng: number }
 }
 
-const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: number; lng: number } | null) => {
+const useGetLocations = (bounds: MapBounds | null, initialPosition: {}) => {
   const [locations, setLocations] = useState<MarkerLocation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const getLocation = async () => {
-      if (!bounds && !initialPosition) {
+      if (!bounds) {
         setDataLoading(false)
         return
       }
