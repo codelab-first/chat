@@ -72,7 +72,6 @@ export default function useCurrentLocation(): LocationState {
     );
   };
 
-
   useEffect(() => {
     if (apiLoading) {
       setLoading(false);
