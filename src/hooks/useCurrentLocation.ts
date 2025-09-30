@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import useKakaoApi from "../components/api/useKakaoApi";
+import { api } from "../modules/api";
 
 interface LocationState {
   position : { lat: number; lng: number };
@@ -21,8 +22,9 @@ export default function useCurrentLocation(): LocationState {
   const [region, setRegion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState<number>(0);
 
-  useEffect(() => {
+  const fetchLocation = useCallback(() => {
     if (apiLoading) {
       setLoading(false);
       setError("카카오맵 API 로딩 중...");
@@ -48,12 +50,11 @@ export default function useCurrentLocation(): LocationState {
         console.log("현재 위치 좌표:", latitude, longitude);
 
         setPosition({ lat: latitude, lng: longitude });
-        
-        // 좌표를 주소로 변환
+
         if (window.kakao && window.kakao.maps.services) {
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.coord2Address(longitude, latitude, (result, status) => {
-            if (status === window.kakao.maps.services.Status.OK) {
+          const geocoder = new (window as any).kakao.maps.services.Geocoder(); // window.kakao 타입 캐스팅
+          geocoder.coord2Address(longitude, latitude, (result: any, status: any) => {
+            if (status === (window as any).kakao.maps.services.Status.OK) {
               const region = result[0].address;
               if (region) {
                 setAddress(region.address_name);
@@ -80,5 +81,13 @@ export default function useCurrentLocation(): LocationState {
     );
   }, [apiLoading, apiError]);
 
-  return { position, address, region, loading, error };
+  const refetch = useCallback(() => {
+    setFetchTrigger((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    fetchLocation();
+  }, [fetchLocation, fetchTrigger]);
+
+  return { position, address, region, loading, error, refetch };
 }
