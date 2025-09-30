@@ -127,13 +127,6 @@ export default function AirLocal({ onShowApp, selectedStation }: Props) {
             <span> {airData?.no2Value}</span>
           </p>
           <p>
-            <strong>이산화질소 (NO2): </strong>
-            <span style={{ color: getGradeColor(airData.no2Grade) }}>
-              {getGradeText(airData.no2Grade) ?? "정보 없음"}
-            </span>
-            <span> {airData?.no2Value}</span>
-          </p>
-          <p>
             <strong>일산화탄소 (CO): </strong>
             <span style={{ color: getGradeColor(airData.coGrade) }}>
               {getGradeText(airData.coGrade) ?? "정보 없음"}
