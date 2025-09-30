@@ -27,16 +27,20 @@ margin:0 auto;
 display:flex;
 justify-content:space-between;
 align-items:center;
+// display:none;
+
 // width:70%;
 `
 const WrapChat = styled.div`
 border:1px solid black;
+
 margin:1em auto;
 width:90%;
 height:500px;
 background:white;
 box-shadow:0px 0px 8px 4px  rgba(.3,.3,.3,.3);
 overflow-y:scroll;
+
 
 
 `
@@ -91,7 +95,7 @@ const Chat = () => {
 
   const { imageList, status, messages } = useSelector(chatData)
   const [message, setMessage] = useState('')
-  const [chats, setChats] = useState<{ chat: string, name: string }[]>([])
+  const [chats, setChats] = useState<{ chat: string, name: string, image: string }[]>([])
   const [day, setDay] = useState<{ [key: string]: string }>({});
 
 
@@ -99,7 +103,6 @@ const Chat = () => {
     const { name, value } = e.target;
     setDay(prev => ({ ...prev, [name]: value }))
   }
-
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -110,12 +113,23 @@ const Chat = () => {
     // imageList에 데이터가 있으면 있는대로 => 수정
     // 결과적으로 imageList와 조합해서 새로운 formData를 만들어 주는 함수인 것
     const formData = imageInsert(e, imageList)
-    dispatch(chatActions.addImage(await formData))
+    // console.log(formData)
+    // dispatch(chatActions.addImage(await formData))
+    sendImage(await formData)
   }
   const onSubmit = async (e: any) => {
     e.preventDefault();
     send();
     setMessage('')
+  }
+  const sendImage = async (formData: FormData) => {
+    formData.append('user', JSON.stringify(user))
+    return await axios.post('http://192.168.10.47:3000/chat/images', formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      }
+    })
+
   }
   const send = async () => {
     // socket.emit('message', { message })
@@ -141,7 +155,7 @@ const Chat = () => {
       console.log('서버와 연결이 끊어졌습니다.');
     });
 
-    socket.on('message', (data) => {
+    socket.on('message', (data: { chat: string, name: string, image: string }) => {
       console.log('data', data)
       setChats(prev => [...prev, data])
     })
@@ -186,13 +200,7 @@ const Chat = () => {
 
           <div style={{ background: "lightyellow", border: "1px solid black", padding: "10px", marginTop: "2em" }}>
 
-            <WrapSearch>
-              <div style={{ marginTop: '5em' }}>
-              </div>
-              <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
-              <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
-              <Button color={"white"} width={'100px'} bgcolor="darkcyan" onClick={onSearch}>검색</Button>
-            </WrapSearch>
+
 
             <WrapChat ref={scrollRef}>
               <div className="chats" >
@@ -208,6 +216,13 @@ const Chat = () => {
 
                       <div>
                         <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.chat && message.chat}</div>
+
+                      </div>
+                      <div>
+
+                        <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>
+                          {message.image && <img key={index} src="../public/images/cat.jpg" alt='img' width='100px'></img>}
+                        </div>
                       </div>
                       <div>
 
@@ -215,7 +230,15 @@ const Chat = () => {
                     </div>)
                 })}
               </div>
-              <div className={`menu ${rise ? "up" : ''}`}></div>
+              <div className={`menu ${rise ? "up" : ''}`}>
+                <WrapSearch className={`search ${rise ? '' : 'down'}`}>
+                  <div style={{ marginTop: '5em' }}>
+                  </div>
+                  <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
+                  <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
+                  <Button color={"white"} width={'100px'} bgcolor="darkcyan" onClick={onSearch}>검색</Button>
+                </WrapSearch>
+              </div>
             </WrapChat>
             <WrapControl>
               <CircleBtn onClick={riseUp} className={rise ? 'rise' : ''}>+</CircleBtn>
@@ -223,7 +246,7 @@ const Chat = () => {
               <form className="control" onSubmit={onSubmit}>
                 <input type="text" onChange={onChange} value={message} />
                 <Button color={"white"} width={'100px'} bgcolor="darkcyan" marginLeft=".5em">전송</Button>
-                {/* <label htmlFor="photo" className='btn'>사진</label> */}
+                <label htmlFor="photo" className='btn'>사진</label>
                 <input type="file" name="images" id="photo" onChange={onInsertImage} multiple accept='image/*' />
               </form>
             </WrapControl>
