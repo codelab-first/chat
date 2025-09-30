@@ -221,7 +221,7 @@ const Chat = () => {
                       <div>
 
                         <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>
-                          {message.image && <img key={index} src="../public/images/cat.jpg" alt='img' width='100px'></img>}
+                          {message.image && <img key={index} src={'http://localhost:3000' + message.image} alt='img' width='100px'></img>}
                         </div>
                       </div>
                       <div>
