@@ -29,6 +29,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     address,
     loading: locationLoading,
     error: locationError,
+    refetch,
   } = useCurrentLocation()
   const {
     locations,
@@ -161,6 +162,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           }}
           onClick={() => {
             console.log("현재 위치로 이동")
+            refetch()
+
             if (map && position) {
               map.panTo(
                 new (window as any).kakao.maps.LatLng(
@@ -172,6 +175,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
             if (initNearestStation?.title) {
               setSelectedStation(initNearestStation.title)
               console.log("초기 위치:", initNearestStation.title)
+            } else if (currentNearestStation?.title) {
+              setSelectedStation(currentNearestStation.title)
+              console.log("가장 가까운 측정소:", currentNearestStation.title)
             }
           }}
         >
