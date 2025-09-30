@@ -29,7 +29,6 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     address,
     loading: locationLoading,
     error: locationError,
-    refetchLocation,
   } = useCurrentLocation()
   const {
     locations,
@@ -42,11 +41,11 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   const currentNearestStation = useNearStation(position, locations)
   const { map, setMap, containerRef } = useMapResize()
 
-  // const [initNearestStation, setInitNearestStation] = useState<
-  //   typeof currentNearestStation | null
-  // >(null)
+  const [initNearestStation, setInitNearestStation] = useState<
+    typeof currentNearestStation | null
+  >(null)
 
-  const displayStation = currentNearestStation
+  const displayStation = initNearestStation || currentNearestStation
 
   // const nearestStation = useNearStation(currentNearestStation, locations)
 
@@ -61,13 +60,16 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   // ]
 
   useEffect(() => {
-    if (map && position) {
-      console.log("현재 위치로 지도 이동:", position.lat, position.lng)
-      map.panTo(
-        new (window as any).kakao.maps.LatLng(position.lat, position.lng)
-      )
+    if (
+      !initNearestStation &&
+      currentNearestStation &&
+      currentNearestStation.title
+    ) {
+      setInitNearestStation(currentNearestStation)
+      setSelectedStation(currentNearestStation.title)
+      console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
     }
-  }, [map, position])
+  }, [initNearestStation, currentNearestStation, setSelectedStation])
 
   useEffect(() => {
     // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
@@ -159,20 +161,17 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           }}
           onClick={() => {
             console.log("현재 위치로 이동")
-            // if (map && position) {
-            //   map.panTo(
-            //     new (window as any).kakao.maps.LatLng(
-            //       position.lat,
-            //       position.lng
-            //     )
-            //   )
-            // }
-            // if (initNearestStation?.title) {
-            //   setSelectedStation(initNearestStation.title)
-            //   console.log("초기 위치:", initNearestStation.title)
-            // }
-            if (refetchLocation) {
-              refetchLocation()
+            if (map && position) {
+              map.panTo(
+                new (window as any).kakao.maps.LatLng(
+                  position.lat,
+                  position.lng
+                )
+              )
+            }
+            if (initNearestStation?.title) {
+              setSelectedStation(initNearestStation.title)
+              console.log("초기 위치:", initNearestStation.title)
             }
           }}
         >
