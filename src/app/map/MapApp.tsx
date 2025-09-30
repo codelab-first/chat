@@ -24,14 +24,19 @@ interface MapAppProps {
 
 const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   const { bounds, updateBounds } = useMapBoundary()
-  const { locations, dataLoading, error: getError } = useGetLocations(bounds)
-  const { loading: apiLoading, error: apiError } = useKakaoApi()
   const {
     position,
     address,
     loading: locationLoading,
     error: locationError,
   } = useCurrentLocation()
+  const {
+    locations,
+    dataLoading,
+    error: getError,
+  } = useGetLocations(bounds, position)
+
+  const { loading: apiLoading, error: apiError } = useKakaoApi()
 
   const currentNearestStation = useNearStation(position, locations)
   const { map, setMap, containerRef } = useMapResize()
@@ -101,6 +106,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           onCreate={(mapInstance) => {
             setMap(mapInstance)
             updateBounds(mapInstance)
+            // updateBounds(mapInstance)
             // setMapCenter({
             //   lat: map.getCenter().getLat(),
             //   lng: map.getCenter().getLng(),
@@ -156,7 +162,16 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           onClick={() => {
             console.log("현재 위치로 이동")
             if (map && position) {
-              map.panTo(new (window as any).kakao.maps.LatLng(position))
+              map.panTo(
+                new (window as any).kakao.maps.LatLng(
+                  position.lat,
+                  position.lng
+                )
+              )
+            }
+            if (initNearestStation?.title) {
+              setSelectedStation(initNearestStation.title)
+              console.log("초기 위치:", initNearestStation.title)
             }
           }}
         >
