@@ -16,7 +16,7 @@
 }
 div.rise {
   transition: 1.5s;
-  transform: rotate(720deg);
+  transform: rotate(360deg);
 }
 div.menu {
   width: 80%;
@@ -26,7 +26,15 @@ div.menu {
   transition: 1.5s;
   bottom: 58px;
   opacity: 0.5;
+  z-index: 2;
 }
 div.menu.up {
   height: 300px;
+  opacity: 1;
+}
+div.search {
+  z-index: 1;
+}
+div.search.down {
+  display: none;
 }
