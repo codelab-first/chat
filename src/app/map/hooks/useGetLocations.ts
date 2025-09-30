@@ -18,14 +18,32 @@ interface MapBounds {
   ne: { lat: number; lng: number }
 }
 
-const useGetLocations = (bounds: MapBounds | null) => {
+const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: number; lng: number } | null) => {
   const [locations, setLocations] = useState<MarkerLocation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const getLocation = async () => {
-      if (!bounds) {
+      let currentBounds = bounds;
+
+      if (!currentBounds && initialPosition) {
+        const deltaLat = 0.5;
+        const deltaLng = 0.5;
+
+        currentBounds = {
+          sw: {
+            lat: initialPosition.lat - deltaLat,
+            lng: initialPosition.lng - deltaLng,
+          },
+          ne: {
+            lat: initialPosition.lat + deltaLat,
+            lng: initialPosition.lng + deltaLng,
+          },
+        };
+      }
+
+      if (!currentBounds) {
         setDataLoading(false)
         return
       }
@@ -36,10 +54,10 @@ const useGetLocations = (bounds: MapBounds | null) => {
       try {
         const response = await axios.get("http://localhost:3000/api/positions", {
           params: {
-            sw_lat: bounds.sw.lat,
-            sw_lng: bounds.sw.lng,
-            ne_lat: bounds.ne.lat,
-            ne_lng: bounds.ne.lng
+            sw_lat: currentBounds.sw.lat,
+            sw_lng: currentBounds.sw.lng,
+            ne_lat: currentBounds.ne.lat,
+            ne_lng: currentBounds.ne.lng
           }
         })
         console.log("response", response.data)
@@ -67,7 +85,7 @@ const useGetLocations = (bounds: MapBounds | null) => {
     }
 
     getLocation()
-  }, [bounds])
+  }, [bounds, initialPosition])
 
   return { locations, dataLoading, error }
 }
