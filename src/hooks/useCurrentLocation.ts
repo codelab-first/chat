@@ -7,6 +7,7 @@ interface LocationState {
   region: string;
   loading: boolean;
   error: string | null;
+  refetchLocation: () => void;
 }
 
 const DEFAULT_POSITION = {
@@ -22,19 +23,8 @@ export default function useCurrentLocation(): LocationState {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (apiLoading) {
-      setLoading(false);
-      setError("카카오맵 API 로딩 중...");
-      return;
-    }
-    if (apiError) {
-      console.error("카카오맵 로딩 실패", apiError);
-      setLoading(false);
-      setError("카카오맵 로딩에 실패했습니다.");
-      return;
-    }
 
+  const fetchLocation = () => {
     if (!navigator.geolocation) {
       setLoading(false);
       setError("사용자의 위치 정보를 가져올 수 없습니다. 기본 위치로 설정됩니다.");
@@ -42,13 +32,15 @@ export default function useCurrentLocation(): LocationState {
     }
 
     setLoading(true);
+    setError(null);
+
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const { latitude, longitude } = pos.coords;
         console.log("현재 위치 좌표:", latitude, longitude);
 
         setPosition({ lat: latitude, lng: longitude });
-        
+
         // 좌표를 주소로 변환
         if (window.kakao && window.kakao.maps.services) {
           const geocoder = new window.kakao.maps.services.Geocoder();
@@ -78,7 +70,25 @@ export default function useCurrentLocation(): LocationState {
         setLoading(false);
       }
     );
+  };
+
+
+  useEffect(() => {
+    if (apiLoading) {
+      setLoading(false);
+      setError("카카오맵 API 로딩 중...");
+      return;
+    }
+    if (apiError) {
+      console.error("카카오맵 로딩 실패", apiError);
+      setLoading(false);
+      setError("카카오맵 로딩에 실패했습니다.");
+      return;
+    }
+    fetchLocation(); 
+
   }, [apiLoading, apiError]);
 
-  return { position, address, region, loading, error };
+  // ⭐️ [수정] refetchLocation 함수를 노출합니다.
+  return { position, address, region, loading, error, refetchLocation: fetchLocation };
 }
