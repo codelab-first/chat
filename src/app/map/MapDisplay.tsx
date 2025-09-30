@@ -1,6 +1,7 @@
 import React, { RefObject } from "react"
-import { Map, MapMarker, MapMarkerOverlay } from "react-kakao-maps-sdk"
-import MapClickHandler from "./MapClickHandler" // 기존 MapApp.tsx에서 사용되던 컴포넌트
+import { Map, MapMarker } from "react-kakao-maps-sdk"
+import MapClickHandler from "./MapClickHandler"
+import MapMarkerOverlay from "./mapMarkerOverlay"
 
 interface MapBounds {
   sw: { lat: number; lng: number }
@@ -69,11 +70,9 @@ const MapDisplay: React.FC<MapDisplayProps> = (props) => {
           onCreate={(mapInstance) => {
             setMap(mapInstance)
             updateBounds(mapInstance)
-            console.log("지도 생성 완료", mapInstance)
           }}
           onIdle={(mapInstance) => {
             updateBounds(mapInstance)
-            console.log("지도 이동 완료", mapInstance)
           }}
         >
           {locations.map((loc) => (
