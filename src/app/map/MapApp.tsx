@@ -15,7 +15,7 @@ import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
 
-import MapMarkerOverlay from "./mapMarkerOverlay"
+import MapMarkerOverlay from "./MapMarkerOverlay"
 import MapClickHandler from "./MapClickHandler"
 
 interface MapAppProps {
@@ -32,10 +32,17 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     loading: locationLoading,
     error: locationError,
   } = useCurrentLocation()
-  const currentLocation = { lat: position.lat, lng: position.lng, address }
 
-  const { setMap, containerRef } = useMapResize()
-  const nearestStation = useNearStation(position, locations)
+  const currentNearestStation = useNearStation(position, locations)
+  const { map, setMap, containerRef } = useMapResize()
+
+  const [initNearestStation, setInitNearestStation] = useState<
+    typeof currentNearestStation | null
+  >(null)
+
+  const displayStation = initNearestStation || currentNearestStation
+
+  // const nearestStation = useNearStation(currentNearestStation, locations)
 
   // const locations = [
   //   {
@@ -48,11 +55,23 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   // ]
 
   useEffect(() => {
-    if (nearestStation && nearestStation.title) {
-      setSelectedStation(nearestStation.title)
-      console.log("가장 가까운 측정소:", nearestStation.title)
+    if (
+      !initNearestStation &&
+      currentNearestStation &&
+      currentNearestStation.title
+    ) {
+      setInitNearestStation(currentNearestStation)
+      setSelectedStation(currentNearestStation.title)
+      console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
     }
-  }, [nearestStation, setSelectedStation])
+  }, [initNearestStation, currentNearestStation, setSelectedStation])
+
+  useEffect(() => {
+    // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
+    if (!displayStation?.title) return
+    setSelectedStation(displayStation.title)
+    console.log("가장 가까운 측정소:", displayStation.title)
+  }, [displayStation, setSelectedStation])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -64,9 +83,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     <>
       <div style={{ margin: "0.75em 0" }}>
         <strong>현재 위치: </strong> {address}
-        {nearestStation && (
+        {displayStation && (
           <p>
-            <strong>가장 가까운 측정소: </strong> {nearestStation.title}
+            <strong>가장 가까운 측정소: </strong> {displayStation.title}
           </p>
         )}
       </div>
@@ -79,14 +98,29 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
             position: "static",
           }}
           level={6} // 지도의 확대 레벨
-          onCreate={(map) => {
-            setMap(map)
-            updateBounds(map)
-            console.log("지도 생성 완료", map)
+          onCreate={(mapInstance) => {
+            setMap(mapInstance)
+            updateBounds(mapInstance)
+            // setMapCenter({
+            //   lat: map.getCenter().getLat(),
+            //   lng: map.getCenter().getLng(),
+            // })
+            console.log("지도 생성 완료", mapInstance)
           }}
-          onIdle={(map) => {
-            updateBounds(map)
-            console.log("지도 이동 완료", map)
+          onIdle={(mapInstance) => {
+            updateBounds(mapInstance)
+            // const newCenter = {
+            //   lat: map.getCenter().getLat(),
+            //   lng: map.getCenter().getLng(),
+            // }
+            // if (
+            //   !mapCenter ||
+            //   mapCenter.lat !== newCenter.lat ||
+            //   mapCenter.lng !== newCenter.lng
+            // ) {
+            //   setMapCenter(newCenter)
+            // }
+            console.log("지도 이동 완료", mapInstance)
           }}
         >
           <MapClickHandler
@@ -121,7 +155,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           }}
           onClick={() => {
             console.log("현재 위치로 이동")
-
+            if (map && position) {
+              map.panTo(new (window as any).kakao.maps.LatLng(position))
+            }
           }}
         >
           현재 위치로 돌아가기
