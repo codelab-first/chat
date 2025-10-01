@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react"
 import axios from "axios"
-
 import { AirData } from "../../types"
-import { current } from "@reduxjs/toolkit"
 
 interface SidoItem {
   value: string
@@ -11,6 +9,15 @@ interface SidoItem {
 
 type Props = {
   onBack: () => void
+}
+
+function getCardBackgroundColor(khaiValue?: string): string {
+  const value = parseInt(khaiValue || "")
+  if (isNaN(value)) return "#E0E0E0" // 정보 없음
+  if (value <= 50) return "#4CAF50"  // 좋음 (초록)
+  if (value <= 100) return "#FFEB3B" // 보통 (노랑)
+  if (value <= 150) return "#FF9800" // 나쁨 (주황)
+  return "#F44336"                   // 매우나쁨 (빨강)
 }
 
 const SIDO_LIST: SidoItem[] = [
@@ -51,6 +58,8 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
   const [airData, setAirData] = useState<AirData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
+  // 여러 카드를 펼치기 위해 Set 상태로 변경
+  const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
 
   const loadData = useCallback(async (sido: string | null) => {
     setIsLoading(true)
@@ -73,11 +82,25 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
 
   useEffect(() => {
     loadData(selectedSido)
+    // 데이터 새로 불러올 때 펼쳐진 카드 초기화
+    setExpandedCards(new Set())
   }, [selectedSido, loadData])
 
   const handleSidoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
     setSelectedSido(value)
+  }
+
+  const toggleCard = (cardId: string) => {
+    setExpandedCards((prev) => {
+      const newSet = new Set(prev)
+      if (newSet.has(cardId)) {
+        newSet.delete(cardId) // 펼쳐진 상태면 닫기
+      } else {
+        newSet.add(cardId)    // 아니면 펼치기
+      }
+      return newSet
+    })
   }
 
   const currentSidoLabel =
@@ -99,7 +122,9 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
       >
         &larr; 현 위치 정보 보기
       </button>
+
       <h1>대기 정보 조회</h1>
+
       <label htmlFor="sido-select">시도 선택: </label>
       <select
         id="sido-select"
@@ -115,45 +140,67 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
 
       <div style={{ marginTop: "1em" }}>
         <h2>대기 정보({currentSidoLabel})</h2>
+
         {isLoading && <p>데이터를 불러오는 중...</p>}
 
         {error && <p style={{ color: "red" }}>오류: {error}</p>}
 
         {!isLoading && !error && (
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
-            <thead>
-              <tr>
-                <th>시도명</th>
-                <th>측정소명</th>
-                <th>통합대기환경지수</th>
-                <th>미세먼지(PM10)</th>
-                <th>초미세먼지(PM2.5)</th>
-                <th>측정 시간</th>
-              </tr>
-            </thead>
-            <tbody>
-              {airData.length > 0 ? (
-                airData.map((item) => (
-                  <tr key={item.stationName + item.dataTime}>
-                    <td>{item.sidoName}</td>
-                    <td>{item.stationName}</td>
-                    <td>{item.khaiValue ?? "정보 없음"}</td>
-                    <td>{item.pm10Value ?? "정보 없음"}</td>
-                    <td>{item.pm25Value ?? "정보 없음"}</td>
-                    <td>{item.dataTime ?? "정보 없음"}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} style={{ textAlign: "center" }}>
-                    {currentSidoLabel !== "전국"
-                      ? `${currentSidoLabel} 지역에 조회된 데이터가 없습니다.`
-                      : "조회된 데이터가 없습니다."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1em",
+              alignItems: "flex-start",
+            }}
+          >
+            {airData.length > 0 ? (
+              airData.map((item) => {
+                const cardId = item.stationName + item.dataTime
+                const isExpanded = expandedCards.has(cardId)
+                return (
+                  <div
+                    key={cardId}
+                    onClick={() => toggleCard(cardId)}
+                    style={{
+                      border: "1px solid #ccc",
+                      borderRadius: "8px",
+                      padding: "1em",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      width: "250px",
+                      backgroundColor: getCardBackgroundColor(item.khaiValue),
+                      color: "#000",
+                      cursor: "pointer",
+                      transition: "all 0.3s",
+                    }}
+                  >
+                    <h3 style={{ marginTop: 0 }}>
+                      {item.sidoName} {item.stationName}
+                    </h3>
+
+                    {isExpanded && (
+                      <div style={{ marginTop: "0.5em" }}>
+                        <p><strong>통합지수:</strong> {item.khaiValue ?? "정보 없음"}</p>
+                        <p><strong>PM10:</strong> {item.pm10Value ?? "정보 없음"} μg/m³</p>
+                        <p><strong>PM2.5:</strong> {item.pm25Value ?? "정보 없음"} μg/m³</p>
+                        <p><strong>이산화황 (SO₂):</strong> {item.so2Value} ppm</p>
+                        <p><strong>오존 (O₃):</strong> {item.o3Value} ppm</p>
+                        <p><strong>이산화질소 (NO₂):</strong> {item.no2Value} ppm</p>
+                        <p><strong>일산화탄소 (CO):</strong> {item.coValue} ppm</p>
+                        <p><strong>측정시간:</strong> {item.dataTime ?? "정보 없음"}</p>
+                      </div>
+                    )}
+                  </div>
+                )
+              })
+            ) : (
+              <p>
+                {currentSidoLabel !== "전국"
+                  ? `${currentSidoLabel} 지역에 조회된 데이터가 없습니다.`
+                  : "조회된 데이터가 없습니다."}
+              </p>
+            )}
+          </div>
         )}
       </div>
     </div>
