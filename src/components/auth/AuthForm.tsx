@@ -43,31 +43,37 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   };
 
   // 버튼 클릭 시 서버로 데이터 전송
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (form === "join") {
-      // 회원가입 정보 저장 (예: users라는 배열에 추가)
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      users.push({
-        email: inputs.email,
-        password: inputs.password,
-        name: inputs.name,
+      const res = await fetch("http://localhost:4000/api/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: inputs.email,
+          password: inputs.password,
+          name: inputs.name,
+        }),
       });
-      localStorage.setItem("users", JSON.stringify(users));
-      alert("회원가입 완료! (로컬 저장)");
+      const result = await res.json();
+      alert(result.message);
     } else {
-      // 로그인: 로컬에서 사용자 확인
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find(
-        (u: any) => u.email === inputs.email && u.password === inputs.password
-      );
-      if (user) {
-        alert("로그인 성공! (로컬 저장)");
-        localStorage.setItem("currentUser", JSON.stringify(user)); // 추가
+      const res = await fetch("http://localhost:4000/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: inputs.email,
+          password: inputs.password,
+        }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        alert("로그인 성공!");
+        localStorage.setItem("currentUser", JSON.stringify(result.user));
         navigate("/home");
       } else {
-        alert("로그인 실패! (로컬 저장)");
+        alert(result.message);
       }
     }
   };
