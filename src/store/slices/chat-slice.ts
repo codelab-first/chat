@@ -31,6 +31,7 @@ const chatSlice = createSlice({
   initialState,
   reducers: {
     addImage: (state, action: PayloadAction<FormData>) => {
+      // console.log(action);
       state.imageList = [];
       state.status.message = "";
       state.status.loading = true;

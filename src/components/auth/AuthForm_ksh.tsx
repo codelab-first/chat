@@ -95,7 +95,11 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
     }
   }
 
-
+  const onLogin = (e: any) => {
+    if (e.key === 'Enter') {
+      login()
+    }
+  }
 
   return (
     <>
@@ -116,6 +120,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
         onChange={onChange}
         placeholder='Input Email'
         autoComplete='none'
+        onKeyDown={onLogin}
       />
       <StyledInput
         name="password"
@@ -123,6 +128,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
         value={form === 'login' ? loginData.password : joinData.password}
         onChange={onChange}
         placeholder='Input Password'
+        onKeyDown={onLogin}
       />
       {form === "login" ? <Button width="100%" color="white" bgcolor="darkcyan" onClick={login}>로그인</Button> : <Button width="100%" color="white" bgcolor="darkcyan" onClick={join}>회원가입</Button>}
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
