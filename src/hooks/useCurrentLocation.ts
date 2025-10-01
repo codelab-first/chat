@@ -8,7 +8,6 @@ interface LocationState {
   region: string;
   loading: boolean;
   error: string | null;
-  refetch: () => void;
 }
 
 const DEFAULT_POSITION = {
