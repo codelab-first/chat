@@ -18,7 +18,7 @@ interface MapBounds {
   ne: { lat: number; lng: number }
 }
 
-const useGetLocations = (bounds: MapBounds | null) => {
+const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: number; lng: number } | null) => {
   const [locations, setLocations] = useState<MarkerLocation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
@@ -67,7 +67,7 @@ const useGetLocations = (bounds: MapBounds | null) => {
     }
 
     getLocation()
-  }, [bounds])
+  }, [bounds, initialPosition])
 
   return { locations, dataLoading, error }
 }
