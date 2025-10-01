@@ -29,7 +29,7 @@ export const imageInsert = async (e: any, imageList: { url: string }[]) => {
         i++
       ) {
         formData.append("images", notConflictImages[i]);
-        console.log("formData", formData);
+        // console.log("formData", formData);
       }
     } else {
       // console.log("imageArray", imageArray);
@@ -38,7 +38,7 @@ export const imageInsert = async (e: any, imageList: { url: string }[]) => {
         i < (imageArray.length > ableCount ? ableCount : imageArray.length);
         i++
       ) {
-        console.log("imageArray", imageArray[i].name);
+        // console.log("imageArray", imageArray[i].name);
         formData.append("images", imageArray[i]);
         // console.log("formData", formData);
       }

@@ -95,7 +95,7 @@ const Chat = () => {
 
   const { imageList, status, messages } = useSelector(chatData)
   const [message, setMessage] = useState('')
-  const [chats, setChats] = useState<{ chat: string, name: string, image: string }[]>([])
+  const [chats, setChats] = useState<{ chat: string, name: string, image: string[] }[]>([])
   const [day, setDay] = useState<{ [key: string]: string }>({});
 
 
@@ -124,7 +124,7 @@ const Chat = () => {
   }
   const sendImage = async (formData: FormData) => {
     formData.append('user', JSON.stringify(user))
-    return await axios.post('http://192.168.10.47:3000/chat/images', formData, {
+    return await axios.post('http://localhost:3000/chat/images', formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       }
@@ -135,11 +135,17 @@ const Chat = () => {
     // socket.emit('message', { message })
     return await axios.post('http://localhost:3000/chat/chat', { message, user })
   }
+  const chatInit = async () => {
+    const result = await axios.get('http://localhost:3000/chat/init')
+    setChats([])
+    setChats(result.data)
+  }
   const scrollToBottom = () => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
+
 
   useEffect(() => {
     const socket = io('http://localhost:3000', {
@@ -155,7 +161,7 @@ const Chat = () => {
       console.log('서버와 연결이 끊어졌습니다.');
     });
 
-    socket.on('message', (data: { chat: string, name: string, image: string }) => {
+    socket.on('message', (data: { chat: string, name: string, image: string[] }) => {
       console.log('data', data)
       setChats(prev => [...prev, data])
     })
@@ -180,7 +186,17 @@ const Chat = () => {
     setChats(result.data)
 
   }
+  useEffect(() => {
+    if (chatting.visible) {
 
+
+      chatInit()
+
+
+
+      // alert('채팅창 열림')
+    }
+  }, [chatting.visible])
   return (
     <div>
       {chatting.visible && <Wraps>
@@ -202,7 +218,10 @@ const Chat = () => {
 
 
 
-            <WrapChat ref={scrollRef}>
+            <WrapChat ref={scrollRef} onClick={() => {
+              if (rise)
+                riseUp()
+            }}>
               <div className="chats" >
                 {chats?.map((message, index) => {
 
@@ -221,7 +240,8 @@ const Chat = () => {
                       <div>
 
                         <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>
-                          {message.image && <img key={index} src={'http://localhost:3000' + message.image} alt='img' width='100px'></img>}
+
+                          {message?.image?.length > 0 && message.image.map(img => <img key={img} src={`http://localhost:3000${img}`} alt='img' width='100px'></img>)}
                         </div>
                       </div>
                       <div>
@@ -230,16 +250,16 @@ const Chat = () => {
                     </div>)
                 })}
               </div>
-              <div className={`menu ${rise ? "up" : ''}`}>
-                <WrapSearch className={`search ${rise ? '' : 'down'}`}>
-                  <div style={{ marginTop: '5em' }}>
-                  </div>
-                  <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
-                  <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
-                  <Button color={"white"} width={'100px'} bgcolor="darkcyan" onClick={onSearch}>검색</Button>
-                </WrapSearch>
-              </div>
             </WrapChat>
+            <div className={`menu ${rise ? "up" : ''}`}>
+              <WrapSearch className={`search ${rise ? '' : 'down'}`}>
+                <div style={{ marginTop: '5em' }}>
+                </div>
+                <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
+                <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
+                <Button color={"white"} width={'100px'} bgcolor="darkcyan" onClick={onSearch}>검색</Button>
+              </WrapSearch>
+            </div>
             <WrapControl>
               <CircleBtn onClick={riseUp} className={rise ? 'rise' : ''}>+</CircleBtn>
 
