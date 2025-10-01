@@ -42,11 +42,19 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   const currentNearestStation = useNearStation(position, locations)
   const { map, setMap, containerRef } = useMapResize()
 
-  const [initNearestStation, setInitNearestStation] = useState<
-    typeof currentNearestStation | null
-  >(null)
+  const [userSelectedStation, setUserSelectedStation] = useState<string | null>(
+    null
+  )
 
-  const displayStation = initNearestStation || currentNearestStation
+  // const [initNearestStation, setInitNearestStation] = useState<
+  //   typeof currentNearestStation | null
+  // >(null)
+
+  // const displayStation = initNearestStation || currentNearestStation
+
+  const displayStationTitle = userSelectedStation
+    ? userSelectedStation
+    : currentNearestStation?.title || null
 
   // const nearestStation = useNearStation(currentNearestStation, locations)
 
@@ -61,23 +69,33 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   // ]
 
   useEffect(() => {
-    if (
-      !initNearestStation &&
-      currentNearestStation &&
-      currentNearestStation.title
-    ) {
-      setInitNearestStation(currentNearestStation)
-      setSelectedStation(currentNearestStation.title)
-      console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
-    }
-  }, [initNearestStation, currentNearestStation, setSelectedStation])
+    //   if (
+    //     !initNearestStation &&
+    //     currentNearestStation &&
+    //     currentNearestStation.title
+    //   ) {
+    //     setInitNearestStation(currentNearestStation)
+    //     setSelectedStation(currentNearestStation.title)
+    //     console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
+    //   }
+    // }, [initNearestStation, currentNearestStation, setSelectedStation])
+    setSelectedStation(displayStationTitle)
 
-  useEffect(() => {
-    // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
-    if (!displayStation?.title) return
-    setSelectedStation(displayStation.title)
-    console.log("가장 가까운 측정소:", displayStation.title)
-  }, [displayStation, setSelectedStation])
+    if (displayStationTitle) {
+      console.log("선택된/가장 가까운 측정소:", displayStationTitle)
+    }
+  }, [displayStationTitle, setSelectedStation])
+
+  const displayStation = locations.find(
+    (loc) => loc.title === displayStationTitle
+  )
+
+  // useEffect(() => {
+  //   // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
+  //   if (!displayStation?.title) return
+  //   setSelectedStation(displayStation.title)
+  //   console.log("가장 가까운 측정소:", displayStation.title)
+  // }, [displayStation, setSelectedStation])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -132,7 +150,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
         >
           <MapClickHandler
             visibleMarkers={locations}
-            setSelectedStation={setSelectedStation}
+            setUserSelectedStation={setUserSelectedStation}
           />
         </Map>
       </div>
@@ -172,13 +190,13 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
                 )
               )
             }
-            if (initNearestStation?.title) {
-              setSelectedStation(initNearestStation.title)
-              console.log("초기 위치:", initNearestStation.title)
-            } else if (currentNearestStation?.title) {
-              setSelectedStation(currentNearestStation.title)
-              console.log("가장 가까운 측정소:", currentNearestStation.title)
-            }
+            // if (initNearestStation?.title) {
+            //   setSelectedStation(initNearestStation.title)
+            //   console.log("초기 위치:", initNearestStation.title)
+            // } else if (currentNearestStation?.title) {
+            //   setSelectedStation(currentNearestStation.title)
+            //   console.log("가장 가까운 측정소:", currentNearestStation.title)
+            setUserSelectedStation(null)
           }}
         >
           현재 위치로 돌아가기
