@@ -18,7 +18,7 @@ import { authData } from '../../store/slices/auth-slice';
 
 const Wraps = styled.div`
 // border:1px solid black;
-min-width:400px;
+width:400px;
 padding:1em;
 position:relative;
 `
@@ -27,9 +27,7 @@ margin:0 auto;
 display:flex;
 justify-content:space-between;
 align-items:center;
-// display:none;
 
-// width:70%;
 `
 const WrapChat = styled.div`
 border:1px solid black;
@@ -132,12 +130,19 @@ const Chat = () => {
 
   }
   const send = async () => {
-    // socket.emit('message', { message })
+
+    // console.log('message', message)
+    if (!message) return;
     return await axios.post('http://localhost:3000/chat/chat', { message, user })
   }
   const chatInit = async () => {
     const result = await axios.get('http://localhost:3000/chat/init')
     setChats([])
+    result.data.map((newData: any) => {
+      if (newData.image) {
+        newData.image = newData.image.split(",")
+      }
+    })
     setChats(result.data)
   }
   const scrollToBottom = () => {
@@ -214,7 +219,7 @@ const Chat = () => {
         </div>
         <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1, }}>
 
-          <div style={{ background: "lightyellow", border: "1px solid black", padding: "10px", marginTop: "2em" }}>
+          <div style={{ maxWidth: "100%", background: "lightyellow", border: "1px solid black", padding: "10px", marginTop: "2em" }}>
 
 
 
@@ -233,16 +238,17 @@ const Chat = () => {
                         {message.name === 'system' ? '' : message.name === user?.name ? " " : message.name}
                       </div>
 
-                      <div>
+                      {message.chat && <div>
                         <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>{message.chat && message.chat}</div>
+                      </div>}
 
-                      </div>
                       <div>
+                        {(message?.image || message?.image?.length > 0) && <div style={{ borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>
 
-                        <div style={{ background: 'yellow', padding: '1em .4em', borderRadius: '4px', fontSize: '1em' }} className={`chat ${message.name === 'system' ? 'center' : message?.name === user?.name ? 'right' : 'left'}`}>
-
-                          {message?.image?.length > 0 && message.image.map(img => <img key={img} src={`http://localhost:3000${img}`} alt='img' width='100px'></img>)}
-                        </div>
+                          {message?.image && (Array.isArray(message?.image) ? message.image.map(img =>
+                            <img key={img} src={`http://localhost:3000${img}`} alt='img' width='100px'></img>
+                          ) : <img key={index} src={`http://localhost:3000${message?.image}`} alt='img' width='100px' />)}
+                        </div>}
                       </div>
                       <div>
 

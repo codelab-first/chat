@@ -17,7 +17,10 @@ const WrapperData = styled.div`
   align-items: center;
   margin-top: 2.5em;
 `
-const FoatButton = styled.button`
+const WrapsAir = styled.div`
+display:none;
+`
+const FloatButton = styled.button`
 position:fixed;
 top:60px;
 right:60px;
@@ -46,11 +49,16 @@ const HomePage = () => {
   return (
     <WrapperAll>
       <WrapperData>
-        <Air selectedStation={selectedStation} />
+        <WrapsAir>
+          <Air selectedStation={selectedStation} screenMode="mobile" />
+        </WrapsAir>
         <Map setSelectedStation={setSelectedStation} />
       </WrapperData>
-      <Chat />
-      <FoatButton onClick={onClick} >채팅</FoatButton>
+      <div>
+
+        <Chat />
+      </div>
+      <FloatButton onClick={onClick} >채팅</FloatButton>
 
     </WrapperAll>
   )
