@@ -43,9 +43,6 @@ height:500px;
 background:white;
 box-shadow:0px 0px 8px 4px  rgba(.3,.3,.3,.3);
 overflow-y:scroll;
-@media (max-width:860px){
-height:360px;
-}
 
 
 
