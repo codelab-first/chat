@@ -188,7 +188,7 @@ const Chat = () => {
         <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
           <div style={{
             maxWidth: "100%",
-            background: "rgba(255, 255, 255, 0.8)",
+            background: "rgba(255, 255, 255, 0.64)",
             border: "3px solid #2E7D32",
             borderRadius: "12px",
             padding: "1.5em",

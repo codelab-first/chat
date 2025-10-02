@@ -10,7 +10,6 @@ const Wrap = styled.div`
   height: 100%;
   box-sizing: border-box;
   overflow: auto;
-  border: 1px solid #ff00ff;
 `
 
 const Bar = styled.div`
