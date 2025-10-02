@@ -15,13 +15,14 @@ const Wraps = styled.div`
   flex:1;
 `
 interface AirProps {
-  selectedStation?: string | null
+  selectedStation?: string | null,
+  screenMode: string
 }
 
-const Air: React.FC<AirProps> = ({ selectedStation }) => {
+const Air: React.FC<AirProps> = ({ selectedStation, screenMode }) => {
   return (
     <Wraps>
-      <AirWidget selectedStation={selectedStation} />
+      {screenMode === "full" && <AirWidget selectedStation={selectedStation} />}
     </Wraps>
   )
 }
