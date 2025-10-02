@@ -25,7 +25,7 @@ const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: numbe
 
   useEffect(() => {
     const getLocation = async () => {
-      if (!bounds && !initialPosition) {
+      if (!bounds) {
         setDataLoading(false)
         return
       }
