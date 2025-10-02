@@ -19,10 +19,11 @@ import MapMarkerOverlay from "./MapMarkerOverlay"
 import MapClickHandler from "./MapClickHandler"
 
 interface MapAppProps {
-  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>,
+  screenMode: boolean;
 }
 
-const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
+const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   const { bounds, updateBounds } = useMapBoundary()
   const {
     position,
@@ -96,12 +97,14 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     // Map 내부에서 loading 상태를 관찰하고 있기 때문에 conditional rendering를 하지 않아도 됩니다.
     <>
       <div style={{ margin: "0.75em 0" }}>
-        <strong>현재 위치: </strong> {address}
-        {displayStation && (
-          <p>
-            <strong>가장 가까운 측정소: </strong> {displayStation.title}
-          </p>
-        )}
+        {!screenMode && <>
+          <strong>현재 위치: </strong> {address}
+          {displayStation && (
+            <p>
+              <strong>가장 가까운 측정소: </strong> {displayStation.title}
+            </p>
+          )}
+        </>}
       </div>
       <div ref={containerRef}>
         <Map
@@ -144,34 +147,43 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           />
         </Map>
       </div>
-      {bounds && (
-        <div style={{ marginTop: "1em" }}>
-          <strong>지도 경계:</strong>
-          <br />
-          <ul>
-            <div>
-              남서쪽: {bounds.sw.lat}, {bounds.sw.lng}
-            </div>
-            <div>
-              북동쪽: {bounds.ne.lat}, {bounds.ne.lng}
-            </div>
-          </ul>
-        </div>
-      )}
-      <div>
-        <button
-          style={{
-            padding: "0.5em 1em",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "1px solid black",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-          onClick={() => {
-            console.log("현재 위치로 이동")
-            refetch()
+      {!screenMode && <>
+        {bounds && (
+          <div style={{ marginTop: "1em" }}>
+            <strong>지도 경계:</strong>
+            <br />
+            <ul>
+              <div>
+                남서쪽: {bounds.sw.lat}, {bounds.sw.lng}
+              </div>
+              <div>
+                북동쪽: {bounds.ne.lat}, {bounds.ne.lng}
+              </div>
+            </ul>
+          </div>
+        )}
+        <div>
+          {!screenMode && <button
+            style={{
+              padding: "0.5em 1em",
+              backgroundColor: "#007bff",
+              color: "white",
+              border: "1px solid black",
+              borderRadius: "4px",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              console.log("현재 위치로 이동")
+              refetch()
 
+<<<<<<< HEAD
+              if (map && position) {
+                map.panTo(
+                  new (window as any).kakao.maps.LatLng(
+                    position.lat,
+                    position.lng
+                  )
+=======
             setIsManuallySelected(false)
 
             if (map && position) {
@@ -179,21 +191,22 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
                 new (window as any).kakao.maps.LatLng(
                   position.lat,
                   position.lng
+>>>>>>> ec41ababe1c75f72f337087ee21a1392da311358
                 )
-              )
-            }
-            if (initNearestStation?.title) {
-              setSelectedStation(initNearestStation.title)
-              console.log("초기 위치:", initNearestStation.title)
-            } else if (currentNearestStation?.title) {
-              setSelectedStation(currentNearestStation.title)
-              console.log("가장 가까운 측정소:", currentNearestStation.title)
-            }
-          }}
-        >
-          현재 위치로 돌아가기
-        </button>
-      </div>
+              }
+              if (initNearestStation?.title) {
+                setSelectedStation(initNearestStation.title)
+                console.log("초기 위치:", initNearestStation.title)
+              } else if (currentNearestStation?.title) {
+                setSelectedStation(currentNearestStation.title)
+                console.log("가장 가까운 측정소:", currentNearestStation.title)
+              }
+            }}
+          >
+            현재 위치로 돌아가기
+          </button>}
+        </div>
+      </>}
     </>
   )
 }
