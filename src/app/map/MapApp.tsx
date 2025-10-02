@@ -46,6 +46,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
     typeof currentNearestStation | null
   >(null)
 
+  const [isManuallySelected, setIsManuallySelected] = useState(false)
+
   const displayStation = initNearestStation || currentNearestStation
 
   // const nearestStation = useNearStation(currentNearestStation, locations)
@@ -73,11 +75,17 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
   }, [initNearestStation, currentNearestStation, setSelectedStation])
 
   useEffect(() => {
+    if (isManuallySelected) return
     // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
     if (!displayStation?.title) return
     setSelectedStation(displayStation.title)
     console.log("가장 가까운 측정소:", displayStation.title)
-  }, [displayStation, setSelectedStation])
+  }, [displayStation, setSelectedStation, isManuallySelected])
+
+  const handleMarkerClick = (stationName: string) => {
+    setIsManuallySelected(true)
+    setSelectedStation(stationName)
+  }
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -163,6 +171,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation }) => {
           onClick={() => {
             console.log("현재 위치로 이동")
             refetch()
+
+            setIsManuallySelected(false)
 
             if (map && position) {
               map.panTo(
