@@ -36,21 +36,6 @@ div.rise {
   transition: 1.5s;
   transform: rotate(360deg);
 }
-.chat_outline {
-  position: fixed;
-  @media (max-width: 860px) {
-    position: static;
-    width: 100%;
-    margin-left: 0;
-    // margin-bottom: auto;
-  }
-}
-.chat_outline {
-  margin-top: 2em;
-  @media (max-width: 860px) {
-    margin-top: 20em;
-  }
-}
 div.menu {
   padding: 0 10px;
   width: 80%;
