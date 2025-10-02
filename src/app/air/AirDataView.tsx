@@ -107,7 +107,18 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     SIDO_LIST.find((item) => item.value === selectedSido)?.label || "전국"
 
   return (
-    <div style={{ padding: "1em" }}>
+  <div style={{ padding: "1em" }}>
+    {/* 상단 고정 영역 */}
+    <div
+      style={{
+        position: "sticky",
+        top: 0,
+        backgroundColor: "white",
+        padding: "1em 0",
+        zIndex: 1000,
+        borderBottom: "1px solid #ccc",
+      }}
+    >
       <button
         onClick={onBack}
         style={{
@@ -123,20 +134,24 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
         &larr; 현 위치 정보 보기
       </button>
 
-      <h1>대기 정보 조회</h1>
-
-      <label htmlFor="sido-select">시도 선택: </label>
-      <select
-        id="sido-select"
-        onChange={handleSidoChange}
-        value={selectedSido ?? ""}
-      >
-        {SIDO_LIST.map((item: SidoItem) => (
-          <option key={item.value} value={item.value}>
-            {item.label}
-          </option>
-        ))}
-      </select>
+      <div>
+        <select
+          id="sido-select"
+          onChange={handleSidoChange}
+          value={selectedSido ?? ""}
+        >
+          {SIDO_LIST.map((item: SidoItem) => (
+            <option key={item.value} value={item.value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
+        <span>
+          의 관측소 수: {airData.length}
+        </span>
+      </div>
+      <p>↑눌러서 시/도변경</p>
+    </div>
 
       <div style={{ marginTop: "1em" }}>
         <h2>대기 정보({currentSidoLabel})</h2>

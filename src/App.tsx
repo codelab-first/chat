@@ -19,6 +19,11 @@ position:relative;
 margin-top:4em;
 
 `
+const WrapHeader = styled.div`
+@media (max-width:860px){
+display:none;
+}
+`
 const App = () => {
   const { user } = useSelector(tokenData)
   if (!user) {
@@ -37,7 +42,10 @@ const App = () => {
 
   return (
     <Container>
-      <Header />
+      <WrapHeader>
+        <Header />
+      </WrapHeader>
+
       <Nav />
       <Routes>
         <Route path='/' element={<LoginPage />} />
