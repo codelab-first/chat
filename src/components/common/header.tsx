@@ -11,13 +11,15 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 color:black;
-position:fixed;
 width:1200px;
 top:0;
 margin:0 auto;
 padding:2em 1.5em;
-// border:1px solid gray;
-// background:gray;
+position:fixed;
+@media(max-width:860px){
+position:absolute;
+// display:none
+}
 @media (max-width: 1200px) { 
   max-width:100%;
 color:black;
@@ -53,11 +55,7 @@ const Header = () => {
   return (
     <WrapperHeader>
       <div style={{ display: 'flex', alignItems: 'center' }}>
-
         <WrappLogo style={{ position: 'absolute', top: '10px' }}><img src={Logo} width="100px" /></WrappLogo>
-        {/* <WrappLogo style={{ position: 'absolute', top: "-20px" }}><img src={Logo1} width="120px" /></WrappLogo> */}
-        {/* <WrappLogo style={{ position: 'absolute', top: "-7px" }}><img src={Logo2} width="120px" /></WrappLogo> */}
-        {/* <WrappLogo style={{ position: 'absolute', }}><img src={Logo3} width="150px" /></WrappLogo> */}
       </div>
       <div>
         {user && user.name && (

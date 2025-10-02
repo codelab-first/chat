@@ -11,11 +11,13 @@ import axios from 'axios';
 import { imageInsert } from '../../modules/createFormData'
 import { io } from "socket.io-client";
 import './chat.scss'
-
 import { apiPost } from '../../modules/api';
 import { authData } from '../../store/slices/auth-slice';
 
-
+import HeaderTop from "./header";
+type props = {
+  screenMode: boolean
+}
 const Wraps = styled.div`
 // border:1px solid black;
 width:400px;
@@ -79,7 +81,7 @@ user-select:none;
 
 //   // textWrap: 'wrap', width: "150px", height: "10px", background: 'yellow', position: 'absolute'
 //   `
-const Chat = () => {
+const Chat: React.FC<props> = ({ screenMode }) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   // const { userData } = useSelector(authData)
   const { chatting } = useSelector(formSelector)
@@ -189,22 +191,16 @@ const Chat = () => {
     const result = await axios(`http://127.0.0.1:3000/chat/searchByDay?startDay=${day.startDay}&endDay=${day.endDay}`)
     setChats([])
     setChats(result.data)
-
   }
   useEffect(() => {
     if (chatting.visible) {
-
-
       chatInit()
-
-
-
       // alert('채팅창 열림')
     }
   }, [chatting.visible])
   return (
-    <div>
-      {chatting.visible && <Wraps>
+    <div>{chatting.visible || screenMode ? 'width:true' : 'width:false'}
+      {(chatting.visible || screenMode) && <Wraps>
         <div {...chattingPos()} style={{
           color: 'black',
           position: 'fixed',
@@ -222,12 +218,12 @@ const Chat = () => {
           <div style={{ maxWidth: "100%", background: "lightyellow", border: "1px solid black", padding: "10px", marginTop: "2em" }}>
 
 
-
             <WrapChat ref={scrollRef} onClick={() => {
               if (rise)
                 riseUp()
             }}>
               <div className="chats" >
+                {screenMode && <HeaderTop />}
                 {chats?.map((message, index) => {
 
                   // console.log('message.name', message.name, 'auth.name:', user?.name)

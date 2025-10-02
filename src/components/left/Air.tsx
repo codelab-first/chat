@@ -13,16 +13,19 @@ const Wraps = styled.div`
   align-items: stretch;
   overflow: hidden;
   flex:1;
+  @media (max-width:860px){
+    display:none;
+  }
 `
 interface AirProps {
   selectedStation?: string | null,
-  screenMode: string
+
 }
 
-const Air: React.FC<AirProps> = ({ selectedStation, screenMode }) => {
+const Air: React.FC<AirProps> = ({ selectedStation }) => {
   return (
     <Wraps>
-      {screenMode === "full" && <AirWidget selectedStation={selectedStation} />}
+      <AirWidget selectedStation={selectedStation} />
     </Wraps>
   )
 }
