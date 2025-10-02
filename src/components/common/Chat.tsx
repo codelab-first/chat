@@ -133,7 +133,7 @@ const Chat = () => {
           position: 'fixed',
           top: chatting.position.y,
           left: chatting.position.x,
-          zIndex: 2,
+          zIndex: 2000,
           textAlign: 'center',
           boxSizing: 'border-box',
 
