@@ -1,15 +1,34 @@
-import React, { useState } from "react";
+import { useEffect } from 'react';
 import styled from '@emotion/styled'
-import { Link, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { authData, authActions } from '../../store/slices/auth-slice'
+import { Link } from 'react-router-dom';
+import { apiPost } from '../../modules/api';
+import Button from '../common/Button';
+import { tokenActions } from '../../store/slices/token-slice';
+import { io } from 'socket.io-client'
+import { ApiResponse } from '../../modules/api';
 
 type Props = {
   form: "login" | "join";
 }
+
 const StyledInput = styled.input`
-  width:100%;
-  padding:.5em;
-  margin-top:1em;
+  width: 100%;
+  padding: 0.7em 1em;
+  margin-top: 1em;
+  border: 1px solid #ccc;
+  border-radius: 2em;
+  outline: none;
+  font-size: 1rem;
+  transition: 0.3s ease;
+  &:focus {
+    border-color: #1b9135ff;
+    background: rgba(255, 255, 255, 0.6);
+  }
 `
+
 const StyledButton = styled.button`
   border:none;
   padding:.5em 1em;
@@ -20,92 +39,100 @@ const StyledButton = styled.button`
   color:white;
   transition:.5s;
   font-size:1rem;
+  border-radius: 2em;
   &:hover{
     background:gray;
     color:black;
   }
 `
+
 const AuthForm: React.FC<Props> = ({ form = "login" }) => {
-  // 입력값 상태 관리
-  const [inputs, setInputs] = useState({
-    email: "",
-    password: "",
-    name: "",
-  });
-  const navigate = useNavigate(); // 추가
+  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const { success, message, loginData, joinData } = useSelector(authData)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setInputs(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    console.log("변경됨:", name, value);   // ✅ 강제 로그 찍기
+    dispatch(authActions.changeField({ form, key: name, value }))
   };
 
-  // 버튼 클릭 시 서버로 데이터 전송
-  const onSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const join = async () => {
+    console.log("joinData", joinData)
+    if (joinData.email === '' || joinData.name === '' || joinData.password === '') return;
+    try {
+      const rs = await apiPost<{ email: string, name: string, password: string }, { success: string }>(
+        "http://localhost:3000/auth/join", 
+        { email: joinData.email, name: joinData.name, password: joinData.password }
+      );
 
-    if (form === "join") {
-      const res = await fetch("http://localhost:4000/api/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: inputs.email,
-          password: inputs.password,
-          name: inputs.name,
-        }),
-      });
-      const result = await res.json();
-      alert(result.message);
-    } else {
-      const res = await fetch("http://localhost:4000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: inputs.email,
-          password: inputs.password,
-        }),
-      });
-      const result = await res.json();
-      if (result.success) {
-        alert("로그인 성공!");
-        localStorage.setItem("currentUser", JSON.stringify(result.user));
-        navigate("/home");
-      } else {
-        alert(result.message);
+      if (rs?.success === "OK") {
+        dispatch(authActions.joinSuccess({ success: 'OK', joinData }))
+        navigate('/')
       }
+    } catch (e) { }
+  }
+
+  const login = async () => {
+    if (loginData.email === '' || loginData.password === '') return;
+    const rs = await apiPost<
+      { email: string, password: string },
+      ApiResponse<{ success: string, data: { user: { id: number, name: string }, accessToken: string, refreshToken: string } }>
+    >("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
+
+    if (rs?.success === "OK") {
+      navigate('/home')
+      dispatch(authActions.loginSuccess(rs))
+      dispatch(tokenActions.setToken(rs))
+      dispatch(authActions.initForm('login'))
+    } else {
+      dispatch(authActions.loginFailure(rs))
+      dispatch(tokenActions.initToken())
     }
-  };
+  }
+
+  const onLogin = (e: any) => {
+    if (e.key === 'Enter') {
+      login()
+    }
+  }
 
   return (
-    <form onSubmit={onSubmit}>
+    <>
       {form === "join" && (
         <StyledInput
           name="name"
-          value={inputs.name}
+          type="text"
+          value={joinData.name}
           onChange={onChange}
-          placeholder='Input Nickname'
+          placeholder='이름을 입력해주세요'
+          autoComplete='none'
         />
       )}
       <StyledInput
         name="email"
-        value={inputs.email}
+        type="text"
+        value={form === 'login' ? loginData.email : joinData.email}
         onChange={onChange}
-        placeholder='Input Email'
+        placeholder='아이디를 입력해주세요'
+        autoComplete='none'
+        onKeyDown={onLogin}
       />
       <StyledInput
-        name="password"
+        name="password"   // ✅ 오타 없애고 정확히 password
         type="password"
-        value={inputs.password}
+        value={form === 'login' ? loginData.password : joinData.password}
         onChange={onChange}
-        placeholder='Input Password'
+        placeholder='비밀번호를 입력해주세요'
+        onKeyDown={onLogin}
       />
-      <StyledButton type="submit">{form !== "login" ? "회원가입" : "로그인"}</StyledButton>
+      {form === "login" 
+        ? <Button width="30%" color="white" bgcolor="#1b9135ff" onClick={login}>Login</Button> 
+        : <Button width="100%" color="white" bgcolor="darkcyan" onClick={join}>회원가입</Button>}
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
         {form === "login" ? <Link to='/join'>회원가입</Link> : <Link to='/'>로그인</Link>}
       </div>
-    </form>
+    </>
   );
 };
 
