@@ -46,6 +46,9 @@ overflow-y:scroll;
 @media (max-width:860px){
 height:360px;
 }
+@media (max-width:860px){
+height:360px;
+}
 
 
 
