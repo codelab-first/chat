@@ -18,7 +18,8 @@ padding:2em 1.5em;
 position:fixed;
 @media(max-width:860px){
 position:absolute;
-// display:none
+top:19em;
+width:90%;
 }
 @media (max-width: 1200px) { 
   max-width:100%;
@@ -37,6 +38,7 @@ cursor:pointer;
 display:flex;
 justify-content:center;
 align-items:center;
+
 `
 const LoginStatus = styled(Link)``
 

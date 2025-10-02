@@ -23,6 +23,9 @@ const Wraps = styled.div`
 width:400px;
 padding:1em;
 position:relative;
+@media (max-width:860px){
+width:100%;
+}
 `
 const WrapSearch = styled.div`
 margin:0 auto;
@@ -201,7 +204,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
   return (
     <div>{chatting.visible || screenMode ? 'width:true' : 'width:false'}
       {(chatting.visible || screenMode) && <Wraps>
-        <div {...chattingPos()} style={{
+        {!screenMode && <div {...chattingPos()} style={{
           color: 'black',
           position: 'fixed',
           top: chatting.position.y,
@@ -211,18 +214,21 @@ const Chat: React.FC<props> = ({ screenMode }) => {
           boxSizing: 'border-box',
 
         }}>
-          <div style={{ width: '480px', padding: '2rem 0', userSelect: 'none' }}></div>
-        </div>
-        <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1, }}>
 
-          <div style={{ maxWidth: "100%", background: "lightyellow", border: "1px solid black", padding: "10px", marginTop: "2em" }}>
+          {screenMode ? <div style={{ width: `370px`, padding: '2rem 0', userSelect: 'none', background: 'transparent' }}></div> :
+            <div style={{ width: `420px`, padding: '2rem 0', userSelect: 'none', background: 'transparent' }}></div>}
+
+        </div>}
+        <div className='chat_outline' style={{ top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
+
+          <div className='chat_inline'  style={{ maxWidth: "100%", background: "lightyellow", border: "1px solid red", padding: "10px"}}>
 
 
             <WrapChat ref={scrollRef} onClick={() => {
               if (rise)
                 riseUp()
             }}>
-              <div className="chats" >
+              <div className="chats">
                 {screenMode && <HeaderTop />}
                 {chats?.map((message, index) => {
 
