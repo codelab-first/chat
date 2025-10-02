@@ -1,19 +1,37 @@
-.chat.right {
-  width: 150px;
-  margin-left: auto;
-  margin-right: 0.3em;
+.chat {
+  margin: 6px 0;
+  padding: 0;
+  clear: both;
+  max-width: 70%;
+  word-wrap: break-word;
 
-  // overflow-wrap: break-word;
+  &.left {
+    float: left;
+    text-align: left;
+    margin-left: 8px; /* 왼쪽 메시지 여백 */
+  }
+
+  &.right {
+    float: right;
+    text-align: right;
+    margin-right: 8px; /* 오른쪽 메시지 여백 */
+  }
+
+  &.center {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    float: none;
+  }
 }
-.chat.left {
-  width: 150px;
-  margin-right: auto;
-  margin-left: 0.5em;
-  // overflow-wrap: break-word;
+
+.username {
+  font-size: 0.8em;
+  color: gray;
+  margin-bottom: 0.3em;
+  clear: both;
 }
-.chat.center {
-  left: 50%;
-}
+
 div.rise {
   transition: 1.5s;
   transform: rotate(360deg);
