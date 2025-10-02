@@ -63,6 +63,11 @@ div.menu {
   bottom: 58px;
   opacity: 0.5;
   z-index: 2;
+  @media (max-width: 860px) {
+    left: 65px;
+    width: 82%;
+    bottom: 74px;
+  }
 }
 div.menu.up {
   height: 300px;
