@@ -20,7 +20,7 @@ const AuthForm = styled.div`
 
 const WhiteBox = styled.div`
   width: 22em;
-  padding: 0.625em;
+  padding: 2em 2em 1.5em; 
   background: rgba(255, 255, 255, 0.5); 
   border-radius: 0.8em;                 
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); 
