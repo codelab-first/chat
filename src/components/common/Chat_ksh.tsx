@@ -34,6 +34,9 @@ height:500px;
 background:white;
 box-shadow: 0px 4px 12px rgba(0,0,0,0.15); 
 overflow-y:scroll;
+@media (max-width:860px){
+height:360px;
+}
 `
 const WrapControl = styled.div`
 margin:0 auto;
