@@ -47,8 +47,6 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     typeof currentNearestStation | null
   >(null)
 
-  const [isManuallySelected, setIsManuallySelected] = useState(false)
-
   const displayStation = initNearestStation || currentNearestStation
 
   // const nearestStation = useNearStation(currentNearestStation, locations)
@@ -76,17 +74,11 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   }, [initNearestStation, currentNearestStation, setSelectedStation])
 
   useEffect(() => {
-    if (isManuallySelected) return
     // 사용자가 지도를 클릭해서 선택한 측정소가 있으면 변경하지 않습니다.
     if (!displayStation?.title) return
     setSelectedStation(displayStation.title)
     console.log("가장 가까운 측정소:", displayStation.title)
-  }, [displayStation, setSelectedStation, isManuallySelected])
-
-  const handleMarkerClick = (stationName: string) => {
-    setIsManuallySelected(true)
-    setSelectedStation(stationName)
-  }
+  }, [displayStation, setSelectedStation])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
 
@@ -176,22 +168,12 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
               console.log("현재 위치로 이동")
               refetch()
 
-<<<<<<< HEAD
               if (map && position) {
                 map.panTo(
                   new (window as any).kakao.maps.LatLng(
                     position.lat,
                     position.lng
                   )
-=======
-            setIsManuallySelected(false)
-
-            if (map && position) {
-              map.panTo(
-                new (window as any).kakao.maps.LatLng(
-                  position.lat,
-                  position.lng
->>>>>>> ec41ababe1c75f72f337087ee21a1392da311358
                 )
               }
               if (initNearestStation?.title) {
