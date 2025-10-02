@@ -6,7 +6,7 @@ interface LatLng {
 }
 
 interface Station {
-  stationName: string;
+  title: string;
   latlng: LatLng;
   // airData: any;
 }

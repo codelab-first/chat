@@ -32,5 +32,5 @@ export default function useMapResize() {
     };
   }, [map]);
 
-  return { setMap, containerRef };
+  return { map, setMap, containerRef };
 }
