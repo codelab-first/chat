@@ -115,7 +115,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
         top: 0,
         backgroundColor: "white",
         padding: "1em 0",
-        zIndex: 1000,
+        zIndex: 1,
         borderBottom: "1px solid #ccc",
       }}
     >
