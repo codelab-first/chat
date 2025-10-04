@@ -7,13 +7,12 @@
 
   &.left {
     float: left;
-    text-align: left;
     margin-left: 8px; /* 왼쪽 메시지 여백 */
   }
 
   &.right {
     float: right;
-    text-align: right;
+    text-align: left;
     margin-right: 8px; /* 오른쪽 메시지 여백 */
   }
 
@@ -36,6 +35,22 @@ div.rise {
   transition: 1.5s;
   transform: rotate(360deg);
 }
+.chat_outline {
+  position: fixed;
+  width: 400px;
+  @media (max-width: 860px) {
+    position: static;
+    width: 100%;
+    margin-left: 0;
+    // margin-bottom: auto;
+  }
+}
+.chat_outline {
+  margin-top: 2em;
+  @media (max-width: 860px) {
+    margin-top: 20em;
+  }
+}
 div.menu {
   padding: 0 10px;
   width: 80%;
@@ -48,6 +63,11 @@ div.menu {
   bottom: 58px;
   opacity: 0.5;
   z-index: 2;
+  @media (max-width: 860px) {
+    left: 65px;
+    width: 82%;
+    bottom: 74px;
+  }
 }
 div.menu.up {
   height: 300px;
