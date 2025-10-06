@@ -25,9 +25,11 @@ const Wraps = styled.div`
 width:400px;
 padding:1em;
 position:relative;
+
 //추가
 @media (max-width:860px){
 width:100%;
+
 }
 `
 const WrapSearch = styled.div`
@@ -43,6 +45,7 @@ height:500px;
 background:white;
 box-shadow: 0px 4px 12px rgba(0,0,0,0.15); 
 overflow-y:scroll;
+
 //추가
 @media (max-width:860px){
 height:360px;

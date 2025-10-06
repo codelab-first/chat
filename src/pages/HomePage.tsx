@@ -44,14 +44,15 @@ const HomePage = () => {
 
   const onClick = () => { dispatch(formActions.toggle_form({ form: 'chatting', value: !chatting.visible })) }
   const [width, setWidth] = useState(false);
-  // useEffect(() => {
-  //   console.log(window.innerWidth)
-  // }, [screen.width])
+  useEffect(() => {
+    updateWidth();
+  }, [])
 
   const updateWidth = () => {
     const width = window.innerWidth;
     if (width < 860) {
       setWidth(true)
+      dispatch(formActions.mobilePosoiton())
     } else {
       setWidth(false)
     }
@@ -64,7 +65,7 @@ const HomePage = () => {
 
         <Air selectedStation={selectedStation} />
 
-        <Map setSelectedStation={setSelectedStation} screenMode={width}/>
+        <Map setSelectedStation={setSelectedStation} screenMode={width} />
         {/* <Chat screenMode={width} /> */}
       </WrapperData>
       <div>

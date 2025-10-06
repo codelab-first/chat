@@ -39,18 +39,18 @@ div.rise {
   position: fixed;
   width: 400px;
   @media (max-width: 860px) {
-    position: static;
+    // position: static;
     width: 100%;
-    margin-left: 0;
+    // margin-left: 0;
     // margin-bottom: auto;
   }
 }
-.chat_outline {
-  margin-top: 2em;
-  @media (max-width: 860px) {
-    margin-top: 20em;
-  }
-}
+// .chat_outline {
+//   margin-top: 2em;
+//   @media (max-width: 860px) {
+//     margin-top: 20em;
+//   }
+// }
 div.menu {
   padding: 0 10px;
   width: 80%;

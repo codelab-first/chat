@@ -4,7 +4,7 @@ import JoinPage from './pages/JoinPage.tsx';
 import LoginPage from './pages/LoginPage.tsx';
 // import AirPage from './pages/AirPage.tsx';
 // import WeatherPage from './pages/WeatherPage.tsx'
-import Nav from './components/common/nav.tsx';
+// import Nav from './components/common/nav.tsx';
 import styled from "@emotion/styled"
 import Header from './components/common/header.tsx'
 import { tokenData } from './store/slices/token-slice.ts';
@@ -46,7 +46,7 @@ const App = () => {
         <Header />
       </WrapHeader>
 
-      <Nav />
+      {/* <Nav /> */}
       <Routes>
         <Route path='/' element={<LoginPage />} />
         <Route path='/join' element={<JoinPage />} />
