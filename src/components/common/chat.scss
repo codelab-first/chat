@@ -35,6 +35,7 @@ div.rise {
   transition: 1.5s;
   transform: rotate(360deg);
 }
+<<<<<<< HEAD
 .chat_outline {
   position: fixed;
   width: 400px;
@@ -48,6 +49,8 @@ div.rise {
 //     margin-top: 20em;
 //   }
 // }
+=======
+>>>>>>> dev
 div.menu {
   padding: 0 10px;
   width: 80%;
@@ -60,11 +63,6 @@ div.menu {
   bottom: 58px;
   opacity: 0.5;
   z-index: 2;
-  @media (max-width: 860px) {
-    left: 65px;
-    width: 82%;
-    bottom: 74px;
-  }
 }
 div.menu.up {
   height: 300px;

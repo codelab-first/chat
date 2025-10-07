@@ -30,7 +30,6 @@ color:black;
 `
 const WrappLogo = styled.div`
 
-
 `
 const LoginStatus = styled(Link)``
 
