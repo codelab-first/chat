@@ -3,40 +3,34 @@ import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
 import { tokenData, tokenActions } from '../../store/slices/token-slice';
 import Logo from '../../../public/images/logo0.gif'
-import Logo1 from '../../../public/images/logo1.gif'
-import Logo2 from '../../../public/images/logo2.gif'
-import Logo3 from '../../../public/images/logo3.gif'
+
 const WrapperHeader = styled.div`
 display:flex;
 justify-content:space-between;
 align-items:center;
 color:black;
 width:1200px;
-top:0;
 margin:0 auto;
-padding:2em 1.5em;
-position:fixed;
+padding:1em 1.5em;
+position:relatived;
+top:0;
 @media(max-width:860px){
-position:absolute;
-// display:none
+  position:absolute;
+  top:-20px;
+  left:0;
+  color:red;
+  align-items:flex-start;
 }
 @media (max-width: 1200px) { 
-  max-width:100%;
+// background:yellow;
+width:100%;
 color:black;
 } 
+
 `
 const WrappLogo = styled.div`
-width:80px;
-height:80px;
-border-radius:50%;
-transition:1s;
-background:white;
-transform:rotate(360deg);
-cursor:pointer;
 
-display:flex;
-justify-content:center;
-align-items:center;
+
 `
 const LoginStatus = styled(Link)``
 
@@ -54,9 +48,9 @@ const Header = () => {
 
   return (
     <WrapperHeader>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <WrappLogo style={{ position: 'absolute', top: '10px' }}><img src={Logo} width="100px" /></WrappLogo>
-      </div>
+
+      <WrappLogo ><img src={Logo} width="100px" /></WrappLogo>
+
       <div>
         {user && user.name && (
           <span style={{ marginRight: "1em" }}>{user.name}님</span>

@@ -213,8 +213,8 @@ const Chat: React.FC<props> = ({ screenMode }) => {
             // marginTop: "2em"
           }}>
             <WrapChat ref={scrollRef} onClick={() => { if (rise) riseUp() }}>
+              {screenMode && <HeaderTop />}
               <div className="chats" style={{ position: 'relative' }}>
-                {screenMode && <HeaderTop />}
                 {chats?.map((message, index) => (
                   <div key={index}>
                     <div className='username' style={{ marginTop: "1.5em", marginLeft: ".3em", fontSize: '.8em', color: 'gray' }}>
