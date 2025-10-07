@@ -13,15 +13,35 @@ interface MarkerLocation {
   // condition: "good" | "normal" | "bad" | "terrible" | "unknown"
 }
 
-const useGetLocations = () => {
+interface MapBounds {
+  sw: { lat: number; lng: number }
+  ne: { lat: number; lng: number }
+}
+
+const useGetLocations = (bounds: MapBounds | null, initialPosition: { lat: number; lng: number } | null) => {
   const [locations, setLocations] = useState<MarkerLocation[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
   useEffect(() => {
     const getLocation = async () => {
+      if (!bounds) {
+        setDataLoading(false)
+        return
+      }
+
+      setDataLoading(true)
+      setError(null)
+
       try {
-        const response = await axios.get("http://localhost:3000/api/positions")
+        const response = await axios.get("http://localhost:3000/api/positions", {
+          params: {
+            sw_lat: bounds.sw.lat,
+            sw_lng: bounds.sw.lng,
+            ne_lat: bounds.ne.lat,
+            ne_lng: bounds.ne.lng
+          }
+        })
         console.log("response", response.data)
 
         if (Array.isArray(response.data)) {
@@ -34,19 +54,20 @@ const useGetLocations = () => {
           )
           setLocations(mapLocations)
         } else {
-          console.error("Invalid data format: Expected an array", response.data)
+          console.error("데이터 형식이 잘못되었습니다.", response.data)
           setLocations([])
         }
-
-        setDataLoading(false)
       } catch (error) {
-        console.error("Error getting data:", error)
+        console.error("데이터를 가져오는 중 오류 발생:", error)
+        setError(error as Error)
+        setLocations([])
+      } finally {
         setDataLoading(false)
       }
     }
 
     getLocation()
-  }, [])
+  }, [bounds, initialPosition])
 
   return { locations, dataLoading, error }
 }

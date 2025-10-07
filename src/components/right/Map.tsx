@@ -5,17 +5,28 @@ import MapApp from "../../app/map/MapApp"
 
 const Wraps = styled.div`
   border: 1px solid black;
-  width: 50%;
+  // width: 0%;
   height: 70vh;
   // display: flex;
   justify-content: center;
   align-items: center;
-  flex:1;
+  flex: 1;
+  @media (max-width:860px){
+    position:fixed;
+    top:0;
+    width:100%;
+    }
 `
-const Map = () => {
+
+interface MapProps {
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
+  , screenMode: boolean
+}
+
+const Map = ({ setSelectedStation, screenMode }: MapProps) => {
   return (
     <Wraps>
-      <MapApp />
+      <MapApp setSelectedStation={setSelectedStation} screenMode={screenMode} />
     </Wraps>
   )
 }

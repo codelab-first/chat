@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import useKakaoApi from "../components/api/useKakaoApi";
+import { api } from "../modules/api";
 
 interface LocationState {
   position : { lat: number; lng: number };
@@ -7,6 +8,7 @@ interface LocationState {
   region: string;
   loading: boolean;
   error: string | null;
+  refetch: () => void;
 }
 
 const DEFAULT_POSITION = {
@@ -21,8 +23,9 @@ export default function useCurrentLocation(): LocationState {
   const [region, setRegion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [fetchTrigger, setFetchTrigger] = useState<number>(0);
 
-  useEffect(() => {
+  const fetchLocation = useCallback(() => {
     if (apiLoading) {
       setLoading(false);
       setError("카카오맵 API 로딩 중...");
@@ -46,36 +49,26 @@ export default function useCurrentLocation(): LocationState {
       (pos) => {
         const { latitude, longitude } = pos.coords;
         console.log("현재 위치 좌표:", latitude, longitude);
-        
-        // 좌표를 주소로 변환
+
+        setPosition({ lat: latitude, lng: longitude });
+
         if (window.kakao && window.kakao.maps.services) {
-          const geocoder = new window.kakao.maps.services.Geocoder();
-          geocoder.coord2Address(longitude, latitude, (result, status) => {
-            if (status === window.kakao.maps.services.Status.OK) {
+          const geocoder = new (window as any).kakao.maps.services.Geocoder(); // window.kakao 타입 캐스팅
+          geocoder.coord2Address(longitude, latitude, (result: any, status: any) => {
+            if (status === (window as any).kakao.maps.services.Status.OK) {
               const region = result[0].address;
               if (region) {
                 setAddress(region.address_name);
                 const { region_1depth_name: city, region_2depth_name: district, region_3depth_name: town } = region;
                 const regionAddress = `${city} ${district} ${town}`;
                 setRegion(regionAddress);
-
-                // 읍면동주소를 좌표로 변환
-                geocoder.addressSearch(regionAddress, (res: any, stat: string) => {
-                  if (stat === window.kakao.maps.services.Status.OK) {
-                    const cityCoordinate = res[0];
-                    const {y: cityLat, x: cityLng} = cityCoordinate;
-                    console.log("지역 좌표:", cityLat, cityLng);
-                    setPosition({ lat: cityLat, lng: cityLng });
-                  } else {
-                  setError("지역 좌표를 찾지 못했습니다.");
-                  }
-                  setLoading(false);
-              });
               } else {
                 setError("주소를 찾지 못했습니다.");
-                setLoading(false);
               }
+            } else {
+              setError("주소 변환에 실패했습니다.");
             }
+            setLoading(false);
           });
         } else {
           setError("카카오맵 API가 로드되지 않았습니다.");
@@ -89,5 +82,13 @@ export default function useCurrentLocation(): LocationState {
     );
   }, [apiLoading, apiError]);
 
-  return { position, address, region, loading, error };
+  const refetch = useCallback(() => {
+    setFetchTrigger((prev) => prev + 1);
+  }, []);
+
+  useEffect(() => {
+    fetchLocation();
+  }, [fetchLocation, fetchTrigger]);
+
+  return { position, address, region, loading, error, refetch };
 }

@@ -3,6 +3,8 @@ import styled from "@emotion/styled"
 import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
 import { useDrag } from '@use-gesture/react';
+
+
 const Wraps = styled.div`
   border: 1px solid black;
   max-width: 500px;
@@ -127,18 +129,25 @@ const Chat = () => {
   const chattingPos = useDrag(params => { changePosition('chatting', { x: params.offset[0] + 250, y: params.offset[1] + 300 }) })
   return (
     <>
+
+
       {chatting.visible && <Wraps>
         <div {...chattingPos()} style={{
           color: 'black',
           position: 'fixed',
           top: chatting.position.y,
           left: chatting.position.x,
-          zIndex: 2,
+          zIndex: 2000,
           textAlign: 'center',
           boxSizing: 'border-box',
 
         }}>
-          <div style={{ width: '450px', padding: '1rem', userSelect: 'none', background: "yellow" }}></div>
+          <div style={{ width: '450px', padding: '1rem', userSelect: 'none', background: "yellow" }}>
+
+
+
+          </div>
+          
         </div>
         <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
 
@@ -187,6 +196,7 @@ const Chat = () => {
             <PhotoButton onClick={handlePhoto}>사진</PhotoButton>
           </InputArea>
         </div>
+   
       </Wraps>}
     </>
   )

@@ -8,22 +8,22 @@ import { apiPost } from '../../modules/api';
 import Button from '../common/Button';
 import { tokenActions } from '../../store/slices/token-slice';
 import { io } from 'socket.io-client'
+import { ApiResponse } from '../../modules/api';
 type Props = {
   form: "login" | "join";
 }
 const StyledInput = styled.input`
-  width:100%;
-  padding:.5em;
-  margin-top:1em;
-  border:none;
-  outline:none;
-  border:1px solid black;
-  cursor:pointer;
-  &:focus{
-  background:rgba(200,200,200,0.4)
-  // ::placeholder{
-  // color:white;
-  // }
+  width: 100%;
+  padding: 0.7em 1em;
+  margin-top: 1em;
+  border: 1px solid #ccc;
+  border-radius: 2em;
+  outline: none;
+  font-size: 1rem;
+  transition: 0.3s ease;
+  &:focus {
+    border-color: #1b9135ff;
+    background: rgba(255, 255, 255, 0.6);
   }
 `
 
@@ -70,9 +70,10 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   }
   const login = async () => {
     if (loginData.email === '' || loginData.password === '') return;
-    console.log("loginData", loginData)
-    const rs = await apiPost<{ email: string, password: string }, { success: string, data: { user: { id: number, name: string }, accessToken: string, refreshToken: string } }>("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
-    // console.log(rs)
+    const rs = await apiPost<
+      { email: string, password: string },
+      ApiResponse<{ success: string, data: { user: { id: number, name: string }, accessToken: string, refreshToken: string } }>
+    >("http://localhost:3000/auth/login", { email: loginData.email, password: loginData.password });
     if (rs?.success === "OK") {
       navigate('/home')
       dispatch(authActions.loginSuccess(rs))
@@ -85,13 +86,20 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       // socket.on('connect', () => {
       //   console.log('Socket.IO 서버에 연결되었습니다.')
       // })
+    } else {
+
+      dispatch(authActions.loginFailure(rs))
+      dispatch(tokenActions.initToken())
+
     }
   }
 
+  const onLogin = (e: any) => {
+    if (e.key === 'Enter') {
+      login()
+    }
+  }
 
-  useEffect(() => {
-    // dispatch(authActions.initForm(form))
-  }, [])
   return (
     <>
       {form === "join" && (
@@ -100,26 +108,27 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
           type="text"
           value={joinData.name}
           onChange={onChange}
-          placeholder='Input Nickname'
+          placeholder='이름을 입력해주세요'
           autoComplete='none'
         />
       )}
       <StyledInput
         name="email"
-        type="text"
         value={form === 'login' ? loginData.email : joinData.email}
         onChange={onChange}
-        placeholder='Input Email'
+        placeholder='아이디를 입력해주세요'
         autoComplete='none'
+        onKeyDown={onLogin}
       />
       <StyledInput
         name="password"
         type="password"
         value={form === 'login' ? loginData.password : joinData.password}
         onChange={onChange}
-        placeholder='Input Password'
+        placeholder='비밀번호를 입력해주세요'
+        onKeyDown={onLogin}
       />
-      {form === "login" ? <Button width="100%" color="white" bgcolor="darkcyan" onClick={login}>로그인</Button> : <Button width="100%" color="white" bgcolor="darkcyan" onClick={join}>회원가입</Button>}
+      {form === "login" ? <Button width="30%" color="white" bgcolor="#1b9135ff" onClick={login}>Login</Button> : <Button width="100%" color="white" bgcolor="darkcyan" onClick={join}>회원가입</Button>}
       <div style={{ textAlign: "right", color: "orange", marginTop: '.5em' }}>
         {form === "login" ? <Link to='/join'>회원가입</Link> : <Link to='/'>로그인</Link>}
       </div>

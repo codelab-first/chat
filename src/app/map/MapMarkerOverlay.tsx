@@ -15,11 +15,24 @@ interface MarkerLocation {
 interface MapMarkerOverlayProps {
   visibleMarkers: MarkerLocation[]
   onMarkerClick: (latlng: LatLng) => void
+  setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
 }
+
+
+
+
+
+
+
+
+
+
+
 
 const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
   visibleMarkers,
   onMarkerClick,
+  setSelectedStation,
 }) => {
   return (
     <>
@@ -31,6 +44,7 @@ const MapMarkerOverlay: React.FC<MapMarkerOverlayProps> = ({
             clickable={true}
             onClick={() => {
               onMarkerClick(marker.latlng)
+              setSelectedStation(marker.title)
             }}
             // image={
             //   {
