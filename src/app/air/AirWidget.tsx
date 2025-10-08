@@ -17,7 +17,7 @@ export default function AirWidget({ selectedStation }: AirWidgetProps) {
       ) : (
         <AirLocal
           onShowApp={() => setIsAppView(true)}
-          selectedStation={selectedStation}
+          selectStation={selectedStation}
         />
       )}
     </div>
