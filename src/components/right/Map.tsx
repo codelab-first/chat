@@ -4,12 +4,10 @@ import styled from "@emotion/styled"
 import MapApp from "../../app/map/MapApp"
 
 const Wraps = styled.div`
-  border: 1px solid black;
-  // width: 0%;
+  border-radius:12px;
+  background:white;
   height: 70vh;
-  // display: flex;
-  justify-content: center;
-  align-items: center;
+
   flex: 1;
   @media (max-width:860px){
     position:fixed;

@@ -49,7 +49,7 @@ overflow-y:scroll;
 
 //추가
 @media (max-width:860px){
-height:360px;
+height:300px;
 }
 `
 const WrapControl = styled.div`
