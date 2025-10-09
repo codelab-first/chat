@@ -8,6 +8,7 @@ import { store, persistor } from './store'
 import { PersistGate } from "redux-persist/integration/react"
 import AlertProvider from "./providers/AlertProvider.tsx"
 import ErrorProvider from "./providers/ErrorProvider.tsx"
+import AirDataProvider from "./providers/AirDataProvider.jsx"
 import { ErrorBoundary } from "react-error-boundary"
 import ErrorFallback from "./components/common/ErrorFallBack.tsx"
 const queryClient = new QueryClient({
@@ -25,11 +26,13 @@ createRoot(document.getElementById("root")!).render(
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
           <AlertProvider>
-            <BrowserRouter>
-              <QueryClientProvider client={queryClient}>
-                <App />
-              </QueryClientProvider>
-            </BrowserRouter>
+            <AirDataProvider>
+              <BrowserRouter>
+                <QueryClientProvider client={queryClient}>
+                  <App />
+                </QueryClientProvider>
+              </BrowserRouter>
+            </AirDataProvider>
           </AlertProvider>
         </PersistGate>
       </Provider>

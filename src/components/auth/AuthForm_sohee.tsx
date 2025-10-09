@@ -49,6 +49,7 @@ const RoundedButton = styled.button<{ bgcolor?: string, fullWidth?: boolean }>`
 `;
 
 const AuthForm: React.FC<Props> = ({ form = "login" }) => {
+
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const { success, message, loginData, joinData } = useSelector(authData)
