@@ -81,7 +81,7 @@ const Header = () => {
     navigate("/"); // 로그아웃 후 로그인 페이지로 이동 (필요시)
   };
   const dispatch = useDispatch();
-  const { airDatas } = useContext(AirDataContext)
+  const { airDatas, airLocal } = useContext(AirDataContext)
   const { chatting } = useSelector(formSelector)
 
   const onClick = () => { dispatch(formActions.toggle_form({ form: 'chatting', value: !chatting.visible })) }
@@ -93,6 +93,7 @@ const Header = () => {
 
       <WrappLogo ><img src={Logo} width="100px" /></WrappLogo>
 
+        {airLocal ? airLocal : '없음'}
       <WrappUser>
         {user && user.name && (
           <span style={{ marginRight: "1em" }}>{user.name}님</span>

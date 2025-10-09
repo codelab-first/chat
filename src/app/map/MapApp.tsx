@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, use } from "react"
+import React, { useState, useEffect, useRef, useCallback, useContext } from "react"
 import {
   CustomOverlayMap,
   Map,
@@ -14,9 +14,9 @@ import useMapResize from "./hooks/useMapResize"
 import useGetLocations from "./hooks/useGetLocations"
 
 import useKakaoApi from "./../../components/api/useKakaoApi"
-
 import MapMarkerOverlay from "./MapMarkerOverlay"
 import MapClickHandler from "./MapClickHandler"
+import { AirDataContext } from "../../providers/AirDataProvider"
 
 interface MapAppProps {
   setSelectedStation: React.Dispatch<React.SetStateAction<string | null>>
@@ -91,6 +91,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     if (!displayStation?.title) return
 
     setSelectedStation(displayStation.title)
+    setAirLocal('위치:' + address + ',측정소:' + displayStation.title)
     console.log("가장 가까운 측정소:", displayStation.title)
   }, [displayStation?.title, isManuallySelected, setSelectedStation])
 
@@ -112,9 +113,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
             map.setCenter(
               new (window as any).kakao.maps.LatLng(
                 mapCenterRef.current?.getLat() ||
-                  import.meta.env.VITE_DEFAULT_LATITUDE,
+                import.meta.env.VITE_DEFAULT_LATITUDE,
                 mapCenterRef.current?.getLng() ||
-                  import.meta.env.VITE_DEFAULT_LONGITUDE
+                import.meta.env.VITE_DEFAULT_LONGITUDE
               )
             )
           }
@@ -167,14 +168,18 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   ])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
-
+  const { setAirLocal } = useContext(AirDataContext)
+  useEffect(() => {
+    console.log('address', address)
+    setAirLocal(address)
+  }, [])
   if (apiLoading || locationLoading) return <div>로딩중...</div>
   if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
 
   return (
     // Map 내부에서 loading 상태를 관찰하고 있기 때문에 conditional rendering를 하지 않아도 됩니다.
     <>
-      <div style={{ margin: "0.75em 0" }}>
+      {/* <div style={{ margin: "0.75em 0" }}>
         {!screenMode && (
           <>
             <strong>현재 위치: </strong> {address}
@@ -185,7 +190,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
             )}
           </>
         )}
-      </div>
+      </div> */}
       <div ref={containerRef}>
         <Map
           center={position}
@@ -249,7 +254,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
           />
         </Map>
       </div>
-      {!screenMode && (
+      {/* {!screenMode && (
         <>
           {bounds && (
             <div style={{ marginTop: "1em" }}>
@@ -283,7 +288,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
             )}
           </div>
         </>
-      )}
+      )} */}
     </>
   )
 }
