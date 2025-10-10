@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import styled from '@emotion/styled'
 import { css } from "@emotion/react";
 import Button from './Button'
@@ -12,7 +12,8 @@ import { FaCalendarAlt, FaPaperPlane, FaCamera, FaSearch } from "react-icons/fa"
 import { imageInsert } from '../../modules/createFormData'
 import { io } from "socket.io-client";
 import './chat.scss'
-
+import AirLocal from '../../app/air/AirLocal';
+import { AirDataContext } from '../../providers/AirDataProvider';
 import { authData } from '../../store/slices/auth-slice';
 
 
@@ -146,7 +147,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
-
+  const { airLocal } = useContext(AirDataContext)
   useEffect(() => {
     const socket = io('http://localhost:3000', {
       auth: {
@@ -217,6 +218,9 @@ const Chat: React.FC<props> = ({ screenMode }) => {
             <WrapChat ref={scrollRef} onClick={() => { if (rise) riseUp() }}>
               {screenMode && <HeaderTop />}
               <div className="chats" style={{ position: 'relative' }}>
+
+                <AirLocal selectStation={airLocal} />
+                
                 {chats?.map((message, index) => (
                   <div key={index}>
                     <div className='username' style={{ marginTop: "1.5em", marginLeft: ".3em", fontSize: '.8em', color: 'gray' }}>

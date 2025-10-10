@@ -24,6 +24,7 @@ interface MapAppProps {
 }
 
 const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
+
   const { bounds, updateBounds } = useMapBoundary()
   const {
     position,
@@ -55,7 +56,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   const isProgrammaticMove = useRef(false)
 
   const displayStation = initNearestStation || currentNearestStation
-
+  const { setAirLocal, setRegion } = useContext(AirDataContext)
   // const nearestStation = useNearStation(currentNearestStation, locations)
 
   // const locations = [
@@ -77,6 +78,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     ) {
       setInitNearestStation(currentNearestStation)
       setSelectedStation(currentNearestStation.title)
+      setAirLocal(currentNearestStation.title)
+      // setRegion()
       console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
     }
   }, [
@@ -91,7 +94,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     if (!displayStation?.title) return
 
     setSelectedStation(displayStation.title)
-    setAirLocal('위치:' + address + ',측정소:' + displayStation.title)
+
     console.log("가장 가까운 측정소:", displayStation.title)
   }, [displayStation?.title, isManuallySelected, setSelectedStation])
 
@@ -134,6 +137,8 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     (stationName: string) => {
       setIsManuallySelected(true)
       setSelectedStation(stationName)
+      setAirLocal(stationName)
+
     },
     [setSelectedStation]
   )
@@ -168,11 +173,13 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   ])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
-  const { setAirLocal } = useContext(AirDataContext)
-  useEffect(() => {
-    console.log('address', address)
-    setAirLocal(address)
-  }, [])
+
+  // useEffect(() => {
+  //   if (currentNearestStation) {
+
+  //     setAirLocal(currentNearestStation.title)
+  //   }
+  // }, [])
   if (apiLoading || locationLoading) return <div>로딩중...</div>
   if (apiError) return <div>카카오맵 API 로딩 실패: {apiError.message}</div>
 
