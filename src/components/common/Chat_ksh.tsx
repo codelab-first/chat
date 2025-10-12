@@ -220,7 +220,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
               <div className="chats" style={{ position: 'relative' }}>
 
                 <AirLocal selectStation={airLocal} />
-                
+
                 {chats?.map((message, index) => (
                   <div key={index}>
                     <div className='username' style={{ marginTop: "1.5em", marginLeft: ".3em", fontSize: '.8em', color: 'gray' }}>
@@ -330,7 +330,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
                     transition: "0.3s ease"
                   }}
                 >
-                  <FaSearch /> 검색
+                  <FaSearch />
                 </Button>              </WrapSearch>
             </div>
 
@@ -339,8 +339,8 @@ const Chat: React.FC<props> = ({ screenMode }) => {
               <div
                 onClick={riseUp}
                 style={{
-                  minWidth: "40px",
-                  height: "40px",
+                  minWidth: "35px",
+                  height: "35px",
                   borderRadius: "50%",
                   background: "#ccc",       // 입력창 보더와 같은 회색
                   display: "flex",
@@ -374,7 +374,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
                     cursor: "pointer"
                   }}
                 >
-                  <FaPaperPlane /> 전송
+                  <FaPaperPlane />
                 </button>
 
                 {/* 사진 버튼 (연두색 원) */}

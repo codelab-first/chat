@@ -51,31 +51,34 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
   const [airData, setAirData] = useState<AirData | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const { setAirDatas, setRegion } = useContext(AirDataContext)
+  const { setAirDatas, setRegion, localAirData } = useContext(AirDataContext)
   useEffect(() => {
-    const getAirData = async () => {
-      if (selectStation) {
-        setLoading(true)
-        setError(null)
-        try {
-          const response = await axios.get(
-            `http://localhost:3000/api/air?stationName=${selectStation}`
-          )
-          // console.log('response.data', response.data)
-          setAirData(response.data)
-          setAirDatas(response.data.khaiGrade)
-          setRegion(region)
-        } catch (err) {
-          setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
-          console.error(err)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
+    setAirData(localAirData)
+  }, [])
+  // useEffect(() => {
+  //   const getAirData = async () => {
+  //     if (selectStation) {
+  //       setLoading(true)
+  //       setError(null)
+  //       try {
+  //         const response = await axios.get(
+  //           `http://localhost:3000/api/air?stationName=${selectStation}`
+  //         )
+  //         // console.log('response.data', response.data)
+  //         setAirData(response.data)
+  //         setAirDatas(response.data.khaiGrade)
+  //         setRegion(response.data.sidoName)
+  //       } catch (err) {
+  //         setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
+  //         console.error(err)
+  //       } finally {
+  //         setLoading(false)
+  //       }
+  //     }
+  //   }
 
-    getAirData()
-  }, [selectStation])
+  //   getAirData()
+  // }, [selectStation])
 
   return (
     <>

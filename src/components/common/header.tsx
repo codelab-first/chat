@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,6 +13,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons"
 import { AirDataContext } from '../../providers/AirDataProvider'
 import { formSelector, formActions } from '../../store/slices/form-slice';
+import axios from 'axios'
+
 function getKhaiGradeIcon(grade: number | null) {
   const style = { fontSize: "64px" } // 아이콘 크기 직접 조절
 
@@ -81,18 +83,46 @@ const Header = () => {
     navigate("/"); // 로그아웃 후 로그인 페이지로 이동 (필요시)
   };
   const dispatch = useDispatch();
-  const { airDatas, airLocal, region } = useContext(AirDataContext)
+  const { setAirDatas, airDatas, airLocal, setRegion, region, setLocalAirData } = useContext(AirDataContext)
   const { chatting } = useSelector(formSelector)
 
   const onClick = () => { dispatch(formActions.toggle_form({ form: 'chatting', value: !chatting.visible })) }
+  // const { setAirDatas, setRegion ,airLocal} = useContext(AirDataContext)
+  useEffect(() => {
 
+    const getAirData = async () => {
+      // if (selectStation) {
+      //   setLoading(true)
+      //   setError(null)
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/air?stationName=${airLocal}`
+        )
+        console.log('response.data', response.data)
+        // setAirData(response.data)
+        setLocalAirData(response.data)
+        setAirDatas(response.data.khaiGrade)
+        airLocal && setRegion(response.data.sidoName)
+
+
+      } catch (err) {
+        // setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
+        console.error(err)
+      } finally {
+        // setLoading(false)
+      }
+      // }
+    }
+
+    getAirData()
+  }, [airLocal])
 
   return (
 
     <WrapperHeader>
 
       <WrappLogo ><img src={Logo} width="100px" /></WrappLogo>
-      {region}
+      {region ? region : '없음'}
       {airLocal ? airLocal : '없음'}
       <WrappUser>
         {user && user.name && (

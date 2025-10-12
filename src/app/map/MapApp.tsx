@@ -56,7 +56,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   const isProgrammaticMove = useRef(false)
 
   const displayStation = initNearestStation || currentNearestStation
-  const { setAirLocal, setRegion } = useContext(AirDataContext)
+  const { setAirLocal } = useContext(AirDataContext)
   // const nearestStation = useNearStation(currentNearestStation, locations)
 
   // const locations = [
