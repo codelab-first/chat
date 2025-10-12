@@ -5,7 +5,7 @@ import styled from "@emotion/styled"
 import AirWidget from "../../app/air/AirWidget.tsx"
 
 const Wraps = styled.div`
-  border: 1px solid black;
+  border-radius:12px;
   width: 50%;
   height: 70vh;
   display: flex;
@@ -13,6 +13,7 @@ const Wraps = styled.div`
   align-items: stretch;
   overflow: hidden;
   flex:1;
+  background:white;
   @media (max-width:860px){
     display:none;
   }
