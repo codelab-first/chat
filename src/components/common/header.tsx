@@ -9,6 +9,7 @@ import { faSmile, faMeh, faSadTear, faAngry } from "@fortawesome/free-solid-svg-
 import { AirDataContext } from "../../providers/AirDataProvider"
 import { formSelector, formActions } from "../../store/slices/form-slice"
 import axios from "axios"
+import './header.scss'
 
 function getKhaiGradeIcon(grade: number | null) {
   const style = { fontSize: "64px" }
@@ -70,11 +71,14 @@ const WrappLogo = styled.div`
 
 const FloatButton = styled.button`
   padding: 0.2em;
+  
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  margin-left:4em;
   position: relative;
   z-index: 2;
+  
+  animation: selectedItem-float infinite 1s linear;
   @media (max-width: 860px) {
     display: none;
   }
@@ -85,7 +89,7 @@ const LoginStatus = styled(Link)``
 const BubbleOverlay = styled.div`
   position: absolute;
   top: 100%;
-  left: 60%;
+  left: 57%;
   transform: translate(-50%, -60%);
   pointer-events: none;
   z-index: 1;
@@ -94,6 +98,9 @@ const BubbleOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width:860px){
+  display:none;
+  }
 `
 
 const Bubble = styled.div`
@@ -165,9 +172,8 @@ const Header = () => {
     if (airLocal) getAirData()
   }, [airLocal])
 
-  const fullText = `${user.name}님 현재 관측소는 ${region || "알 수 없음"} ${airLocal || ""}${
-    stationAddress ? ` (${stationAddress})` : ""
-  } 입니다.\n저를 누르시면 자세한 정보가 표시됩니다.`
+  const fullText = `${user?.name}님 현재 관측소는 ${region || "알 수 없음"} ${airLocal || ""}${stationAddress ? ` (${stationAddress})` : ""
+    } 입니다.\n저를 누르시면 자세한 정보가 표시됩니다.`
 
   const [displayText, setDisplayText] = useState("")
   const [fadeOut, setFadeOut] = useState(false)
@@ -212,22 +218,25 @@ const Header = () => {
       </BubbleOverlay>
 
       <WrappUser>
-        {user && user.name && <span style={{ marginRight: "1em" }}>{user.name}님</span>}
-        {user ? (
-          <LoginStatus
-            to={"/"}
-            onClick={() => {
-              handleLogout()
-              navigate("/")
-            }}
-          >
-            LogOut
-          </LoginStatus>
-        ) : (
-          <LoginStatus to={"/"} onClick={() => navigate("/")}>
-            Login
-          </LoginStatus>
-        )}
+        <div>
+
+          {user && user.name && <span style={{ marginRight: "1em" }}>{user.name}님</span>}
+          {user ? (
+            <LoginStatus
+              to={"/"}
+              onClick={() => {
+                handleLogout()
+                navigate("/")
+              }}
+            >
+              LogOut
+            </LoginStatus>
+          ) : (
+            <LoginStatus to={"/"} onClick={() => navigate("/")}>
+              Login
+            </LoginStatus>
+          )}
+        </div>
         <FloatButton onClick={onClick}>{airDatas > 0 && getKhaiGradeIcon(airDatas)}</FloatButton>
       </WrappUser>
     </WrapperHeader>
