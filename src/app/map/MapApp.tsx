@@ -132,6 +132,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     initNearestStation,
     isManuallySelected,
     setSelectedStation,
+    setAirLocal,
     getStationAddress,
   ])
 
@@ -158,7 +159,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
 
         if (containerWidth !== newWidth && map && mapCenter) {
           isProgrammaticMove.current = true
-          if (map && mapCenter) {
+          if (map && mapCenterRef.current) {
             map.setCenter(
               new (window as any).kakao.maps.LatLng(
                 mapCenterRef.current?.getLat() ||
@@ -192,7 +193,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
         getStationAddress(stationName, selectedLocation.latlng)
       }
     },
-    [setSelectedStation]
+    [setSelectedStation, setAirLocal, locations, map, getStationAddress]
   )
 
   const handleReturnToCurrentLocation = useCallback(() => {
