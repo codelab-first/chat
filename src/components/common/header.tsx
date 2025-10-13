@@ -84,8 +84,8 @@ const LoginStatus = styled(Link)``
 
 const BubbleOverlay = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 100%;
+  left: 60%;
   transform: translate(-50%, -60%);
   pointer-events: none;
   z-index: 1;
@@ -115,17 +115,18 @@ const Bubble = styled.div`
   white-space: pre-line;
 `
 
+/* ✅ 화살표를 오른쪽으로 이동하고, 오른쪽을 향하게 수정 */
 const Tail = styled.span`
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid #ffffff;
-  filter: drop-shadow(0 1px 0 #e5e7eb);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #ffffff;
+  filter: drop-shadow(1px 0 0 #e5e7eb);
 `
 
 const TypingText = styled.span<{ fadeOut: boolean }>`
@@ -164,7 +165,7 @@ const Header = () => {
     if (airLocal) getAirData()
   }, [airLocal])
 
-  const fullText = `현재 관측소는 ${region || "알 수 없음"} ${airLocal || ""}${
+  const fullText = `${user.name}님 현재 관측소는 ${region || "알 수 없음"} ${airLocal || ""}${
     stationAddress ? ` (${stationAddress})` : ""
   } 입니다.\n저를 누르시면 자세한 정보가 표시됩니다.`
 
