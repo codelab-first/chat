@@ -19,7 +19,7 @@ const Wraps = styled.div`
   }
 `
 interface AirProps {
-  selectedStation?: string | null,
+  selectedStation: string | null,
 
 }
 
