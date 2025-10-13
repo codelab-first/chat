@@ -308,12 +308,24 @@ const Chat: React.FC<props> = ({ screenMode }) => {
             </WrapChat>
 
             <div className={`menu ${rise ? "up" : ''}`}>
-              <WrapSearch className="search">
-                <div style={{ display: "flex", alignItems: "center", marginTop: '5em' }}></div>
-                <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
-                <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
-                <Button
-                  onClick={onSearch}
+              {rise && (
+              <WrapSearch className="search" style={{ marginTop: "1em" }}>
+                <div style={{ display: "flex", alignItems: "center", marginTop: '1em' }}></div>
+                <input
+                  type="date"
+                  name="startDay"
+                  id="date"
+                  value={day.startDay}
+                  onChange={daySelect}
+                />
+                <input
+                  type="date"
+                  name="endDay"
+                  id="date"
+                  value={day.endDay}
+                  onChange={daySelect}
+                />
+                <Button onClick={onSearch}
                   style={{
                     display: "flex",
                     alignItems: "center",
@@ -328,10 +340,11 @@ const Chat: React.FC<props> = ({ screenMode }) => {
                     fontSize: "0.95rem",
                     fontWeight: "bold",
                     transition: "0.3s ease"
-                  }}
-                >
+                  }}>
                   <FaSearch />
-                </Button>              </WrapSearch>
+                </Button>
+              </WrapSearch>
+            )}
             </div>
 
             <WrapControl>

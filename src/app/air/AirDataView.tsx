@@ -24,14 +24,22 @@ function getCardBackgroundColor(khaiValue?: string): string {
 const SIDO_LIST: SidoItem[] = [
   { value: "", label: "전국" },
   { value: "서울", label: "서울" },
-  { value: "부산", label: "부산" },
-  { value: "대구", label: "대구" },
-  { value: "인천", label: "인천" },
-  { value: "광주", label: "광주" },
-  { value: "대전", label: "대전" },
-  { value: "울산", label: "울산" },
   { value: "경기", label: "경기" },
+  { value: "인천", label: "인천" },
+  { value: "강원", label: "강원" },
+  { value: "충북", label: "충북" },
+  { value: "충남", label: "충남" },
+  { value: "대전", label: "대전" },
+  { value: "전북", label: "전북" },
+  { value: "전남", label: "전남" },
+  { value: "광주", label: "광주" },
+  { value: "경북", label: "경북" },
+  { value: "경남", label: "경남" },
+  { value: "대구", label: "대구" },
+  { value: "부산", label: "부산" },
+  { value: "울산", label: "울산" },
   { value: "제주", label: "제주" },
+  { value: "세종", label: "세종" },
 ]
 
 async function fetchAirData(sidoName: string | null): Promise<AirData[]> {
@@ -55,11 +63,11 @@ async function fetchAirData(sidoName: string | null): Promise<AirData[]> {
 }
 
 const AirDataView: React.FC<Props> = ({ onBack }) => {
-  const [selectedSido, setSelectedSido] = useState<string | null>(null)
+  const { region, airLocal } = useContext(AirDataContext)
+  const [selectedSido, setSelectedSido] = useState<string>(region || "")
   const [airData, setAirData] = useState<AirData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  // 여러 카드를 펼치기 위해 Set 상태로 변경
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
 
   const loadData = useCallback(async (sido: string | null) => {
@@ -68,11 +76,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     try {
       const sidoToQuery = sido?.trim() === "" ? null : sido
       const data = await fetchAirData(sidoToQuery)
-      const currData = newAirData(data)
-      console.log('orderedList', currData)
-      if (currData)
-        setAirData(data)
-
+      setAirData(data)
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -85,25 +89,26 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     }
   }, [])
 
-  const { region, airLocal } = useContext(AirDataContext)
   useEffect(() => {
+    setSelectedSido(region || "")
     loadData(region)
-    // 데이터 새로 불러올 때 펼쳐진 카드 초기화
-    // setExpandedCards(new Set())
-  }, [region])
+    setExpandedCards(new Set()) // 선택 변경 시 펼친 카드 초기화
+  }, [region, loadData])
 
   const handleSidoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
     setSelectedSido(value)
+    loadData(value)
+    setExpandedCards(new Set()) // 선택 변경 시 펼친 카드 초기화
   }
 
   const toggleCard = (cardId: string) => {
     setExpandedCards((prev) => {
       const newSet = new Set(prev)
       if (newSet.has(cardId)) {
-        newSet.delete(cardId) // 펼쳐진 상태면 닫기
+        newSet.delete(cardId)
       } else {
-        newSet.add(cardId)    // 아니면 펼치기
+        newSet.add(cardId)
       }
       return newSet
     })
@@ -111,20 +116,6 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
 
   const currentSidoLabel =
     SIDO_LIST.find((item) => item.value === selectedSido)?.label || "전국"
-
-  const newAirData = (datas: AirData[]) => {
-    if (datas.length > 0) {
-      const index = datas.findIndex(data => {
-        return data.stationName === airLocal
-      })
-      // console.log(index)
-      const newData = (datas.splice(index, 1))
-      // console.log('newData', newData)
-      return newData
-
-
-    }
-  }
 
   return (
     <div style={{ padding: "1em" }}>
@@ -139,30 +130,16 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
           borderBottom: "1px solid #ccc",
         }}
       >
-        {/* <button
-          onClick={onBack}
-          style={{
-            marginBottom: "1em",
-            padding: "0.5em 1em",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "1px solid black",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          &larr; 현 위치 정보 보기
-        </button> */}
-
+        {/* 선택 박스 */}
         <div>
           <select
             id="sido-select"
             onChange={handleSidoChange}
-            value={selectedSido ?? ""}
+            value={selectedSido}
           >
             {SIDO_LIST.map((item: SidoItem) => (
               <option key={item.value} value={item.value}>
-                {region}
+                {item.label}
               </option>
             ))}
           </select>
@@ -189,12 +166,9 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
               alignItems: "flex-start",
             }}
           >
-
             {airData.length > 0 ? (
-
               airData.map((item) => {
                 const cardId = item.stationName + item.dataTime
-                // const isExpanded = expandedCards.has(cardId)
                 const isExpanded = item.stationName === airLocal || expandedCards.has(cardId)
 
                 return (
