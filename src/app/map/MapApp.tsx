@@ -132,6 +132,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     initNearestStation,
     isManuallySelected,
     setSelectedStation,
+    setAirLocal,
     getStationAddress,
   ])
 
@@ -141,7 +142,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
 
     setSelectedStation(displayStation.title)
 
-    console.log("가장 가까운 측정소:", displayStation.title)
+    // console.log("가장 가까운 측정소:", displayStation.title)
   }, [displayStation?.title, isManuallySelected, setSelectedStation])
 
   useEffect(() => {
@@ -158,7 +159,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
 
         if (containerWidth !== newWidth && map && mapCenter) {
           isProgrammaticMove.current = true
-          if (map && mapCenter) {
+          if (map && mapCenterRef.current) {
             map.setCenter(
               new (window as any).kakao.maps.LatLng(
                 mapCenterRef.current?.getLat() ||
@@ -192,7 +193,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
         getStationAddress(stationName, selectedLocation.latlng)
       }
     },
-    [setSelectedStation]
+    [setSelectedStation, setAirLocal, locations, map, getStationAddress]
   )
 
   const handleReturnToCurrentLocation = useCallback(() => {
@@ -278,7 +279,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
               lng: center.getLng(),
             }
 
-            console.log("지도 생성 완료", mapInstance)
+            // console.log("지도 생성 완료", mapInstance)
           }}
           onIdle={(mapInstance) => {
             updateBounds(mapInstance)
@@ -309,7 +310,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
               isProgrammaticMove.current = false
             }
 
-            console.log("지도 이동 완료", mapInstance)
+            // console.log("지도 이동 완료", mapInstance)
           }}
         >
           <MapClickHandler

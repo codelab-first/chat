@@ -54,7 +54,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
   const { setAirDatas, setRegion, localAirData } = useContext(AirDataContext)
   useEffect(() => {
     setAirData(localAirData)
-  }, [])
+  }, [localAirData])
   // useEffect(() => {
   //   const getAirData = async () => {
   //     if (selectStation) {
