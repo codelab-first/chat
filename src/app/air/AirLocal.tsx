@@ -55,33 +55,10 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
   useEffect(() => {
     setAirData(localAirData)
   }, [localAirData])
-  // useEffect(() => {
-  //   const getAirData = async () => {
-  //     if (selectStation) {
-  //       setLoading(true)
-  //       setError(null)
-  //       try {
-  //         const response = await axios.get(
-  //           `http://localhost:3000/api/air?stationName=${selectStation}`
-  //         )
-  //         // console.log('response.data', response.data)
-  //         setAirData(response.data)
-  //         setAirDatas(response.data.khaiGrade)
-  //         setRegion(response.data.sidoName)
-  //       } catch (err) {
-  //         setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
-  //         console.error(err)
-  //       } finally {
-  //         setLoading(false)
-  //       }
-  //     }
-  //   }
 
-  //   getAirData()
-  // }, [selectStation])
 
   return (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       <div
         style={{
           padding: "1em",
@@ -120,6 +97,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
             borderRadius: "8px",
             marginTop: "1em",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
+            width: "50%"
           }}
         >
           <h3>선택된 측정소: {airData?.stationName}</h3>
@@ -175,6 +153,6 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
           </p>
         </div>
       )}
-    </>
+    </div>
   )
 }

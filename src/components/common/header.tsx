@@ -1,20 +1,15 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import styled from "@emotion/styled"
 import { useDispatch, useSelector } from "react-redux"
 import { tokenData, tokenActions } from "../../store/slices/token-slice"
 import Logo from "../../../public/images/logo0.gif"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {
-  faSmile,
-  faMeh,
-  faSadTear,
-  faAngry,
-} from "@fortawesome/free-solid-svg-icons"
+import { faSmile, faMeh, faSadTear, faAngry } from "@fortawesome/free-solid-svg-icons"
 import { AirDataContext } from "../../providers/AirDataProvider"
 import { formSelector, formActions } from "../../store/slices/form-slice"
 import axios from "axios"
-
+import './header.scss'
 
 function getKhaiGradeIcon(grade: number | null) {
   const style = { fontSize: "64px" }
@@ -76,11 +71,14 @@ const WrappLogo = styled.div`
 
 const FloatButton = styled.button`
   padding: 0.2em;
+  
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  // align-items: center;
+  margin-left:4em;
   position: relative;
   z-index: 2;
+  
+  animation: selectedItem-float infinite 1s linear;
   @media (max-width: 860px) {
     display: none;
   }
@@ -88,12 +86,11 @@ const FloatButton = styled.button`
 
 const LoginStatus = styled(Link)``
 
-/* 말풍선을 로고 높이에 맞춰 수평 정렬 */
 const BubbleOverlay = styled.div`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -60%); /* 로고 높이에 맞춰 살짝 내림 */
+  top: 100%;
+  left: 57%;
+  transform: translate(-50%, -60%);
   pointer-events: none;
   z-index: 1;
   width: 90%;
@@ -101,75 +98,70 @@ const BubbleOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  @media (max-width:860px){
+  display:none;
+  }
 `
 
-const Bubble = styled.button`
+const Bubble = styled.div`
   pointer-events: auto;
   background: #ffffff;
   color: #111827;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 10px 16px;
-  line-height: 1.5;
+  line-height: 1.6;
   text-align: center;
   max-width: 100%;
-  white-space: normal;
   word-break: keep-all;
   overflow-wrap: break-word;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  min-height: 40px;
+  font-size: 15px;
+  white-space: pre-line;
 `
 
+/* ✅ 화살표를 오른쪽으로 이동하고, 오른쪽을 향하게 수정 */
 const Tail = styled.span`
   position: absolute;
-  bottom: -8px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
   width: 0;
   height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 8px solid #ffffff;
-  filter: drop-shadow(0 1px 0 #e5e7eb);
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #ffffff;
+  filter: drop-shadow(1px 0 0 #e5e7eb);
+`
+
+const TypingText = styled.span<{ fadeOut: boolean }>`
+  display: inline-block;
+  opacity: ${(props) => (props.fadeOut ? 0 : 1)};
+  transition: opacity 0.8s ease;
 `
 
 const Header = () => {
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const { user } = useSelector(tokenData)
+  const { chatting } = useSelector(formSelector)
+  const { setAirDatas, airDatas, airLocal, setRegion, region, setLocalAirData, stationAddress } =
+    useContext(AirDataContext)
+
   const handleLogout = () => {
     dispatch(tokenActions.initToken())
   }
-  const dispatch = useDispatch()
-  const {
-    setAirDatas,
-    airDatas,
-    airLocal,
-    setRegion,
-    region,
-    setLocalAirData,
-    stationAddress,
-  } = useContext(AirDataContext)
-  const { chatting } = useSelector(formSelector)
 
   const onClick = () => {
-    dispatch(
-      formActions.toggle_form({
-        form: "chatting",
-        value: !chatting.visible,
-      })
-    )
+    dispatch(formActions.toggle_form({ form: "chatting", value: !chatting.visible }))
   }
 
   useEffect(() => {
     const getAirData = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/api/air?stationName=${airLocal}`
-        )
+        const response = await axios.get(`http://localhost:3000/api/air?stationName=${airLocal}`)
         setLocalAirData(response.data)
         setAirDatas(response.data.khaiGrade)
         airLocal && setRegion(response.data.sidoName)
@@ -177,10 +169,40 @@ const Header = () => {
         console.error(err)
       }
     }
-    if (airLocal) {
-      getAirData()
-    }
+    if (airLocal) getAirData()
   }, [airLocal])
+
+  const fullText = `${user?.name}님 현재 관측소는 ${region || "알 수 없음"} ${airLocal || ""}${stationAddress ? ` (${stationAddress})` : ""
+    } 입니다.\n저를 누르시면 자세한 정보가 표시됩니다.`
+
+  const [displayText, setDisplayText] = useState("")
+  const [fadeOut, setFadeOut] = useState(false)
+
+  useEffect(() => {
+    let i = 0
+    let typingTimeout: NodeJS.Timeout
+
+    const startTyping = () => {
+      if (i < fullText.length) {
+        setDisplayText(fullText.slice(0, i + 1))
+        i++
+        typingTimeout = setTimeout(startTyping, 120)
+      } else {
+        setTimeout(() => {
+          setFadeOut(true)
+          setTimeout(() => {
+            setDisplayText("")
+            setFadeOut(false)
+            i = 0
+            startTyping()
+          }, 800)
+        }, 2500)
+      }
+    }
+
+    startTyping()
+    return () => clearTimeout(typingTimeout)
+  }, [fullText])
 
   return (
     <WrapperHeader>
@@ -188,41 +210,34 @@ const Header = () => {
         <img src={Logo} width="100px" />
       </WrappLogo>
 
-      {/* 헤더 중앙, 로고와 수평 맞춤 */}
       <BubbleOverlay>
-        <Bubble type="button">
+        <Bubble>
           <Tail />
-          <p>
-            현재 관측소는 {region ? region : "알 수 없음"}{" "}
-            {airLocal && <span>{airLocal}</span>}{" "}
-            {stationAddress && <span> ({stationAddress})</span>} 입니다. 저를
-            누르시면 자세한 정보가 표시됩니다.
-          </p>
+          <TypingText fadeOut={fadeOut}>{displayText}</TypingText>
         </Bubble>
       </BubbleOverlay>
 
       <WrappUser>
-        {user && user.name && (
-          <span style={{ marginRight: "1em" }}>{user.name}님</span>
-        )}
-        {user ? (
-          <LoginStatus
-            to={"/"}
-            onClick={() => {
-              handleLogout()
-              navigate("/")
-            }}
-          >
-            LogOut
-          </LoginStatus>
-        ) : (
-          <LoginStatus to={"/"} onClick={() => navigate("/")}>
-            Login
-          </LoginStatus>
-        )}
-        <FloatButton onClick={onClick}>
-          {airDatas > 0 && getKhaiGradeIcon(airDatas)}
-        </FloatButton>
+        <div>
+
+          {user && user.name && <span style={{ marginRight: "1em" }}>{user.name}님</span>}
+          {user ? (
+            <LoginStatus
+              to={"/"}
+              onClick={() => {
+                handleLogout()
+                navigate("/")
+              }}
+            >
+              LogOut
+            </LoginStatus>
+          ) : (
+            <LoginStatus to={"/"} onClick={() => navigate("/")}>
+              Login
+            </LoginStatus>
+          )}
+        </div>
+        <FloatButton onClick={onClick}>{airDatas > 0 && getKhaiGradeIcon(airDatas)}</FloatButton>
       </WrappUser>
     </WrapperHeader>
   )
