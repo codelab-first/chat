@@ -14,6 +14,7 @@ import {
 import { AirDataContext } from "../../providers/AirDataProvider"
 import { formSelector, formActions } from "../../store/slices/form-slice"
 import axios from "axios"
+import './header.scss'
 
 
 function getKhaiGradeIcon(grade: number | null) {
@@ -81,6 +82,7 @@ const FloatButton = styled.button`
   justify-content: center;
   position: relative;
   z-index: 2;
+  animation: selectedItem-float infinite 1s linear;
   @media (max-width: 860px) {
     display: none;
   }
@@ -202,24 +204,27 @@ const Header = () => {
       </BubbleOverlay>
 
       <WrappUser>
-        {user && user.name && (
-          <span style={{ marginRight: "1em" }}>{user.name}님</span>
-        )}
-        {user ? (
-          <LoginStatus
-            to={"/"}
-            onClick={() => {
-              handleLogout()
-              navigate("/")
-            }}
-          >
-            LogOut
-          </LoginStatus>
-        ) : (
-          <LoginStatus to={"/"} onClick={() => navigate("/")}>
-            Login
-          </LoginStatus>
-        )}
+        <div>
+          {user && user.name && (
+            <span style={{ marginRight: "1em" }}>{user.name}님</span>
+          )}
+
+          {user ? (
+            <LoginStatus
+              to={"/"}
+              onClick={() => {
+                handleLogout()
+                navigate("/")
+              }}
+            >
+              LogOut
+            </LoginStatus>
+          ) : (
+            <LoginStatus to={"/"} onClick={() => navigate("/")}>
+              Login
+            </LoginStatus>
+          )}
+        </div>
         <FloatButton onClick={onClick}>
           {airDatas > 0 && getKhaiGradeIcon(airDatas)}
         </FloatButton>
