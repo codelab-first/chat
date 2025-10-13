@@ -103,14 +103,14 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
 
   }, [region])
 
-  useEffect(() => {
+  // useEffect(() => {
 
 
-    const nextData = airData.filter(data => data.stationName === airLocal)
-    console.log(nextData)
-    // loadData(region)
+  //   const nextData = airData.filter(data => data.stationName === airLocal)
+  //   console.log(nextData)
+  //   // loadData(region)
 
-  }, [airLocal])
+  // }, [airLocal])
 
 
 
