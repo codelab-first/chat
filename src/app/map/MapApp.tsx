@@ -1,4 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from "react"
+import styled from "@emotion/styled"
+
 import {
   CustomOverlayMap,
   Map,
@@ -24,7 +32,6 @@ interface MapAppProps {
 }
 
 const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
-
   const { bounds, updateBounds } = useMapBoundary()
   const {
     position,
@@ -116,9 +123,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
             map.setCenter(
               new (window as any).kakao.maps.LatLng(
                 mapCenterRef.current?.getLat() ||
-                import.meta.env.VITE_DEFAULT_LATITUDE,
+                  import.meta.env.VITE_DEFAULT_LATITUDE,
                 mapCenterRef.current?.getLng() ||
-                import.meta.env.VITE_DEFAULT_LONGITUDE
+                  import.meta.env.VITE_DEFAULT_LONGITUDE
               )
             )
           }
@@ -138,7 +145,6 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
       setIsManuallySelected(true)
       setSelectedStation(stationName)
       setAirLocal(stationName)
-
     },
     [setSelectedStation]
   )
@@ -203,8 +209,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
           center={position}
           style={{
             width: "100%", // 지도의 크기
-            height: "480px",
-            position: "static",
+            height: "70vh",
           }}
           level={6} // 지도의 확대 레벨
           onCreate={(mapInstance) => {
