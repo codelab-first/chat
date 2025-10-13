@@ -15,6 +15,7 @@ import { AirDataContext } from "../../providers/AirDataProvider"
 import { formSelector, formActions } from "../../store/slices/form-slice"
 import axios from "axios"
 
+
 function getKhaiGradeIcon(grade: number | null) {
   const style = { fontSize: "64px" } // 아이콘 크기 직접 조절
 

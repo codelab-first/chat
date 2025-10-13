@@ -27,6 +27,7 @@ const SIDO_LIST: SidoItem[] = [
   { value: "부산", label: "부산" },
   { value: "충남", label: "충남" },
   { value: "충북", label: "충북" },
+  { value: "세종", label: "세종" },
   { value: "대구", label: "대구" },
   { value: "인천", label: "인천" },
   { value: "광주", label: "광주" },
@@ -59,6 +60,7 @@ async function fetchAirData(sidoName: string | null): Promise<AirData[]> {
 }
 
 const AirDataView: React.FC<Props> = ({ onBack }) => {
+  const { region, airLocal } = useContext(AirDataContext)
   const [selectedSido, setSelectedSido] = useState<string | null>(null)
   const [airData, setAirData] = useState<AirData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -72,10 +74,13 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     try {
       const sidoToQuery = sido?.trim() === "" ? null : sido
       const data = await fetchAirData(sidoToQuery)
-      const currData = newAirData(data)
-      console.log('orderedList', currData)
-      if (currData)
-        setAirData(data)
+      // if (data) {
+      //   const currData = newAirData(data)
+      //   console.log('sido', data, 'airLocal', airLocal)
+      //   console.log('currData', currData)
+      //   if (currData)
+      setAirData(data)
+      // }
 
     } catch (err) {
       if (err instanceof Error) {
@@ -89,12 +94,23 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     }
   }, [])
 
-  const { region, airLocal } = useContext(AirDataContext)
   useEffect(() => {
     loadData(region)
+  }, [region])
+
+
+  useEffect(() => {
+    loadData(region)
+
+    // console.log(airLocal, region)
+    // console.log(airData)
+    const selectedData = airData.filter(data => data.stationName === airLocal)
+    console.log('selectedData', selectedData)
+
+    console.log('airData', airData)
     // 데이터 새로 불러올 때 펼쳐진 카드 초기화
     // setExpandedCards(new Set())
-  }, [region])
+  }, [airLocal])
 
   const handleSidoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
@@ -116,19 +132,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
   const currentSidoLabel =
     SIDO_LIST.find((item) => item.value === selectedSido)?.label || "전국"
 
-  const newAirData = (datas: AirData[]) => {
-    if (datas.length > 0) {
-      const index = datas.findIndex(data => {
-        return data.stationName === airLocal
-      })
-      // console.log(index)
-      const newData = (datas.splice(index, 1))
-      // console.log('newData', newData)
-      return newData
 
-
-    }
-  }
 
   return (
     <div style={{ padding: "1em" }}>
