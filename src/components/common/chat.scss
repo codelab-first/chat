@@ -64,6 +64,9 @@ div.menu {
 div.menu.up {
   height: 300px;
   opacity: 1;
+  @media (max-width: 100px) {
+    display: none;
+  }
 }
 div.search {
   z-index: 1;
