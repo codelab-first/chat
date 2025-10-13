@@ -2,13 +2,6 @@ import { useState, useEffect, useContext } from "react"
 import useCurrentLocation from "../../hooks/useCurrentLocation"
 import axios from "axios"
 import { getGradeText, getGradeColor } from "../../utils/getGrade"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import {
-  faSmile,
-  faMeh,
-  faSadTear,
-  faAngry,
-} from "@fortawesome/free-solid-svg-icons"
 import { AirDataContext } from "../../providers/AirDataProvider"
 
 
@@ -54,33 +47,38 @@ type Props = {
 
 export default function AirLocal({ onShowApp, selectStation }: Props) {
   const { region } = useCurrentLocation()
+
   const [airData, setAirData] = useState<AirData | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
-  const { setAirDatas } = useContext(AirDataContext)
+  const { setAirDatas, setRegion, localAirData } = useContext(AirDataContext)
   useEffect(() => {
-    const getAirData = async () => {
-      if (selectStation) {
-        setLoading(true)
-        setError(null)
-        try {
-          const response = await axios.get(
-            `http://localhost:3000/api/air?stationName=${selectStation}`
-          )
-          // console.log('response.data', response.data)
-          setAirData(response.data)
-          setAirDatas(response.data.khaiGrade)
-        } catch (err) {
-          setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
-          console.error(err)
-        } finally {
-          setLoading(false)
-        }
-      }
-    }
+    setAirData(localAirData)
+  }, [])
+  // useEffect(() => {
+  //   const getAirData = async () => {
+  //     if (selectStation) {
+  //       setLoading(true)
+  //       setError(null)
+  //       try {
+  //         const response = await axios.get(
+  //           `http://localhost:3000/api/air?stationName=${selectStation}`
+  //         )
+  //         // console.log('response.data', response.data)
+  //         setAirData(response.data)
+  //         setAirDatas(response.data.khaiGrade)
+  //         setRegion(response.data.sidoName)
+  //       } catch (err) {
+  //         setError("대기 정보를 불러오는 중 오류가 발생했습니다.")
+  //         console.error(err)
+  //       } finally {
+  //         setLoading(false)
+  //       }
+  //     }
+  //   }
 
-    getAirData()
-  }, [selectStation])
+  //   getAirData()
+  // }, [selectStation])
 
   return (
     <>
@@ -91,7 +89,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
           justifyContent: "space-between",
         }}
       >
-        <h2>현재 지역 정보</h2>
+        {/* <h2>현재 지역 정보</h2>
         <p>
           <strong>현재 지역: </strong> {region}
         </p>
@@ -110,7 +108,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
           >
             전체 대기 상태 보기
           </button>
-        )}
+        )} */}
       </div>
       {loading && <p>대기 정보 로딩 중...</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
@@ -125,6 +123,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
           }}
         >
           <h3>선택된 측정소: {airData?.stationName}</h3>
+          <hr />
           <p>
             <strong>통합대기환경지수: </strong>
             <span style={{ color: getGradeColor(airData.khaiGrade) }}>
