@@ -147,7 +147,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
-  const { airLocal } = useContext(AirDataContext)
+  const { airLocal, region } = useContext(AirDataContext)
   useEffect(() => {
     const socket = io('http://localhost:3000', {
       auth: {
