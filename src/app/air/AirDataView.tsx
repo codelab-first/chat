@@ -15,22 +15,27 @@ type Props = {
 function getCardBackgroundColor(khaiValue?: string): string {
   const value = parseInt(khaiValue || "")
   if (isNaN(value)) return "#E0E0E0" // 정보 없음
-  if (value <= 50) return "#4CAF50"  // 좋음 (초록)
+  if (value <= 50) return "#4CAF50" // 좋음 (초록)
   if (value <= 100) return "#FFEB3B" // 보통 (노랑)
   if (value <= 150) return "#FF9800" // 나쁨 (주황)
-  return "#F44336"                   // 매우나쁨 (빨강)
+  return "#F44336" // 매우나쁨 (빨강)
 }
 
 const SIDO_LIST: SidoItem[] = [
   { value: "", label: "전국" },
   { value: "서울", label: "서울" },
   { value: "부산", label: "부산" },
+  { value: "충남", label: "충남" },
+  { value: "충북", label: "충북" },
+  { value: "세종", label: "세종" },
   { value: "대구", label: "대구" },
   { value: "인천", label: "인천" },
   { value: "광주", label: "광주" },
   { value: "대전", label: "대전" },
   { value: "울산", label: "울산" },
   { value: "경기", label: "경기" },
+  { value: "경남", label: "경남" },
+  { value: "경북", label: "경북" },
   { value: "제주", label: "제주" },
 ]
 
@@ -55,12 +60,28 @@ async function fetchAirData(sidoName: string | null): Promise<AirData[]> {
 }
 
 const AirDataView: React.FC<Props> = ({ onBack }) => {
+  const { region, airLocal } = useContext(AirDataContext)
   const [selectedSido, setSelectedSido] = useState<string | null>(null)
   const [airData, setAirData] = useState<AirData[]>([])
+  const [sortedAirData, setSortedAirData] = useState<AirData[]>([])
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [error, setError] = useState<string | null>(null)
   // 여러 카드를 펼치기 위해 Set 상태로 변경
   const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    if (!airData.length || !airLocal) {
+      setSortedAirData(airData)
+      return
+    }
+    const selectedStationData = airData.filter(
+      (data) => data.stationName === airLocal
+    )
+    const otherStationsData = airData.filter(
+      (data) => data.stationName !== airLocal
+    )
+    setSortedAirData([...selectedStationData, ...otherStationsData])
+  }, [airData, airLocal])
 
   const loadData = useCallback(async (sido: string | null) => {
     setIsLoading(true)
@@ -68,11 +89,14 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     try {
       const sidoToQuery = sido?.trim() === "" ? null : sido
       const data = await fetchAirData(sidoToQuery)
-      const currData = newAirData(data)
-      console.log('orderedList', currData)
-      if (currData)
-        setAirData(data)
 
+      // if (data) {
+      //   const currData = newAirData(data)
+      //   console.log('sido', data, 'airLocal', airLocal)
+      //   console.log('currData', currData)
+      //   if (currData)
+      setAirData(data)
+      // }
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message)
@@ -85,16 +109,36 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     }
   }, [])
 
-  const { region, airLocal } = useContext(AirDataContext)
   useEffect(() => {
     loadData(region)
-    // 데이터 새로 불러올 때 펼쳐진 카드 초기화
-    // setExpandedCards(new Set())
-  }, [region])
+  }, [region, loadData])
+
+  useEffect(() => {
+    const nextData = airData.filter((data) => data.stationName === airLocal)
+    console.log(nextData)
+    // loadData(region)
+  }, [airLocal, airData])
+
+  useEffect(() => {
+    if (airLocal) {
+      setExpandedCards((prev) => {
+        const newSet = new Set()
+        const selectedCard = sortedAirData.find(
+          (data) => data.stationName === airLocal
+        )
+        if (selectedCard) {
+          const cardId = selectedCard.stationName + selectedCard.dataTime
+          newSet.add(cardId)
+        }
+        return newSet
+      })
+    }
+  }, [airLocal, sortedAirData])
 
   const handleSidoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
     setSelectedSido(value)
+    loadData(value)
   }
 
   const toggleCard = (cardId: string) => {
@@ -103,7 +147,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
       if (newSet.has(cardId)) {
         newSet.delete(cardId) // 펼쳐진 상태면 닫기
       } else {
-        newSet.add(cardId)    // 아니면 펼치기
+        newSet.add(cardId) // 아니면 펼치기
       }
       return newSet
     })
@@ -111,20 +155,6 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
 
   const currentSidoLabel =
     SIDO_LIST.find((item) => item.value === selectedSido)?.label || "전국"
-
-  const newAirData = (datas: AirData[]) => {
-    if (datas.length > 0) {
-      const index = datas.findIndex(data => {
-        return data.stationName === airLocal
-      })
-      // console.log(index)
-      const newData = (datas.splice(index, 1))
-      // console.log('newData', newData)
-      return newData
-
-
-    }
-  }
 
   return (
     <div style={{ padding: "1em" }}>
@@ -154,28 +184,29 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
           &larr; 현 위치 정보 보기
         </button> */}
 
-        <div>
+        {/* <div style={{ textAlign: 'center' }}>
           <select
             id="sido-select"
             onChange={handleSidoChange}
-            value={selectedSido ?? ""}
+            value={region ?? ""}
           >
             {SIDO_LIST.map((item: SidoItem) => (
               <option key={item.value} value={item.value}>
-                {region}
+                {item.value}
               </option>
             ))}
           </select>
-          <span>
-            의 관측소 수: {airData.length}
-          </span>
-        </div>
-        <p>↑눌러서 시/도변경</p>
+          <div>
+            {region}의 총 관측소 수: {airData.length}
+          </div>
+        </div> */}
+        {/* <p>↑눌러서 시/도변경</p> */}
+        <h2 style={{ marginBottom: "1em", textAlign: "center" }}>
+          {region} 대기 정보 (총 {airData.length}개소)
+        </h2>
       </div>
 
-      <div style={{ marginTop: "1em" }}>
-        <h2>대기 정보({currentSidoLabel})</h2>
-
+      <div style={{ marginTop: "1em", textAlign: "center" }}>
         {isLoading && <p>데이터를 불러오는 중...</p>}
 
         {error && <p style={{ color: "red" }}>오류: {error}</p>}
@@ -186,48 +217,88 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
               display: "flex",
               flexWrap: "wrap",
               gap: "1em",
+              justifyContent: "center",
               alignItems: "flex-start",
             }}
           >
-
-            {airData.length > 0 ? (
-
-              airData.map((item) => {
+            {sortedAirData.length > 0 ? (
+              sortedAirData.map((item, index) => {
                 const cardId = item.stationName + item.dataTime
                 // const isExpanded = expandedCards.has(cardId)
-                const isExpanded = item.stationName === airLocal || expandedCards.has(cardId)
+                const isExpanded =
+                  item.stationName === airLocal || expandedCards.has(cardId)
+                const isSelectedStation = item.stationName === airLocal
 
                 return (
                   <div
                     key={cardId}
                     onClick={() => toggleCard(cardId)}
                     style={{
-                      border: "1px solid #ccc",
+                      // order: isExpanded ? 0 : 1,
+                      // border: "1px solid #ccc",
+                      border: isSelectedStation
+                        ? "3px solid #007bff"
+                        : "1px solid #ccc",
                       borderRadius: "8px",
                       padding: "1em",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      // boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      boxShadow: isSelectedStation
+                        ? "0 4px 12px rgba(0, 123, 255, 0.3)"
+                        : "0 2px 8px rgba(0,0,0,0.1)",
+                      width: isExpanded ? "100%" : "200px",
                       maxWidth: "200px",
                       minWidth: "180px",
                       backgroundColor: getCardBackgroundColor(item.khaiValue),
                       color: "#000",
                       cursor: "pointer",
                       transition: "all 0.3s",
+                      position: "relative",
                     }}
                   >
-                    <h3 style={{ marginTop: 0 }}>
+                    <h3
+                      style={{
+                        marginTop: 0,
+                        color: isSelectedStation ? "#0800ffff" : "#000",
+                      }}
+                    >
                       {item.sidoName} {item.stationName}
+                      {index === 0 && isSelectedStation && " (선택됨)"}
                     </h3>
 
                     {isExpanded && (
                       <div style={{ marginTop: "0.5em" }}>
-                        <p><strong>통합지수:</strong> {item.khaiValue ?? "정보 없음"}</p>
-                        <p><strong>PM10:</strong> {item.pm10Value ?? "정보 없음"} μg/m³</p>
-                        <p><strong>PM2.5:</strong> {item.pm25Value ?? "정보 없음"} μg/m³</p>
-                        <p><strong>이산화황 (SO₂):</strong> {item.so2Value} ppm</p>
-                        <p><strong>오존 (O₃):</strong> {item.o3Value} ppm</p>
-                        <p><strong>이산화질소 (NO₂):</strong> {item.no2Value} ppm</p>
-                        <p><strong>일산화탄소 (CO):</strong> {item.coValue} ppm</p>
-                        <p><strong>측정시간:</strong> {item.dataTime ?? "정보 없음"}</p>
+                        <p>
+                          <strong>통합지수:</strong>{" "}
+                          {item.khaiValue ?? "정보 없음"}
+                        </p>
+                        <p>
+                          <strong>PM10:</strong> {item.pm10Value ?? "정보 없음"}{" "}
+                          μg/m³
+                        </p>
+                        <p>
+                          <strong>PM2.5:</strong>{" "}
+                          {item.pm25Value ?? "정보 없음"} μg/m³
+                        </p>
+                        <p>
+                          <strong>이산화황 (SO₂):</strong>{" "}
+                          {item.so2Value ?? "정보 없음"} ppm
+                        </p>
+                        <p>
+                          <strong>오존 (O₃):</strong>{" "}
+                          {item.o3Value ?? "정보 없음"} ppm
+                        </p>
+                        <p>
+                          <strong>이산화질소 (NO₂):</strong>{" "}
+                          {item.no2Value ?? "정보 없음"} ppm
+                        </p>
+                        <p>
+                          <strong>일산화탄소 (CO):</strong>{" "}
+                          {item.coValue ?? "정보 없음"} ppm
+                        </p>
+                        <p>
+                          <strong>측정시간:</strong>{" "}
+                          {item.dataTime ?? "정보 없음"}
+                        </p>
                       </div>
                     )}
                   </div>

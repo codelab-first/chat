@@ -65,9 +65,18 @@ div.menu {
 }
 
 div.menu.up {
-  height: 300px; /* 열릴 때 높이 */
+  height: 70px; /* 열릴 때 높이 */
   opacity: 1;
+  @media (max-width: 100px) {
+    display: none;
+  }
 }
+
 div.search {
   z-index: 1;
+}
+form input {
+  @media (max-width: 860px) {
+    width: 400px;
+  }
 }
