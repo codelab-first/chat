@@ -1,4 +1,12 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from "react"
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from "react"
+import styled from "@emotion/styled"
+
 import {
   CustomOverlayMap,
   Map,
@@ -24,7 +32,6 @@ interface MapAppProps {
 }
 
 const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
-
   const { bounds, updateBounds } = useMapBoundary()
   const {
     position,
@@ -56,7 +63,40 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
   const isProgrammaticMove = useRef(false)
 
   const displayStation = initNearestStation || currentNearestStation
-  const { setAirLocal } = useContext(AirDataContext)
+  const { setAirLocal, setStationAddress } = useContext(AirDataContext)
+
+  const getStationAddress = useCallback(
+    async (stationName: string, position: { lat: number; lng: number }) => {
+      if (window.kakao && window.kakao.maps.services) {
+        const geocoder = new (window as any).kakao.maps.services.Geocoder()
+
+        const selectedLocation = locations.find(
+          (loc) => loc.title === stationName
+        )
+        if (selectedLocation) {
+          geocoder.coord2Address(
+            selectedLocation.latlng.lng,
+            selectedLocation.latlng.lat,
+            (result: any, status: any) => {
+              if (status === (window as any).kakao.maps.services.Status.OK) {
+                const region = result[0].address
+                if (region) {
+                  const {
+                    region_1depth_name: city,
+                    region_2depth_name: district,
+                    region_3depth_name: town,
+                  } = region
+                  const stationAddress = `${city} ${district} ${town || ""}`
+                  setStationAddress(stationAddress.trim())
+                }
+              }
+            }
+          )
+        }
+      }
+    },
+    [locations, setStationAddress]
+  )
   // const nearestStation = useNearStation(currentNearestStation, locations)
 
   // const locations = [
@@ -80,6 +120,11 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
       setSelectedStation(currentNearestStation.title)
       setAirLocal(currentNearestStation.title)
       // setRegion()
+      getStationAddress(
+        currentNearestStation.title,
+        currentNearestStation.latlng
+      )
+
       console.log("초기 가장 가까운 측정소:", currentNearestStation.title)
     }
   }, [
@@ -87,6 +132,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     initNearestStation,
     isManuallySelected,
     setSelectedStation,
+    getStationAddress,
   ])
 
   useEffect(() => {
@@ -116,9 +162,9 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
             map.setCenter(
               new (window as any).kakao.maps.LatLng(
                 mapCenterRef.current?.getLat() ||
-                import.meta.env.VITE_DEFAULT_LATITUDE,
+                  import.meta.env.VITE_DEFAULT_LATITUDE,
                 mapCenterRef.current?.getLng() ||
-                import.meta.env.VITE_DEFAULT_LONGITUDE
+                  import.meta.env.VITE_DEFAULT_LONGITUDE
               )
             )
           }
@@ -139,6 +185,12 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
       setSelectedStation(stationName)
       setAirLocal(stationName)
 
+      const selectedLocation = locations.find(
+        (loc) => loc.title === stationName
+      )
+      if (selectedLocation && map) {
+        getStationAddress(stationName, selectedLocation.latlng)
+      }
     },
     [setSelectedStation]
   )
@@ -161,7 +213,12 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
       initNearestStation?.title || currentNearestStation?.title
     if (stationToSelect) {
       setSelectedStation(stationToSelect)
-      // console.log("선택된 측정소:", stationToSelect)
+
+      const stationLocation = initNearestStation || currentNearestStation
+      if (stationLocation && map) {
+        getStationAddress(stationToSelect, stationLocation.latlng)
+      }
+      console.log("선택된 측정소:", stationToSelect)
     }
   }, [
     refetch,
@@ -170,6 +227,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
     initNearestStation,
     currentNearestStation,
     setSelectedStation,
+    getStationAddress,
   ])
 
   // const visibleMarkers = useVisibleMarkers(locations, bounds)
@@ -203,8 +261,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
           center={position}
           style={{
             width: "100%", // 지도의 크기
-            height: "480px",
-            position: "static",
+            height: "70vh",
           }}
           level={6} // 지도의 확대 레벨
           onCreate={(mapInstance) => {
