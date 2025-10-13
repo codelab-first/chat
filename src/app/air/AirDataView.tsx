@@ -74,6 +74,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     try {
       const sidoToQuery = sido?.trim() === "" ? null : sido
       const data = await fetchAirData(sidoToQuery)
+
       // if (data) {
       //   const currData = newAirData(data)
       //   console.log('sido', data, 'airLocal', airLocal)
@@ -94,23 +95,25 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
     }
   }, [])
 
+
+
+
   useEffect(() => {
     loadData(region)
+
   }, [region])
 
-
   useEffect(() => {
-    loadData(region)
 
-    // console.log(airLocal, region)
-    // console.log(airData)
-    const selectedData = airData.filter(data => data.stationName === airLocal)
-    console.log('selectedData', selectedData)
 
-    console.log('airData', airData)
-    // 데이터 새로 불러올 때 펼쳐진 카드 초기화
-    // setExpandedCards(new Set())
+    const nextData = airData.filter(data => data.stationName === airLocal)
+    console.log(nextData)
+    // loadData(region)
+
   }, [airLocal])
+
+
+
 
   const handleSidoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value
@@ -162,7 +165,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
           &larr; 현 위치 정보 보기
         </button> */}
 
-        <div>
+        {/* <div style={{ textAlign: 'center' }}>
           <select
             id="sido-select"
             onChange={handleSidoChange}
@@ -174,15 +177,15 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
               </option>
             ))}
           </select>
-          <span>
-            의 관측소 수: {airData.length}
-          </span>
-        </div>
-        <p>↑눌러서 시/도변경</p>
+          <div>
+            {region}의 총 관측소 수: {airData.length}
+          </div>
+        </div> */}
+        {/* <p>↑눌러서 시/도변경</p> */}
+        <h2 style={{ marginBottom: '1em', textAlign: 'center' }}>{region} 대기 정보 (총 {airData.length}개소)</h2>
       </div>
 
-      <div style={{ marginTop: "1em" }}>
-        <h2>대기 정보({currentSidoLabel})</h2>
+      <div style={{ marginTop: "1em", textAlign: 'center' }}>
 
         {isLoading && <p>데이터를 불러오는 중...</p>}
 
@@ -194,6 +197,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
               display: "flex",
               flexWrap: "wrap",
               gap: "1em",
+              justifyContent: 'center',
               alignItems: "flex-start",
             }}
           >
@@ -210,6 +214,8 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
                     key={cardId}
                     onClick={() => toggleCard(cardId)}
                     style={{
+
+                      order: isExpanded ? 0 : 1,
                       border: "1px solid #ccc",
                       borderRadius: "8px",
                       padding: "1em",
@@ -220,6 +226,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
                       color: "#000",
                       cursor: "pointer",
                       transition: "all 0.3s",
+
                     }}
                   >
                     <h3 style={{ marginTop: 0 }}>
@@ -251,7 +258,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   )
 }
 
