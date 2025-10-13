@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useContext } from 'react';
 import styled from '@emotion/styled'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -9,6 +9,7 @@ import Button from '../common/Button';
 import { tokenActions } from '../../store/slices/token-slice';
 import { io } from 'socket.io-client'
 import { ApiResponse } from '../../modules/api';
+import AirData from '../../providers/AirDataProvider'
 type Props = {
   form: "login" | "join";
 }
@@ -44,6 +45,7 @@ const StyledButton = styled.button`
 `
 const AuthForm: React.FC<Props> = ({ form = "login" }) => {
   // 입력값 상태 관리
+
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const { success, message, loginData, joinData } = useSelector(authData)

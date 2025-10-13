@@ -15,6 +15,7 @@ import './chat.scss'
 
 import { authData } from '../../store/slices/auth-slice';
 
+
 import HeaderTop from "./header";
 
 type props = {
@@ -48,7 +49,7 @@ overflow-y:scroll;
 
 //추가
 @media (max-width:860px){
-height:360px;
+height:300px;
 }
 `
 const WrapControl = styled.div`
@@ -198,9 +199,10 @@ const Chat: React.FC<props> = ({ screenMode }) => {
           zIndex: 2,
           textAlign: 'center',
           boxSizing: 'border-box',
+          cursor: 'move'
         }}>
           {screenMode ? <div style={{ width: `370px`, padding: '1rem 0', userSelect: 'none', marginTop: '1em' }}></div> :
-            <div style={{ width: `420px`, padding: '1rem 0', userSelect: 'none', marginTop: '2em', cursor: 'move' }}></div>}
+            <div style={{ width: `420px`, padding: '1rem 0', userSelect: 'none', marginTop: '2em', }}></div>}
         </div>}
 
         <div className='chat_outline' style={{ top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
