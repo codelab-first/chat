@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useContext } from 'react';
 import styled from '@emotion/styled'
 import { css } from "@emotion/react";
 import Button from './Button'
@@ -12,14 +12,27 @@ import { FaCalendarAlt, FaPaperPlane, FaCamera, FaSearch } from "react-icons/fa"
 import { imageInsert } from '../../modules/createFormData'
 import { io } from "socket.io-client";
 import './chat.scss'
-
+import AirLocal from '../../app/air/AirLocal';
+import { AirDataContext } from '../../providers/AirDataProvider';
 import { authData } from '../../store/slices/auth-slice';
 
+
+import HeaderTop from "./header";
+
+type props = {
+  screenMode: boolean
+}
 
 const Wraps = styled.div`
 width:400px;
 padding:1em;
 position:relative;
+
+//추가
+@media (max-width:860px){
+width:100%;
+
+}
 `
 const WrapSearch = styled.div`
 margin:0 auto;
@@ -34,6 +47,11 @@ height:500px;
 background:white;
 box-shadow: 0px 4px 12px rgba(0,0,0,0.15); 
 overflow-y:scroll;
+
+//추가
+@media (max-width:860px){
+height:300px;
+}
 `
 const WrapControl = styled.div`
 margin:0 auto;
@@ -62,7 +80,7 @@ user-select:none;
 }
 `
 
-const Chat = () => {
+const Chat: React.FC<props> = ({ screenMode }) => {
   const scrollRef = useRef<HTMLDivElement>(null)
   const { chatting } = useSelector(formSelector)
   const { token, user } = useSelector(tokenData)
@@ -129,7 +147,7 @@ const Chat = () => {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
-
+  const { airLocal } = useContext(AirDataContext)
   useEffect(() => {
     const socket = io('http://localhost:3000', {
       auth: {
@@ -172,8 +190,9 @@ const Chat = () => {
 
   return (
     <div>
-      {chatting.visible && <Wraps>
-        <div {...chattingPos()} style={{
+      {chatting.visible || screenMode ? 'width:true' : 'width:false'}
+      {(chatting.visible || screenMode) && <Wraps>
+        {!screenMode && <div {...chattingPos()} style={{
           color: 'black',
           position: 'fixed',
           top: chatting.position.y,
@@ -181,21 +200,27 @@ const Chat = () => {
           zIndex: 2,
           textAlign: 'center',
           boxSizing: 'border-box',
+          cursor: 'move'
         }}>
-          <div style={{ width: '480px', padding: '2rem 0', userSelect: 'none' }}></div>
-        </div>
+          {screenMode ? <div style={{ width: `370px`, padding: '1rem 0', userSelect: 'none', marginTop: '1em' }}></div> :
+            <div style={{ width: `420px`, padding: '1rem 0', userSelect: 'none', marginTop: '2em', }}></div>}
+        </div>}
 
-        <div style={{ position: 'fixed', top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
+        <div className='chat_outline' style={{ top: chatting.position.y, left: chatting.position.x, zIndex: 1 }}>
           <div style={{
             maxWidth: "100%",
             background: "rgba(255, 255, 255, 0.8)",
             border: "3px solid #2E7D32",
             borderRadius: "12px",
             padding: "1.5em",
-            marginTop: "2em"
+            // marginTop: "2em"
           }}>
             <WrapChat ref={scrollRef} onClick={() => { if (rise) riseUp() }}>
-              <div className="chats">
+              {screenMode && <HeaderTop />}
+              <div className="chats" style={{ position: 'relative' }}>
+
+                <AirLocal selectStation={airLocal} />
+
                 {chats?.map((message, index) => (
                   <div key={index}>
                     <div className='username' style={{ marginTop: "1.5em", marginLeft: ".3em", fontSize: '.8em', color: 'gray' }}>
@@ -253,6 +278,7 @@ const Chat = () => {
                               key={img}
                               src={`http://localhost:3000${img}`}
                               alt="img"
+                              width='100px'
                               style={{
                                 borderRadius: "6px",
                                 display: "block",
@@ -262,16 +288,17 @@ const Chat = () => {
                             />
                           ))
                           : <img
-                              key={index}
-                              src={`http://localhost:3000${message?.image}`}
-                              alt="img"
-                              style={{
-                                borderRadius: "6px",
-                                display: "block",
-                                margin: "4px auto",
-                                maxWidth: "100%"
-                              }}
-                            />
+                            key={index}
+                            src={`http://localhost:3000${message?.image}`}
+                            alt="img"
+                            width="100px"
+                            style={{
+                              borderRadius: "6px",
+                              maxWidth: "100%",
+                              display: "block",
+                              margin: "4px auto"
+                            }}
+                          />
                         )}
                       </div>
                     )}
@@ -281,106 +308,106 @@ const Chat = () => {
             </WrapChat>
 
             <div className={`menu ${rise ? "up" : ''}`}>
-           <WrapSearch className="search">
+              <WrapSearch className="search">
                 <div style={{ display: "flex", alignItems: "center", marginTop: '5em' }}></div>
                 <input type="date" name="startDay" id="date" value={day.startDay} onChange={daySelect} />
                 <input type="date" name="endDay" id="date" value={day.endDay} onChange={daySelect} />
-<Button
-  onClick={onSearch}
-  style={{
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "0.4em",
-    backgroundColor: "rgba(0, 0, 0, 0.4)",
-    color: "white",
-    border: "none",
-    borderRadius: "2em",
-    padding: "0.4em 1em",
-    cursor: "pointer",
-    fontSize: "0.95rem",
-    fontWeight: "bold",
-    transition: "0.3s ease"
-  }}
->
-  <FaSearch /> 검색
-</Button>              </WrapSearch>
+                <Button
+                  onClick={onSearch}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "0.4em",
+                    backgroundColor: "rgba(0, 0, 0, 0.4)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "2em",
+                    padding: "0.4em 1em",
+                    cursor: "pointer",
+                    fontSize: "0.95rem",
+                    fontWeight: "bold",
+                    transition: "0.3s ease"
+                  }}
+                >
+                  <FaSearch />
+                </Button>              </WrapSearch>
             </div>
 
-<WrapControl>
-  {/* 달력 버튼 (회색 원) */}
-  <div
-  onClick={riseUp} 
-    style={{
-      minWidth: "40px",
-      height: "40px",
-      borderRadius: "50%",
-      background: "#ccc",       // 입력창 보더와 같은 회색
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      color: "white",
-      fontSize: "1rem",
-      marginRight: "0.5em",
-      cursor: "pointer"
-    }}
-  >
-    <FaCalendarAlt />
-  </div>
+            <WrapControl>
+              {/* 달력 버튼 (회색 원) */}
+              <div
+                onClick={riseUp}
+                style={{
+                  minWidth: "35px",
+                  height: "35px",
+                  borderRadius: "50%",
+                  background: "#ccc",       // 입력창 보더와 같은 회색
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  color: "white",
+                  fontSize: "1rem",
+                  marginRight: "0.5em",
+                  cursor: "pointer"
+                }}
+              >
+                <FaCalendarAlt />
+              </div>
 
-  <form className="control" onSubmit={onSubmit} style={{ display: "flex", alignItems: "center" }}>
-    <input type="text" onChange={onChange} value={message} />
+              <form className="control" onSubmit={onSubmit} style={{ display: "flex", alignItems: "center" }}>
+                <input type="text" onChange={onChange} value={message} />
 
-    {/* 전송 버튼 (라운드 네모, 텍스트+아이콘) */}
-    <button
-      type="submit"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "4px",
-        padding: "0.55em 0.8em",
-        borderRadius: "8px",
-        background: "#388E3C",
-        color: "white",
-        border: "none",
-        marginLeft: "0.5em",
-        cursor: "pointer"
-      }}
-    >
-    <FaPaperPlane /> 전송
-    </button>
+                {/* 전송 버튼 (라운드 네모, 텍스트+아이콘) */}
+                <button
+                  type="submit"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    padding: "0.55em 0.8em",
+                    borderRadius: "8px",
+                    background: "#388E3C",
+                    color: "white",
+                    border: "none",
+                    marginLeft: "0.5em",
+                    cursor: "pointer"
+                  }}
+                >
+                  <FaPaperPlane />
+                </button>
 
-    {/* 사진 버튼 (연두색 원) */}
-    {/* 사진 버튼 (연두색 동그라미, 네모 제거) */}
-<label
-  htmlFor="photo"
-  style={{
-    display: "inline-flex",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",       // 동그라미
-    background: "#81C784",     // 초록색
-    color: "white",
-    cursor: "pointer",
-    marginLeft: "0.5em",
-    border: "none"             // 네모 테두리 제거
-  }}
->
-  <FaCamera />
-</label>
-<input
-  type="file"
-  id="photo"
-  name="images"
-  multiple
-  accept="image/*"
-  style={{ display: "none" }}
-  onChange={onInsertImage}
-/>
-  </form>
-</WrapControl>
+                {/* 사진 버튼 (연두색 원) */}
+                {/* 사진 버튼 (연두색 동그라미, 네모 제거) */}
+                <label
+                  htmlFor="photo"
+                  style={{
+                    display: "inline-flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "50%",       // 동그라미
+                    background: "#81C784",     // 초록색
+                    color: "white",
+                    cursor: "pointer",
+                    marginLeft: "0.5em",
+                    border: "none"             // 네모 테두리 제거
+                  }}
+                >
+                  <FaCamera />
+                </label>
+                <input
+                  type="file"
+                  id="photo"
+                  name="images"
+                  multiple
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  onChange={onInsertImage}
+                />
+              </form>
+            </WrapControl>
           </div>
         </div>
       </Wraps>}
