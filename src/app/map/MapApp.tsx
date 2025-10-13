@@ -95,7 +95,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
 
     setSelectedStation(displayStation.title)
 
-    console.log("가장 가까운 측정소:", displayStation.title)
+    // console.log("가장 가까운 측정소:", displayStation.title)
   }, [displayStation?.title, isManuallySelected, setSelectedStation])
 
   useEffect(() => {
@@ -161,7 +161,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
       initNearestStation?.title || currentNearestStation?.title
     if (stationToSelect) {
       setSelectedStation(stationToSelect)
-      console.log("선택된 측정소:", stationToSelect)
+      // console.log("선택된 측정소:", stationToSelect)
     }
   }, [
     refetch,
@@ -221,7 +221,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
               lng: center.getLng(),
             }
 
-            console.log("지도 생성 완료", mapInstance)
+            // console.log("지도 생성 완료", mapInstance)
           }}
           onIdle={(mapInstance) => {
             updateBounds(mapInstance)
@@ -252,7 +252,7 @@ const MapApp: React.FC<MapAppProps> = ({ setSelectedStation, screenMode }) => {
               isProgrammaticMove.current = false
             }
 
-            console.log("지도 이동 완료", mapInstance)
+            // console.log("지도 이동 완료", mapInstance)
           }}
         >
           <MapClickHandler

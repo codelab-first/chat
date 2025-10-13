@@ -15,6 +15,7 @@ import { AirDataContext } from '../../providers/AirDataProvider'
 import { formSelector, formActions } from '../../store/slices/form-slice';
 import axios from 'axios'
 
+
 function getKhaiGradeIcon(grade: number | null) {
   const style = { fontSize: "64px" } // 아이콘 크기 직접 조절
 
@@ -98,7 +99,7 @@ const Header = () => {
         const response = await axios.get(
           `http://localhost:3000/api/air?stationName=${airLocal}`
         )
-        console.log('response.data', response.data)
+        // console.log('response.data', response.data)
         // setAirData(response.data)
         setLocalAirData(response.data)
         setAirDatas(response.data.khaiGrade)
