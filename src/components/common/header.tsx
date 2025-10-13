@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from "react-redux"
 import { tokenData, tokenActions } from "../../store/slices/token-slice"
 import Logo from "../../../public/images/logo0.gif"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faSmile, faMeh, faSadTear, faAngry } from "@fortawesome/free-solid-svg-icons"
+import {
+  faSmile,
+  faMeh,
+  faSadTear,
+  faAngry,
+} from "@fortawesome/free-solid-svg-icons"
 import { AirDataContext } from "../../providers/AirDataProvider"
 import { formSelector, formActions } from "../../store/slices/form-slice"
 import axios from "axios"
@@ -138,7 +143,15 @@ const Header = () => {
     dispatch(tokenActions.initToken())
   }
   const dispatch = useDispatch()
-  const { setAirDatas, airDatas, airLocal, setRegion, region, setLocalAirData } = useContext(AirDataContext)
+  const {
+    setAirDatas,
+    airDatas,
+    airLocal,
+    setRegion,
+    region,
+    setLocalAirData,
+    stationAddress,
+  } = useContext(AirDataContext)
   const { chatting } = useSelector(formSelector)
 
   const onClick = () => {
@@ -153,7 +166,9 @@ const Header = () => {
   useEffect(() => {
     const getAirData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/api/air?stationName=${airLocal}`)
+        const response = await axios.get(
+          `http://localhost:3000/api/air?stationName=${airLocal}`
+        )
         setLocalAirData(response.data)
         setAirDatas(response.data.khaiGrade)
         airLocal && setRegion(response.data.sidoName)
@@ -161,7 +176,9 @@ const Header = () => {
         console.error(err)
       }
     }
-    getAirData()
+    if (airLocal) {
+      getAirData()
+    }
   }, [airLocal])
 
   return (
@@ -174,12 +191,19 @@ const Header = () => {
       <BubbleOverlay>
         <Bubble type="button">
           <Tail />
-          현위치는 {(airLocal || region || "").trim() || "정보 없음"} 입니다. 저를 누르시면 자세한 정보가 표시됩니다.
+          <p>
+            현재 관측소는 {region ? region : "알 수 없음"}{" "}
+            {airLocal && <span>{airLocal}</span>}{" "}
+            {stationAddress && <span> ({stationAddress})</span>} 입니다. 저를
+            누르시면 자세한 정보가 표시됩니다.
+          </p>
         </Bubble>
       </BubbleOverlay>
 
       <WrappUser>
-        {user && user.name && <span style={{ marginRight: "1em" }}>{user.name}님</span>}
+        {user && user.name && (
+          <span style={{ marginRight: "1em" }}>{user.name}님</span>
+        )}
         {user ? (
           <LoginStatus
             to={"/"}
@@ -195,7 +219,9 @@ const Header = () => {
             Login
           </LoginStatus>
         )}
-        <FloatButton onClick={onClick}>{airDatas > 0 && getKhaiGradeIcon(airDatas)}</FloatButton>
+        <FloatButton onClick={onClick}>
+          {airDatas > 0 && getKhaiGradeIcon(airDatas)}
+        </FloatButton>
       </WrappUser>
     </WrapperHeader>
   )
