@@ -49,25 +49,28 @@ div.rise {
 //   }
 // }
 div.menu {
-  padding: 0 10px;
+  padding: 0.5em;
   width: 80%;
-  height: 0px;
+  height: 0; /* 기본은 닫힘 */
   left: 31px;
-  // bottom: 100px;
   position: absolute;
-  background: gray;
-  transition: 1.5s;
   bottom: 58px;
-  opacity: 0.5;
+  background: rgba(240, 240, 240, 0.95); /* 밝은 회색 + 투명도 */
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease;
+  overflow: hidden;
+  opacity: 0;
   z-index: 2;
 }
+
 div.menu.up {
-  height: 300px;
+  height: 300px; /* 열릴 때 높이 */
   opacity: 1;
+  @media (max-width: 100px) {
+    display: none;
+  }
 }
 div.search {
   z-index: 1;
-}
-div.search.down {
-  display: none;
 }
