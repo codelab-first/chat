@@ -3,6 +3,7 @@ import useCurrentLocation from "../../hooks/useCurrentLocation"
 import axios from "axios"
 import { getGradeText, getGradeColor } from "../../utils/getGrade"
 import { AirDataContext } from "../../providers/AirDataProvider"
+import styled from '@emotion/styled'
 
 
 function getKhaiGradeColor(grade: number | null): string {
@@ -44,6 +45,7 @@ type Props = {
   onShowApp?: () => void
   selectStation: string | null
 }
+
 
 export default function AirLocal({ onShowApp, selectStation }: Props) {
   const { region } = useCurrentLocation()
@@ -91,14 +93,7 @@ export default function AirLocal({ onShowApp, selectStation }: Props) {
       {error && <p style={{ color: "red" }}>{error}</p>}
       {airData && (
         <div
-          style={{
-            backgroundColor: getKhaiGradeColor(airData.khaiGrade),
-            padding: "1em",
-            borderRadius: "8px",
-            marginTop: "1em",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)",
-            width: "50%"
-          }}
+          style={{ backgroundColor: getKhaiGradeColor(airData.khaiGrade), padding: '1em .5em', borderRadius: '12px' }}
         >
           <h3>선택된 측정소: {airData?.stationName}</h3>
           <hr />
