@@ -164,7 +164,7 @@ const AirDataView: React.FC<Props> = ({ onBack }) => {
           &larr; 현 위치 정보 보기
         </button> */}
 
-        <div>
+        {/*<div>
           <select
             id="sido-select"
             onChange={handleSidoChange}
