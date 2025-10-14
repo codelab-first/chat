@@ -52,13 +52,13 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
 
   const navigate = useNavigate()
   const dispatch = useDispatch();
-  const { success, message, loginData, joinData } = useSelector(authData)
+  const { loginData, joinData } = useSelector(authData)
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch(authActions.changeField({ form, key: name, value }))
   };
-
+//회원가입
   const join = async () => {
     if (joinData.email === '' || joinData.name === '' || joinData.password === '') return;
     try {
@@ -72,7 +72,7 @@ const AuthForm: React.FC<Props> = ({ form = "login" }) => {
       }
     } catch (e) { }
   };
-
+//로그인
   const login = async () => {
     if (loginData.email === '' || loginData.password === '') return;
     const rs = await apiPost<
