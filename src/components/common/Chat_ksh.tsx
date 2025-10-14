@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useContext } from 'react';
 import styled from '@emotion/styled'
-import { css } from "@emotion/react";
 import Button from './Button'
 import { useSelector, useDispatch } from "react-redux";
 import { formSelector, formActions } from '../../store/slices/form-slice';
@@ -14,7 +13,7 @@ import { io } from "socket.io-client";
 import './chat.scss'
 import AirLocal from '../../app/air/AirLocal';
 import { AirDataContext } from '../../providers/AirDataProvider';
-import { authData } from '../../store/slices/auth-slice';
+
 
 
 import HeaderTop from "./header";
@@ -116,7 +115,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
     send();
     setMessage('')
   }
-
+  //이미지 전송 headers:multipart/form-data
   const sendImage = async (formData: FormData) => {
     formData.append('user', JSON.stringify(user))
     return await axios.post('http://localhost:3000/chat/images', formData, {
@@ -130,7 +129,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
     if (!message) return;
     return await axios.post('http://localhost:3000/chat/chat', { message, user })
   }
-
+  //채팅창 초기화
   const chatInit = async () => {
     const result = await axios.get('http://localhost:3000/chat/init')
     setChats([])
@@ -147,7 +146,8 @@ const Chat: React.FC<props> = ({ screenMode }) => {
       scrollRef.current.scrollTop = scrollRef.current?.scrollHeight;
     }
   }
-  const { airLocal, region } = useContext(AirDataContext)
+  const { airLocal } = useContext(AirDataContext)
+  //소켓 연결
   useEffect(() => {
     const socket = io('http://localhost:3000', {
       auth: {
@@ -167,11 +167,12 @@ const Chat: React.FC<props> = ({ screenMode }) => {
       console.error('연결 오류:', error.message);
     });
   }, [])
-
+  //채팅창 메뉴 상태변경
   const riseUp = () => {
     setRise(!rise)
   }
 
+  //채팅발생마다 하단으로 스크롤
   useEffect(() => {
     setTimeout(scrollToBottom, 100)
   }, [chats])
@@ -190,7 +191,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
 
   return (
     <div>
-      {chatting.visible || screenMode ? 'width:true' : 'width:false'}
+
       {(chatting.visible || screenMode) && <Wraps>
         {!screenMode && <div {...chattingPos()} style={{
           color: 'black',
@@ -356,7 +357,7 @@ const Chat: React.FC<props> = ({ screenMode }) => {
               </div>
 
               <form className="control" onSubmit={onSubmit} style={{ display: "flex", alignItems: "center" }}>
-                <input type="text" onChange={onChange} value={message} />
+                <input className="input" type="text" onChange={onChange} value={message} />
 
                 {/* 전송 버튼 (라운드 네모, 텍스트+아이콘) */}
                 <button
